@@ -1,0 +1,80 @@
+
+import unittest
+from ..okx import Account
+
+class AccountTest(unittest.TestCase):
+    def setUp(self):
+        api_key = 'ef06bf27-6a01-4797-b801-e3897031e45d'
+        api_secret_key = 'D3620B2660203350EEE80FDF5BE0C960'
+        passphrase = 'Beijing123'
+        self.AccountAPI = Account.AccountAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag='1')
+    '''
+    POSITIONS_HISTORY = '/api/v5/account/positions-history' #need add
+    GET_PM_LIMIT = '/api/v5/account/position-tiers' #need add
+    ACCOUNT_RISK = '/api/v5/account/risk-state' #need add
+    def test_account_risk(self):
+        print(self.AccountAPI.get_account_risk())
+
+    def test_get_pm_limit(self):
+        print(self.AccountAPI.get_pm_limit("SWAP","BTC-USDT"))
+    #positions-history
+    def test_get_positions_history(self):
+        print(self.AccountAPI.get_positions_history())
+    def test_get_user_config(self):
+        print(self.AccountAPI.get_account_config())
+    def test_get_positions(self):
+        print(self.AccountAPI.get_positions("SWAP"))
+    def test_get_balance(self):
+        print(self.AccountAPI.get_account())
+    def test_get_positions_risk(self):
+        print(self.AccountAPI.get_position_risk("SWAP"))
+    def test_get_bills(self):
+        print(self.AccountAPI.get_bills_detail())
+
+    def test_get_bills_arch(self):
+        print(self.AccountAPI.get_bills_details())
+    def test_set_position_mode(self):
+        print(self.AccountAPI.set_position_mode("long_short_mode"))
+    def test_set_leverage(self):
+        print(self.AccountAPI.set_leverage(instId="BTC-USDT",lever="5",mgnMode="isolated"))
+    def test_get_max_avaliable_size(self):
+        print(self.AccountAPI.get_max_avail_size(instId="BTC-USDT",tdMode="cash"))
+    def test_get_max_size(self):
+        print(self.AccountAPI.get_maximum_trade_size(instId="BTC-USDT",tdMode="cash"))
+    def test_get_positions(self):
+        print(self.AccountAPI.get_positions("MARGIN"))
+    def test_set_margin_balance(self):
+        print(self.AccountAPI.Adjustment_margin(instId="BTC-USDT",posSide="net",type="add",amt="1"))
+    def test_get_lev_info(self):
+        print(self.AccountAPI.get_leverage("BTC-USDT","cross"));
+    def test_get_max_loan(self):
+        print(self.AccountAPI.get_max_loan("BTC-USDT","cross","USDT"))
+    def test_get_trade_fee(self):
+        print(self.AccountAPI.get_fee_rates("SPOT"))
+    def test_get_insterested_accrued(self):
+        print(self.AccountAPI.get_interest_accrued())
+    def test_get_interestred_rate(self):
+        print(self.AccountAPI.get_interest_rate())
+    def test_set_greeks(self):
+        print(self.AccountAPI.set_greeks("BS"))
+
+    def test_set_isolated_mode(self):
+        print(self.AccountAPI.set_isolated_mode("automatic","MARGIN"))
+    def test_set_max_withdraw(self):
+        print(self.AccountAPI.get_max_withdrawal("USDT"))
+    def test_borrow_repay(self):
+        print(self.AccountAPI.borrow_repay("BTC","borrow","1.0"))
+    def test_borrow_repay_history(self):
+        print(self.AccountAPI.get_borrow_repay_history())
+    def test_get_interest_limits(self):
+        print(self.AccountAPI.get_interest_limits())    
+    def test_simulated_margin(self):
+        print(self.AccountAPI.get_simulated_margin())
+    def test_get_greeks(self):
+        print(self.AccountAPI.get_greeks())
+    '''
+    def test_simulated_margin(self):
+        print(self.AccountAPI.get_simulated_margin())
+
+if __name__ == '__main__':
+    unittest.main()
