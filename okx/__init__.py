@@ -1,6 +1,5 @@
-"""An unofficial Python wrapper for the OKEx exchange API v3
-
-.. moduleauthor:: Sam McHardy
+"""
+Python SDK for the OKX API v5
 
 """
-__version__="0.0.12"
+__version__="0.1.0"
