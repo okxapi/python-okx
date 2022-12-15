@@ -1,6 +1,6 @@
 import time
 
-from okx.websocket.WsPrivate import WsPrivate
+from okx.websocket.WsPublic import WsPublic
 
 
 def privateCallback(message):
