@@ -1,6 +1,6 @@
 from twisted.internet import reactor
 
-from WsConnectManager import WsConnectManager
+from .WsConnectManager import WsConnectManager
 
 
 class WsPublic(WsConnectManager):

@@ -6,7 +6,7 @@ def publicCallback(message):
 
 
 if __name__ == '__main__':
-    url = "wss://ws.okx.com:8443/ws/v5/public"
+    url = "wss://wspri.coinall.ltd:8443/ws/v5/public?brokerId=9999"
     ws = WsPublic(url=url)
     ws.start()
     args = []
