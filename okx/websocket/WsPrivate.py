@@ -2,8 +2,8 @@ import time
 
 from twisted.internet import reactor
 
-import WsUtils
-from WsConnectManager import WsConnectManager
+from . import WsUtils
+from .WsConnectManager import WsConnectManager
 
 
 class WsPrivate(WsConnectManager):
