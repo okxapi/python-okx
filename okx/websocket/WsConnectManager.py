@@ -5,8 +5,8 @@ from autobahn.twisted.websocket import connectWS
 from twisted.internet import reactor
 from twisted.internet.error import ReactorAlreadyRunning
 
-import WsUtils
-from WsClientFactory import *
+from . import WsUtils
+from .WsClientFactory import *
 
 
 class WsConnectManager(threading.Thread):
