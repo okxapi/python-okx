@@ -1,7 +1,5 @@
 import time
-
-from WsPublic import WsPublic
-
+from okx.websocket.WsPublic import WsPublic
 
 def publicCallback(message):
     print("publicCallback", message)

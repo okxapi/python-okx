@@ -1,7 +1,6 @@
 import time
 
-from WsPrivate import WsPrivate
-
+from okx.websocket.WsPrivate import WsPrivate
 
 def privateCallback(message):
     print("WsPrivate subscribe callback:", message)
