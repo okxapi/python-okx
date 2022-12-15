@@ -1,7 +1,7 @@
 from autobahn.twisted.websocket import WebSocketClientFactory
 from twisted.internet.protocol import ReconnectingClientFactory
 
-from WsClientProtocol import *
+from .WsClientProtocol import *
 
 
 class WsReconnectingClientFactory(ReconnectingClientFactory):
