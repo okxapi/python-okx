@@ -116,16 +116,23 @@ passphrase = ""
   - Run `example.py`
   - Uncomment the corresponding method and then pass the arguments and call the interfaces
 - WebSocketAPI
-  - Open `websocket_example.py`
-  - According to the `public channel`/`private channel`, select the corresponding `url`, the corresponding start method, and pass in the corresponding parameters
+ * Open `WsPrivate`and`WsPublic`；
+ * choose the right `url`(if private channel need login info).
 
-```python 
-# WebSocket public channel
-url = "wss://ws.okx.com:8443/ws/v5/public?brokerId=9999"
+ ```python
+ # WebSocket Public channel
+ url = "wss://ws.okx.com:8443/ws/v5/public"
+ # WebSocket Private channel
+ url = "wss://ws.okx.com:8443/ws/v5/private"
+ ```
 
-# WebSocket private channel
-url = "wss://ws.okx.com:8443/ws/v5/private?brokerId=9999"
-```
+ ```python
+ # Public channel not need login(e.g. tickers,candle,mark-price,books,funding-rate)
+ refer to WsPublicTest.py
+
+ # Private channel nedd login(e.g. account,positions,orders)
+ refer to  WsPrivateTest.py
+ ```
 
 P.S. 
 
