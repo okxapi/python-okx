@@ -116,8 +116,8 @@ passphrase = ""
   - Run `example.py`
   - Uncomment the corresponding method and then pass the arguments and call the interfaces
 - WebSocketAPI
- * Open `WsPrivate`and`WsPublic`；
- * choose the right `url`(if private channel need login info).
+  - Open `WsPrivate`and`WsPublic`；
+  - choose the right `url`(if private channel need login info).
 
  ```python
  # WebSocket Public channel
