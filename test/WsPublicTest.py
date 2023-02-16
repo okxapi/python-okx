@@ -1,12 +1,14 @@
 import time
+
 from okx.websocket.WsPublic import WsPublic
+
 
 def publicCallback(message):
     print("publicCallback", message)
 
 
 if __name__ == '__main__':
-    url = "wss://wspri.coinall.ltd:8443/ws/v5/public?brokerId=9999"
+    url = "wss://ws.okx.com:8443/ws/v5/public"
     ws = WsPublic(url=url)
     ws.start()
     args = []
