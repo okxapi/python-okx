@@ -53,21 +53,8 @@ passphrase = ""
   - Run test/WsPrivateTest.py for private websocket channels
   - Run test/WsPublicTest.py for public websocket channels
   - Use different URLs for different environment
-
-```python 
-# WebSocket public channel
-# live trading
-url = "wss://ws.okx.com:8443/ws/v5/public?brokerId=9999"
-# demo trading
-url = "wss://wspap.okx.com:8443/ws/v5/public?brokerId=9999"
-
-# WebSocket private channel
-# live trading
-url = "wss://ws.okx.com:8443/ws/v5/private?brokerId=9999"
-# demo trading
-url = "wss://wspap.okx.com:8443/ws/v5/private?brokerId=9999"
-
-```
+      - Production URLs: https://www.okx.com/docs-v5/en/#overview-production-trading-services
+      - Demo trading URLs: https://www.okx.com/docs-v5/en/#overview-demo-trading-services
 
 Note 
 
