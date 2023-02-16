@@ -53,7 +53,7 @@ passphrase = ""
   - Run test/WsPrivateTest.py for private websocket channels
   - Run test/WsPublicTest.py for public websocket channels
   - Use different URLs for different environment
-      - Production URLs: https://www.okx.com/docs-v5/en/#overview-production-trading-services
+      - Live trading URLs: https://www.okx.com/docs-v5/en/#overview-production-trading-services
       - Demo trading URLs: https://www.okx.com/docs-v5/en/#overview-demo-trading-services
 
 Note 
