@@ -29,5 +29,4 @@ build/
 
 ### VS Code ###
 .vscode/
-setup.py
 id_rsa*
