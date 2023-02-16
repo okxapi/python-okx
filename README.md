@@ -1,5 +1,5 @@
 ### Overview
-This is an unofficial Python wrapper for the [OKX exchange REST API v5](https://www.okx.com/docs-v5/en/)
+This is an unofficial Python wrapper for the [OKX exchange v5 API](https://www.okx.com/okx-api)
 
 If you came here looking to purchase cryptocurrencies from the OKX exchange, please go [here](https://www.okx.com/).
 
