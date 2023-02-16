@@ -8,8 +8,8 @@ https://github.com/okxapi/python-okx
 #### OKX API Telegram
 https://t.me/OKXAPI
 #### API trading tutorials
-- Spot trading: [](https://www.okx.com/learn/spot-trading-with-jupyter-notebook)
-- Derivative trading: [](https://www.okx.com/learn/derivatives-trading-with-jupyter-notebook)
+- Spot trading: https://www.okx.com/learn/spot-trading-with-jupyter-notebook
+- Derivative trading: https://www.okx.com/learn/derivatives-trading-with-jupyter-notebook
 
 Make sure you update often and check the [Changelog](https://www.okx.com/docs-v5/log_en/) for new features and bug fixes.
 
@@ -27,8 +27,8 @@ Make sure you update often and check the [Changelog](https://www.okx.com/docs-v5
 `WebSocketAPI： websockets package advise version 6.0`
 
 #### Step 1: register an account on OKX and apply for an API key
-- Register account: [](https://www.okx.com/account/register)
-- Apply for an API key: [](https://www.okx.com/account/users/myApi)
+- Register for an account: https://www.okx.com/account/register
+- Apply for an API key: https://www.okx.com/account/users/myApi
 
 #### Step 2: install python-okx
 
@@ -46,7 +46,7 @@ passphrase = ""
 ```
 - RestAPI
   - For spot trading: run example/get_started_en.ipynb
-  - For derivative trading: run example/https://github.com/okxapi/python-okx/blob/master/example/trade_derivatives_en.ipynb
+  - For derivative trading: run example/trade_derivatives_en.ipynb
   - Tweak the value of the parameter `flag` (live trading: 0, demo trading: 1
 ) to switch between live and demo trading environment
 - WebSocketAPI
