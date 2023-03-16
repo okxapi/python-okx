@@ -7,7 +7,7 @@ from . import consts as c, utils, exceptions
 
 class Client(object):
 
-    def __init__(self, api_key = '-1', api_secret_key = '-1', passphrase = '-1', use_server_time=False, flag='1', base_api = 'https://www.okx.com',debug = 'True'):
+    def __init__(self, api_key = '-1', api_secret_key = '-1', passphrase = '-1', use_server_time=False, flag='1', base_api = 'https://www.okx.com',debug = False):
 
         self.API_KEY = api_key
         self.API_SECRET_KEY = api_secret_key
@@ -16,7 +16,7 @@ class Client(object):
         self.flag = flag
         self.domain = base_api
         self.debug = debug
-        self.client = httpx.Client(base_url=base_api, http2=True)
+        self.client = httpx.Client(base_url=base_api, http2=True, verify=False, timeout=None)
 
     def _request(self, method, request_path, params):
         if method == c.GET:
