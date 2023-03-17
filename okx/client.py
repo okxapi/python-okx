@@ -49,7 +49,7 @@ class Client(object):
         return self._request(method, request_path, params)
 
     def _get_timestamp(self):
-        request_path = c.API_URL + c.SERVER_TIMESTAMP_URL
+        request_path = base_api + c.SERVER_TIMESTAMP_URL
         response = self.client.get(request_path)
         if response.status_code == 200:
             return response.json()['ts']
