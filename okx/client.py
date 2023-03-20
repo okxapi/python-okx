@@ -8,6 +8,8 @@ import time
 
 import traceback
 
+from httpx import _client
+
 class Client(object):
 
     def __init__(self, api_key = '-1', api_secret_key = '-1', passphrase = '-1', use_server_time=False, flag='1', base_api = 'https://www.okx.com',debug = False):
@@ -19,6 +21,7 @@ class Client(object):
         self.flag = flag
         self.domain = base_api
         self.debug = debug
+        self.request_times = 0
         self.client = httpx.Client(base_url=base_api, http2=True, verify=False, timeout=None)
 
     def _request(self, method, request_path, params):
@@ -41,6 +44,13 @@ class Client(object):
             response = self.client.get(request_path, headers=header)
         elif method == c.POST:
             response = self.client.post(request_path, data=body, headers=header)
+        self.request_times += 1
+        # print('request times:', self.request_times)
+        if (self.request_times > 512):
+            self.client.close()
+            self.client._state = _client.ClientState.UNOPENED
+            self.request_times = 0
+            # print('close the current tcp connection while request times larger than 512.')
         return response
 
     def _request_until_success(self, method, request_path, params):
