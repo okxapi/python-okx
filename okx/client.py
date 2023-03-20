@@ -6,6 +6,8 @@ from . import consts as c, utils, exceptions
 
 import time
 
+import traceback
+
 class Client(object):
 
     def __init__(self, api_key = '-1', api_secret_key = '-1', passphrase = '-1', use_server_time=False, flag='1', base_api = 'https://www.okx.com',debug = False):
@@ -49,7 +51,9 @@ class Client(object):
             try:
                 response = self._request(method, request_path, params)
                 break
-            except:
+            except Exception as e:
+                msg = traceback.format_exc()
+                print(msg)
                 retry_times += 1
                 if retry_times > retry_times_max:
                     print('reach max retry times, exit loop.')
