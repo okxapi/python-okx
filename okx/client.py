@@ -4,6 +4,7 @@ import httpx
 
 from . import consts as c, utils, exceptions
 
+import time
 
 class Client(object):
 
@@ -38,15 +39,32 @@ class Client(object):
             response = self.client.get(request_path, headers=header)
         elif method == c.POST:
             response = self.client.post(request_path, data=body, headers=header)
+        return response
+
+    def _request_until_success(self, method, request_path, params):
+        response = ''
+        retry_times = 0
+        retry_times_max = 15
+        while True:
+            try:
+                response = self._request(method, request_path, params)
+                break
+            except:
+                retry_times += 1
+                if retry_times > retry_times_max:
+                    print('reach max retry times, exit loop.')
+                    break
+                print('http request failed, retry in 1 seconds ... retry times:', retry_times)
+                time.sleep(1)
         if not str(response.status_code).startswith('2'):
             raise exceptions.OkxAPIException(response)
         return response.json()
 
     def _request_without_params(self, method, request_path):
-        return self._request(method, request_path, {})
+        return self._request_with_params(method, request_path, {})
 
     def _request_with_params(self, method, request_path, params):
-        return self._request(method, request_path, params)
+        return self._request_until_success(method, request_path, params)
 
     def _get_timestamp(self):
         request_path = base_api + c.SERVER_TIMESTAMP_URL
