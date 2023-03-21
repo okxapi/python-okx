@@ -56,22 +56,24 @@ class Client(object):
     def _request_until_success(self, method, request_path, params):
         response = ''
         retry_times = 0
-        retry_times_max = 15
         while True:
             try:
                 response = self._request(method, request_path, params)
+                if not str(response.status_code).startswith('2'):
+                    print('response.status_code:', response.status_code)
+                    print('response.json.code:', response.json()['code'])
+                    print('response.json.msg:', response.json()['msg'])
+                    time.sleep(1)
+                    continue
                 break
             except Exception as e:
                 msg = traceback.format_exc()
-                print(msg)
+                print(e)
                 retry_times += 1
-                if retry_times > retry_times_max:
-                    print('reach max retry times, exit loop.')
-                    break
-                print('http request failed, retry in 1 seconds ... retry times:', retry_times)
+                print('http request retry in 1 seconds, retry times:', retry_times)
                 time.sleep(1)
-        if not str(response.status_code).startswith('2'):
-            raise exceptions.OkxAPIException(response)
+        # if not str(response.status_code).startswith('2'):
+        #     raise exceptions.OkxAPIException(response)
         return response.json()
 
     def _request_without_params(self, method, request_path):
@@ -81,7 +83,7 @@ class Client(object):
         return self._request_until_success(method, request_path, params)
 
     def _get_timestamp(self):
-        request_path = base_api + c.SERVER_TIMESTAMP_URL
+        request_path = self.domain + c.SERVER_TIMESTAMP_URL
         response = self.client.get(request_path)
         if response.status_code == 200:
             return response.json()['ts']
