@@ -1,5 +1,5 @@
 # http header
-#API_URL = 'https://www.okx.com'
+DOMAIN = 'https://www.okx.com'
 
 CONTENT_TYPE = 'Content-Type'
 OK_ACCESS_KEY = 'OK-ACCESS-KEY'
