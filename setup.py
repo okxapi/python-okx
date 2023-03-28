@@ -20,7 +20,7 @@ setuptools.setup(
     ],
     install_requires=[
         "importlib-metadata",
-        "httpx",
+        "httpx[http2]",
         "keyring",
         "requests",
         "Twisted",
