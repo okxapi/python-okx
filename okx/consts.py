@@ -48,6 +48,7 @@ POSITIONS_HISTORY = '/api/v5/account/positions-history' #need add
 GET_PM_LIMIT = '/api/v5/account/position-tiers' #need add
 
 # funding-complete-testcomplete
+NON_TRADABLE_ASSETS = '/api/v5/asset/non-tradable-assets'
 DEPOSIT_ADDRESS = '/api/v5/asset/deposit-address'
 GET_BALANCES = '/api/v5/asset/balances'
 FUNDS_TRANSFER = '/api/v5/asset/transfer'
