@@ -9,10 +9,13 @@ class TradeAPI(Client):
 
     # Place Order
     def place_order(self, instId, tdMode, side, ordType, sz, ccy='', clOrdId='', tag='', posSide='', px='',
-                    reduceOnly='', tgtCcy=''):
+                    reduceOnly='', tgtCcy='', tpTriggerPx='', tpOrdPx='', slTriggerPx='', slOrdPx='',
+                    tpTriggerPxType='', slTriggerPxType='', quickMgnType='', stpId='', stpMode=''):
         params = {'instId': instId, 'tdMode': tdMode, 'side': side, 'ordType': ordType, 'sz': sz, 'ccy': ccy,
                   'clOrdId': clOrdId, 'tag': tag, 'posSide': posSide, 'px': px, 'reduceOnly': reduceOnly,
-                  'tgtCcy': tgtCcy}
+                  'tgtCcy': tgtCcy, 'tpTriggerPx': tpTriggerPx, 'tpOrdPx': tpOrdPx, 'slTriggerPx': slTriggerPx,
+                  'slOrdPx': slOrdPx, 'tpTriggerPxType': tpTriggerPxType, 'slTriggerPxType': slTriggerPxType,
+                  'quickMgnType': quickMgnType, 'stpId': stpId, 'stpMode': stpMode}
         return self._request_with_params(POST, PLACR_ORDER, params)
 
     # Place Multiple Orders
@@ -29,10 +32,12 @@ class TradeAPI(Client):
         return self._request_with_params(POST, CANAEL_BATCH_ORDERS, orders_data)
 
     # Amend Order
-    def amend_order(self, instId, cxlOnFail='', ordId='', clOrdId='', reqId='', newSz='', newPx=''):
+    def amend_order(self, instId, cxlOnFail='', ordId='', clOrdId='', reqId='', newSz='', newPx='', newTpTriggerPx='',
+                    newTpOrdPx='', newSlTriggerPx='', newSlOrdPx='', newTpTriggerPxType='', newSlTriggerPxType=''):
         params = {'instId': instId, 'cxlOnFailc': cxlOnFail, 'ordId': ordId, 'clOrdId': clOrdId, 'reqId': reqId,
-                  'newSz': newSz,
-                  'newPx': newPx}
+                  'newSz': newSz, 'newPx': newPx, 'newTpTriggerPx': newTpTriggerPx, 'newTpOrdPx': newTpOrdPx,
+                  'newSlTriggerPx': newSlTriggerPx, 'newSlOrdPx': newSlOrdPx, 'newTpTriggerPxType': newTpTriggerPxType,
+                  'newSlTriggerPxType': newSlTriggerPxType}
         return self._request_with_params(POST, AMEND_ORDER, params)
 
     # Amend Multiple Orders
@@ -40,8 +45,9 @@ class TradeAPI(Client):
         return self._request_with_params(POST, AMEND_BATCH_ORDER, orders_data)
 
     # Close Positions
-    def close_positions(self, instId, mgnMode, posSide='', ccy='',autoCxl=''):
-        params = {'instId': instId, 'mgnMode': mgnMode, 'posSide': posSide, 'ccy': ccy,'autoCxl':autoCxl}
+    def close_positions(self, instId, mgnMode, posSide='', ccy='', autoCxl='', clOrdId='', tag=''):
+        params = {'instId': instId, 'mgnMode': mgnMode, 'posSide': posSide, 'ccy': ccy, 'autoCxl': autoCxl,
+                  'clOrdId': clOrdId, 'tag': tag}
         return self._request_with_params(POST, CLOSE_POSITION, params)
 
     # Get Order Details
@@ -56,15 +62,19 @@ class TradeAPI(Client):
         return self._request_with_params(GET, ORDERS_PENDING, params)
 
     # Get Order History (last 7 days）
-    def get_orders_history(self, instType, uly='', instId='', ordType='', state='', after='', before='', limit='',instFamily = ''):
+    def get_orders_history(self, instType, uly='', instId='', ordType='', state='', after='', before='', begin='',
+                           end='', limit='', instFamily=''):
         params = {'instType': instType, 'uly': uly, 'instId': instId, 'ordType': ordType, 'state': state,
-                  'after': after, 'before': before, 'limit': limit,'instFamily':instFamily}
+                  'after': after, 'before': before, 'begin': begin, 'end': end, 'limit': limit,
+                  'instFamily': instFamily}
         return self._request_with_params(GET, ORDERS_HISTORY, params)
 
     # Get Order History (last 3 months)
-    def get_orders_history_archive(self, instType, uly='', instId='', ordType='', state='', after='', before='', limit='',instFamily = ''):
+    def get_orders_history_archive(self, instType, uly='', instId='', ordType='', state='', after='', before='',
+                                   begin='', end='', limit='', instFamily=''):
         params = {'instType': instType, 'uly': uly, 'instId': instId, 'ordType': ordType, 'state': state,
-                  'after': after, 'before': before, 'limit': limit,'instFamily':instFamily}
+                  'after': after, 'before': before, 'begin': begin, 'end': end, 'limit': limit,
+                  'instFamily': instFamily}
         return self._request_with_params(GET, ORDERS_HISTORY_ARCHIVE, params)
 
     # Get Transaction Details
@@ -80,7 +90,8 @@ class TradeAPI(Client):
                          triggerPx='', orderPx='', tgtCcy='', pxVar='',
                          pxSpread='',
                          szLimit='', pxLimit='', timeInterval='', tpTriggerPxType='', slTriggerPxType='',
-                         callbackRatio='',callbackSpread='',activePx='',tag='',triggerPxType=''):
+                         callbackRatio='',callbackSpread='',activePx='',tag='',triggerPxType='',closeFraction=''
+                         ,quickMgnType='',algoClOrdId=''):
         params = {'instId': instId, 'tdMode': tdMode, 'side': side, 'ordType': ordType, 'sz': sz, 'ccy': ccy,
                   'posSide': posSide, 'reduceOnly': reduceOnly, 'tpTriggerPx': tpTriggerPx, 'tpOrdPx': tpOrdPx,
                   'slTriggerPx': slTriggerPx, 'slOrdPx': slOrdPx, 'triggerPx': triggerPx, 'orderPx': orderPx,
@@ -88,10 +99,8 @@ class TradeAPI(Client):
                   'timeInterval': timeInterval,
                   'pxSpread': pxSpread, 'tpTriggerPxType': tpTriggerPxType, 'slTriggerPxType': slTriggerPxType,
                   'callbackRatio' : callbackRatio, 'callbackSpread':callbackSpread,'activePx':activePx,
-                  'tag':tag,'triggerPxType':triggerPxType,}
+                  'tag':tag,'triggerPxType':triggerPxType,'closeFraction':closeFraction,'quickMgnType':quickMgnType,'algoClOrdId':algoClOrdId}
         return self._request_with_params(POST, PLACE_ALGO_ORDER, params)
-
-
 
     # Cancel Algo Order
     def cancel_algo_order(self, params):
@@ -102,9 +111,9 @@ class TradeAPI(Client):
         return self._request_with_params(POST, Cancel_Advance_Algos, params)
 
     # Get Algo Order List
-    def order_algos_list(self, ordType ='', algoId='', instType='', instId='', after='', before='', limit=''):
+    def order_algos_list(self, ordType='', algoId='', instType='', instId='', after='', before='', limit='',algoClOrdId=''):
         params = {'ordType': ordType, 'algoId': algoId, 'instType': instType, 'instId': instId, 'after': after,
-                  'before': before, 'limit': limit}
+                  'before': before, 'limit': limit, 'algoClOrdId': algoClOrdId}
         return self._request_with_params(GET, ORDERS_ALGO_OENDING, params)
 
     # Get Algo Order History
@@ -157,3 +166,18 @@ class TradeAPI(Client):
             'limit':limit
         }
         return self._request_with_params(GET,ONE_CLICK_REPAY_HISTORY,params)
+
+    # Get algo order details
+    def get_algo_order_details(self, algoId='', algoClOrdId=''):
+        params = {'algoId': algoId, 'algoClOrdId': algoClOrdId}
+        return self._request_with_params(GET, GET_ALGO_ORDER_DETAILS, params)
+
+    # Amend algo order
+    def amend_algo_order(self, instId='', algoId='', algoClOrdId='', cxlOnFail='', reqId='', newSz='',
+                         newTpTriggerPx='', newTpOrdPx='', newSlTriggerPx='', newSlOrdPx='', newTpTriggerPxType='',
+                         newSlTriggerPxType=''):
+        params = {'instId': instId, 'algoId': algoId, 'algoClOrdId': algoClOrdId, 'cxlOnFail': cxlOnFail,
+                  'reqId': reqId, 'newSz': newSz, 'newTpTriggerPx': newTpTriggerPx, 'newTpOrdPx': newTpOrdPx,
+                  'newSlTriggerPx': newSlTriggerPx, 'newSlOrdPx': newSlOrdPx,
+                  'newTpTriggerPxType': newTpTriggerPxType, 'newSlTriggerPxType': newSlTriggerPxType}
+        return self._request_with_params(POST, AMEND_ALGO_ORDER, params)

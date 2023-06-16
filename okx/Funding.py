@@ -30,13 +30,15 @@ class FundingAPI(Client):
         return self._request_with_params(POST, FUNDS_TRANSFER, params)
 
     # Withdrawal
-    def withdrawal(self, ccy, amt, dest, toAddr, fee,chain = '', clientId = ''):
-        params = {'ccy': ccy, 'amt': amt, 'dest': dest, 'toAddr': toAddr, 'fee': fee,'chain':chain,'clientId':clientId}
+    def withdrawal(self, ccy, amt, dest, toAddr, fee, chain='', areaCode='', clientId=''):
+        params = {'ccy': ccy, 'amt': amt, 'dest': dest, 'toAddr': toAddr, 'fee': fee, 'chain': chain,
+                  'areaCode': areaCode, 'clientId': clientId}
         return self._request_with_params(POST, WITHDRAWAL_COIN, params)
 
     # Get Deposit History
-    def get_deposit_history(self, ccy='', state='', after='', before='', limit='',txId='',depId=''):
-        params = {'ccy': ccy, 'state': state, 'after': after, 'before': before, 'limit': limit,'txId':txId,'depId':depId}
+    def get_deposit_history(self, ccy='', state='', after='', before='', limit='', txId='', depId='', fromWdId=''):
+        params = {'ccy': ccy, 'state': state, 'after': after, 'before': before, 'limit': limit, 'txId': txId,
+                  'depId': depId, 'fromWdId': fromWdId}
         return self._request_with_params(GET, DEPOSIT_HISTORIY, params)
 
     # Get Withdrawal History
@@ -72,24 +74,20 @@ class FundingAPI(Client):
         params = {'ccy':ccy, 'invoice':invoice, 'memo':memo}
         return self._request_with_params(POST, WITHDRAWAL_LIGHTNING, params)
 
-
     # POST SET LENDING RATE
     def set_lending_rate(self, ccy, rate):
         params = {'ccy': ccy, 'rate': rate}
         return self._request_with_params(POST, SET_LENDING_RATE, params)
-
 
     # GET LENDING HISTORY
     def get_lending_history(self, ccy='', before='', after='', limit='' ):
         params = {'ccy': ccy, 'after': after, 'before': before, 'limit': limit }
         return self._request_with_params(GET, LENDING_HISTORY, params)
 
-
     # GET LENDING RATE HISTORY
     def get_lending_rate_history(self, ccy='',after = '',before = '',limit = '' ):
         params = {'ccy': ccy,'after':after,'before':before,'limit':limit}
         return self._request_with_params(GET, LENDING_RATE_HISTORY, params)
-
 
     # GET LENDING RATE SUMMARY
     def get_lending_rate_summary(self, ccy=''):
@@ -124,3 +122,21 @@ class FundingAPI(Client):
             'ccy':ccy
         }
         return self._request_with_params(GET, GET_SAVING_BALANCE, params)
+
+    #Get non-tradable assets
+    def get_non_tradable_assets(self, ccy=''):
+        params = {
+            'ccy': ccy
+        }
+        return self._request_with_params(GET, GET_NON_TRADABLE_ASSETS, params)
+
+    #Get deposit withdraw status
+    def get_deposit_withdraw_status(self, wdId='', txId='', ccy='', to='', chain=''):
+        params = {'wdId': wdId, 'txId': txId, 'ccy': ccy, 'to': to, 'chain': chain}
+        return self._request_with_params(GET, GET_DEPOSIT_WITHDrAW_STATUS, params)
+
+    #Get withdrawal history
+    def get_withdrawal_history(self, ccy='', wdId='', clientId='', txId='', type='', state='', after='', before	='', limit=''):
+        params = {'ccy': ccy, 'wdId': wdId, 'clientId': clientId, 'txId': txId, 'type': type, 'state': state, 'after': after, 'before': before, 'limit': limit}
+        return self._request_with_params(GET, GET_WITHDRAWAL_HISTORY, params)
+

@@ -10,8 +10,10 @@ class BlockTradingAPI(Client):
         params = {}
         return self._request_with_params(GET, COUNTERPARTIES, params)
 
-    def create_rfq(self, counterparties=[], anonymous='false', clRfqId='', legs = []):
-        params = {'counterparties': counterparties, 'anonymous': anonymous, 'clRfqId': clRfqId, 'legs': legs}
+    def create_rfq(self, counterparties=[], anonymous='false', clRfqId='', tag='', allowPartialExecution='false',
+                   legs=[]):
+        params = {'counterparties': counterparties, 'anonymous': anonymous, 'clRfqId': clRfqId, 'tag': tag,
+                  'allowPartialExecution': allowPartialExecution, 'legs': legs}
         return self._request_with_params(POST, CREATE_RFQ, params)
 
     def cancel_rfq(self, rfqId = '', clRfqId = ''):
@@ -26,13 +28,13 @@ class BlockTradingAPI(Client):
         params = {}
         return self._request_with_params(POST, CANCEL_ALL_RSQS, params)
 
-    def execute_quote(self, rfqId='', quoteId=''):
-        params = {'rfqId': rfqId, 'quoteId': quoteId}
+    def execute_quote(self, rfqId='', quoteId='', legs=[]):
+        params = {'rfqId': rfqId, 'quoteId': quoteId, 'legs': legs}
         return self._request_with_params(POST, EXECUTE_QUOTE, params)
 
-    def create_quote(self, rfqId='', clQuoteId='', quoteSide = '', legs = [],anonymous=False,expiresIn=''):
-        params = {'rfqId': rfqId, 'clQuoteId': clQuoteId, 'quoteSide': quoteSide, 'legs': legs,
-                  'anonymous':anonymous,'expiresIn':expiresIn}
+    def create_quote(self, rfqId='', clQuoteId='', tag='', quoteSide='', legs=[], anonymous=False, expiresIn=''):
+        params = {'rfqId': rfqId, 'clQuoteId': clQuoteId, 'tag': tag, 'quoteSide': quoteSide, 'legs': legs,
+                  'anonymous': anonymous, 'expiresIn': expiresIn}
         return self._request_with_params(POST, CREATE_QUOTE, params)
 
     def cancel_quote(self, quoteId  = '', clQuoteId = ''):
@@ -55,8 +57,10 @@ class BlockTradingAPI(Client):
         params = {'rfqId': rfqId, 'clRfqId': clRfqId, 'quoteId':quoteId,'clQuoteId':clQuoteId, 'state': state, 'beginId': beginId, 'endId': endId, 'limit':limit}
         return self._request_with_params(GET, GET_QUOTES, params)
 
-    def get_trades(self, rfqId = '', clRfqId = '', quoteId = '', clQuoteId = '', state = '', beginId = '', endId = '', limit = ''):
-        params = {'rfqId': rfqId, 'clRfqId': clRfqId, 'quoteId':quoteId,'clQuoteId':clQuoteId, 'state': state, 'beginId': beginId, 'endId': endId, 'limit':limit}
+    def get_trades(self, rfqId='', clRfqId='', quoteId='', clQuoteId='', state='', beginId='', endId='', beginTs='',
+                   endTs='', limit=''):
+        params = {'rfqId': rfqId, 'clRfqId': clRfqId, 'quoteId': quoteId, 'clQuoteId': clQuoteId, 'state': state,
+                  'beginId': beginId, 'endId': endId, 'beginTs': beginTs, 'endTs': endTs, 'limit': limit}
         return self._request_with_params(GET, GET_RFQ_TRADES, params)
 
     def get_public_trades(self, beginId = '', endId = '', limit = ''):
@@ -69,3 +73,7 @@ class BlockTradingAPI(Client):
     def set_marker_instrument(self,params = []):
 
         return self._request_with_params(POST, MARKER_INSTRUMENT_SETTING, params)
+
+    #Get Quote products
+    def get_quote_products(self):
+        return self._request_without_params(GET, MARKER_INSTRUMENT_SETTING)

@@ -1,10 +1,10 @@
 import unittest
-from ..okx import Trade
+from okx import Trade
 class TradeTest(unittest.TestCase):
     def setUp(self):
-        api_key = '35d8f27e-63cc-45bc-a578-45d76363d47f'
-        api_secret_key = '0B7C968025BC2D4D71CF74771EA0E15C'
-        passphrase = '123456'
+        api_key = 'da097c9c-2f77-4dea-be18-2bfa77d0e394'
+        api_secret_key = '56CC6C72D6B8A46EC993D48C83142A25'
+        passphrase = '123456aA.'
         self.tradeApi = Trade.TradeAPI(api_key, api_secret_key, passphrase, False, '1')
     """
     def test_place_order(self):
@@ -112,10 +112,80 @@ class TradeTest(unittest.TestCase):
 """
 #485903392536264704
     #485936482235191296
-    def test_oneclick_repay_history(self):
-        print(self.tradeApi.oneclick_repay_history())
+    # def test_oneclick_repay_history(self):
+    #     print(self.tradeApi.oneclick_repay_history())
+    # def test_order_algo(self):
+    #     print(self.tradeApi.place_algo_order(instId='BTC-USDT-SWAP', tdMode='cross', side='buy', ordType='conditional', \
+    #         tpTriggerPx='15', tpOrdPx='18',sz='2'))
 
+    # 581628185981308928
+    # def test_get_algo_order_details(self):
+    #     print(self.tradeApi.get_algo_order_details(algoId='581628185981308928'))
 
+    #581628185981308928
+    # def test_amend_algo_order(self):
+    #     print(self.tradeApi.amend_algo_order(instId='BTC-USDT-SWAP', algoId='581628185981308928',newSz='3'))
 
+    # def test_get_order_history(self):
+    #     print(self.tradeApi.get_orders_history(instType="SPOT",begin='1684857629313',end='1684857629313'))
+
+    # def test_get_order_histry_archive(self):
+    #     print(self.tradeApi.get_orders_history_archive(instType="SPOT",begin='1684857629313',end='1684857629313'))
+    # def test_place_order(self):
+    #     print(self.tradeApi.place_order("BTC-USDT", tdMode="cross", clOrdId="asCai1", side="buy", ordType="limit",
+    #                                     sz="0.01", px="18000"))
+    # def test_batch_order(self):
+    #     orderData = [{
+    #         "instId": "ETH-USDT",
+    #         "tdMode": "cross",
+    #         "clOrdId": "b151121",
+    #         "side": "buy",
+    #         "ordType": "limit",
+    #         "px": "2.15",
+    #         "sz": "2"
+    #     },
+    #         {
+    #             "instId": "BTC-USDT",
+    #             "tdMode": "cross",
+    #             "clOrdId": "b152233",
+    #             "side": "buy",
+    #             "ordType": "limit",
+    #             "px": "2.15",
+    #             "sz": "2"
+    #         }]
+    #     print(self.tradeApi.place_multiple_orders(orderData))
+
+        #581616258865516544
+        #581616258865516545
+    # def test_amend_order(self):
+    #     print(self.tradeApi.amend_order("BTC-USDT", ordId="581616258865516544", newSz="0.03"))
+    # def test_amend_order_batch(self):
+    #     orderData = [
+    #         {
+    #             'instId': 'ETH-USDT',
+    #             'ordId': '581616258865516544',
+    #             'newSz': '0.02'
+    #         },
+    #         {
+    #             'instId': 'BTC-USDT',
+    #             'ordId': '581616258865516545',
+    #             'newPx': '3.0'
+    #         }
+    #     ]
+    #     print(self.tradeApi.amend_multiple_orders(orderData))
+
+    # def test_order_algo(self):
+    #
+    #     print(self.tradeApi.place_algo_order(instId='BTC-USDT-SWAP', tdMode='cross', side='buy', ordType='conditional', \
+    #                                          tpTriggerPx='15', tpOrdPx='18', sz='2',algoClOrdId='7678687',quickMgnType='manual'))
+
+    def test_order_algos_list(self):
+        print(self.tradeApi.order_algos_list(ordType='conditional'))
+
+    # def test_order_algo(self):
+    #     print(self.tradeApi.place_order(instId='BTC-USDT-SWAP', tdMode='cross', side='buy',px='121',sz='2',
+    #                                     clOrdId='234234565535',ordType='market'))
+    # def test_close_all_positions(self):
+    #     print(self.tradeApi.close_positions(instId="BTC-USDT-SWAP", mgnMode="cross",clOrdId='1213124'))
 if __name__=='__main__':
     unittest.main()

@@ -115,6 +115,20 @@ class MarketAPI(Client):
         }
         return self._request_with_params(GET, BLOCK_TRADES, params)
 
+    #- Get order lite book
+    def get_order_lite_book(self,instId = ''):
+        params = {
+            'instId':instId
+        }
+        return self._request_with_params(GET, GET_ORDER_LITE_BOOK, params)
+
+    #- Get option trades
+    def get_option_trades(self,instFamily = ''):
+        params = {
+            'instFamily':instFamily
+        }
+        return self._request_with_params(GET, GET_OPTION_TRADES, params)
+
 
 
 

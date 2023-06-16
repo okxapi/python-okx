@@ -1,12 +1,12 @@
 
 import unittest
-from ..okx import Account
+from okx import Account
 
 class AccountTest(unittest.TestCase):
     def setUp(self):
-        api_key = 'ef06bf27-6a01-4797-b801-e3897031e45d'
-        api_secret_key = 'D3620B2660203350EEE80FDF5BE0C960'
-        passphrase = 'Beijing123'
+        api_key = 'e2ea07df-15ca-405c-9e23-addb4aca8a42'
+        api_secret_key = 'DE69BED90FF154085B56020A88B2638A'
+        passphrase = '12345678aA.'
         self.AccountAPI = Account.AccountAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag='1')
     '''
     POSITIONS_HISTORY = '/api/v5/account/positions-history' #need add
@@ -73,8 +73,36 @@ class AccountTest(unittest.TestCase):
     def test_get_greeks(self):
         print(self.AccountAPI.get_greeks())
     '''
-    def test_simulated_margin(self):
-        print(self.AccountAPI.get_simulated_margin())
+    # def test_simulated_margin(self):
+    #     print(self.AccountAPI.get_simulated_margin())
 
+    # def test_get_VIP_interest_accrued_data(self):
+    #     print(self.AccountAPI.get_VIP_interest_accrued_data())
+
+    # def test_get_VIP_interest_deducted_data(self):
+    #     print(self.AccountAPI.get_VIP_interest_deducted_data())
+
+    # def test_get_VIP_loan_order_list(self):
+    #     print(self.AccountAPI.get_VIP_loan_order_list())
+
+    # def test_get_VIP_loan_order_detail(self):
+    #     print(self.AccountAPI.get_VIP_loan_order_detail(ordId='1'))
+
+    # def test_set_risk_offset_typel(self):
+    #     print(self.AccountAPI.set_risk_offset_typel(type='1'))
+    #
+    # def test_set_auto_loan(self):
+    #     print(self.AccountAPI.set_auto_loan())
+    #
+    # def test_activate_option(self):
+    #     print(self.AccountAPI.activate_option())
+
+    # def test_get_max_avaliable_size(self):
+    #     print(self.AccountAPI.get_max_avail_size(instId="BTC-USDT",tdMode="cash",quickMgnType='manual'))
+    # def test_borrow_repay(self):
+    #     print(self.AccountAPI.borrow_repay("BTC", "borrow", "1.0"))
+
+    def test_simulated_margin(self):
+        print(self.AccountAPI.get_simulated_margin(spotOffsetType='3'))
 if __name__ == '__main__':
     unittest.main()

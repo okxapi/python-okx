@@ -1,10 +1,10 @@
 import unittest
-from ..okx import PublicData
+from okx import PublicData
 class publicDataTest(unittest.TestCase):
     def setUp(self):
-        api_key = 'ef06bf27-6a01-4797-b801-e3897031e45d'
-        api_secret_key = 'D3620B2660203350EEE80FDF5BE0C960'
-        passphrase = 'Beijing123'
+        api_key = 'da097c9c-2f77-4dea-be18-2bfa77d0e394'
+        api_secret_key = '56CC6C72D6B8A46EC993D48C83142A25'
+        passphrase = '123456aA.'
         self.publicDataApi = PublicData.PublicAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag='1')
     '''
     TestCase For:
@@ -50,8 +50,14 @@ class publicDataTest(unittest.TestCase):
         print(self.publicDataApi.get_mark_price('SWAP'))
     
     '''
-    def test_position_tier(self):
-        print(self.publicDataApi.get_position_tiers('SWAP','cross',uly='ETH-USD'))
+    # def test_position_tier(self):
+    #     print(self.publicDataApi.get_position_tiers('SWAP','cross',uly='ETH-USD'))
+
+    # def test_get_option_tickBands(self):
+    #     print(self.publicDataApi.get_option_tick_bands(instType='OPTION'))
+
+    def test_get_option_trades(self):
+        print(self.publicDataApi.get_option_trades(instFamily='BTC-USD'))
 
 if __name__ == '__main__':
     unittest.main()
