@@ -14,15 +14,17 @@ class EarningAPI(Client):
         }
         return self._request_with_params(GET,STACK_DEFI_OFFERS,params)
 
-    def purchase(self,productId = '',investData = [],term = ''):
+    def purchase(self, productId='', investData=[], term='', tag=''):
 
         params = {
-            'productId':productId,
-            'investData':investData
+            'productId': productId,
+            'investData': investData
         }
         if term != '':
             params['term'] = term
-        return self._request_with_params(POST,STACK_DEFI_PURCHASE,params)
+        if tag != '':
+            params['tag'] = tag
+        return self._request_with_params(POST, STACK_DEFI_PURCHASE, params)
 
     def redeem(self,ordId = '',protocolType = '',allowEarlyRedeem = ''):
         params = {
@@ -59,6 +61,55 @@ class EarningAPI(Client):
         }
         return self._request_with_params(GET,STACK_DEFI_ORDERS_HISTORY,params)
 
+    # - Get saving balance
+    def get_saving_balance(self, ccy=''):
+        params = {
+            'ccy': ccy
+        }
+        return self._request_with_params(GET, GET_SAVING_BALANCE, params)
 
+    # - Savings purchase/redemption
+    def savings_purchase_redemption(self, ccy='', amt='', side='', rate=''):
 
+        params = {
+            'ccy': ccy,
+            'amt': amt,
+            'side': side,
+            'rate': rate
+        }
+        return self._request_with_params(POST, SAVING_PURCHASE_REDEMPTION, params)
 
+    # - Set lending rate
+    def set_lending_rate(self, ccy='', rate=''):
+        params = {
+            'ccy': ccy,
+            'rate': rate
+        }
+        return self._request_with_params(POST, SET_LENDING_RATE, params)
+
+    # - Get lending history
+    def get_lending_history(self, ccy='', after='', before='', limit=''):
+        params = {
+            'ccy': ccy,
+            'after': after,
+            'before': before,
+            'limit': limit
+        }
+        return self._request_with_params(GET, GET_LENDING_HISTORY, params)
+
+    # - Get public borrow info (public)
+    def get_public_borrow_info(self, ccy=''):
+        params = {
+            'ccy': ccy
+        }
+        return self._request_with_params(GET, GET_PUBLIC_BORROW_INFO, params)
+
+    # - Get public borrow history (public)
+    def get_public_borrow_history(self, ccy='', after='', before='', limit=''):
+        params = {
+            'ccy': ccy,
+            'after': after,
+            'before': before,
+            'limit': limit
+        }
+        return self._request_with_params(GET, GET_PUBLIC_BORROW_HISTORY, params)

@@ -56,13 +56,6 @@ class PublicAPI(Client):
     def get_system_time(self):
         return self._request_without_params(GET, SYSTEM_TIME)
 
-    # Get Liquidation Orders
-    def get_liquidation_orders(self, instType, mgnMode='', instId='', ccy='', uly='', alias='', state='', before='',
-                               after='', limit='',instFamily =''):
-        params = {'instType': instType, 'mgnMode': mgnMode, 'instId': instId, 'ccy': ccy, 'uly': uly,
-                  'alias': alias, 'state': state, 'before': before, 'after': after, 'limit': limit,'instFamily':instFamily}
-        return self._request_with_params(GET, LIQUIDATION_ORDERS, params)
-
     # Get Mark Price
     def get_mark_price(self, instType, uly='', instId='',instFamily = ''):
         params = {'instType': instType, 'uly': uly, 'instId': instId,'instFamily':instFamily}
@@ -113,5 +106,19 @@ class PublicAPI(Client):
         }
         return self._request_with_params(GET, CONVERT_CONTRACT_COIN, params)
 
+    # Get option tickBands
+    def get_option_tickBands(self, instType='', instFamily=''):
+        params = {
+            'instType': instType,
+            'instFamily': instFamily
+        }
+        return self._request_with_params(GET, GET_OPTION_TICKBANDS, params)
 
-
+    # Get option trades
+    def get_option_trades(self, instId='', instFamily='', optType=''):
+        params = {
+            'instId': instId,
+            'instFamily': instFamily,
+            'optType': optType
+        }
+        return self._request_with_params(GET, GET_OPTION_TRADES, params)

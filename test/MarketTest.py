@@ -1,6 +1,6 @@
 
 import unittest
-from ..okx import MarketData
+from okx import MarketData
 
 '''
 ORACLE = '/api/v5/market/open-oracle' #need to update? if it is open oracle
@@ -58,7 +58,11 @@ class MarketAPITest(unittest.TestCase):
         print(self.MarketApi.get_volume())
     '''
 
+    # def test_get_order_lite_book(self):
+    #     print(self.MarketApi.get_order_lite_book(instId='BTC-USDT'))
 
+    def test_get_option_trades(self):
+        print(self.MarketApi.get_option_trades(instFamily='BTC-USD'))
 
 
 if __name__ == "__main__":

@@ -1,13 +1,13 @@
 
 import unittest
-from ..okx import Funding
+from okx import Funding
 
 class FundingTest(unittest.TestCase):
     def setUp(self):
-        api_key = 'ef06bf27-6a01-4797-b801-e3897031e45d'
-        api_secret_key = 'D3620B2660203350EEE80FDF5BE0C960'
-        passphrase = 'Beijing123'
-        self.FundingAPI = Funding.FundingAPI(use_server_time=False, flag='0')
+        api_key = 'cfa1017d-940a-445f-af52-b340cbd6b0e0'
+        api_secret_key = '6C50A4E980230A4BBE7046411DED0276'
+        passphrase = '123456aA.'
+        self.FundingAPI = Funding.FundingAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag='0')
     """
     CANCEL_WITHDRAWAL = '/api/v5/asset/cancel-withdrawal' #need add
     CONVERT_DUST_ASSETS = '/api/v5/asset/convert-dust-assets' #need add
@@ -58,9 +58,25 @@ class FundingTest(unittest.TestCase):
         print(self.FundingAPI.get_lending_rate_summary('BTC'))
     """
 
-    def test_get_lending_summary(self):
-        print(self.FundingAPI.get_lending_rate_summary('BTC'))
-    def test_get_lending_rate_history(self):
-        print(self.FundingAPI.get_lending_rate_history())
+    # def test_get_lending_summary(self):
+    #     print(self.FundingAPI.get_lending_rate_summary('BTC'))
+    # def test_get_lending_rate_history(self):
+    #     print(self.FundingAPI.get_lending_rate_history())
+
+    # def test_get_non_tradable_assets(self):
+    #     print(self.FundingAPI.get_non_tradable_assets())
+
+    def test_get_deposit_withdraw_status(self):
+        print(self.FundingAPI.get_deposit_withdraw_status(wdId='84804812'))
+
+    # def test_get_withdrawal_history(self):
+    #     print(self.FundingAPI.get_withdrawal_history())
+
+    # def test_get_deposit_history(self):
+    #     print(self.FundingAPI.get_deposit_history())
+
+    # def test_withdrawal(self):
+    #     print(self.FundingAPI.withdrawal(ccy='USDT',amt='1',dest='3',toAddr='18740405107',fee='0',areaCode='86'))
+
 if __name__ == '__main__':
     unittest.main()

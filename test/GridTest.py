@@ -1,12 +1,12 @@
 
 import unittest
-from ..okx import Grid
+from okx import Grid
 
 class GridTest(unittest.TestCase):
     def setUp(self):
-        api_key = 'ef06bf27-6a01-4797-b801-e3897031e45d'
-        api_secret_key = 'D3620B2660203350EEE80FDF5BE0C960'
-        passphrase = 'Beijing123'
+        api_key = 'da097c9c-2f77-4dea-be18-2bfa77d0e394'
+        api_secret_key = '56CC6C72D6B8A46EC993D48C83142A25'
+        passphrase = '123456aA.'
         self.GridAPI = Grid.GridAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag='1', debug=False)
     """
     GRID_COMPUTE_MARIGIN_BALANCE = '/api/v5/tradingBot/grid/compute-margin-balance'
@@ -49,7 +49,37 @@ class GridTest(unittest.TestCase):
     """
 
 
-    def test_order_algo(self):
-        print(self.GridAPI.grid_order_algo("BTC-USDT","grid","45000","20000","100","1",quoteSz="50"))
+    # def test_order_algo(self):
+    #     print(self.GridAPI.grid_order_algo("BTC-USDT","grid","45000","20000","100","1",quoteSz="50"))
+
+    # def test_place_recurring_buy_order(self):
+    #     print(self.GridAPI.place_recurring_buy_order(stgyName="jzhtest",recurringList=[{
+    #         'ccy':"ETH",
+    #         'ratio':'1'
+    #     }],period="daily",recurringDay='1',recurringTime='0',timeZone='8',amt='100',investmentCcy='USDT',tdMode='cross'))
+
+    # def test_amend_recurring_buy_order(self):
+    #     print(self.GridAPI.amend_recurring_buy_order(algoId="581185292170952704",stgyName="changtest"))
+
+    # def test_stop_recurring_buy_order(self):
+    #     orderData = [{
+    #         "algoId": "581190894481838080"
+    #     }]
+    #     print(self.GridAPI.stop_recurring_buy_order(orderData))
+
+    # def test_get_recurring_buy_order_list(self):
+    #     print(self.GridAPI.get_recurring_buy_order_list())
+
+    # def test_get_recurring_buy_order_history(self):
+    #     print(self.GridAPI.get_recurring_buy_order_history())
+
+    # def test_get_recurring_buy_order_details(self):
+    #     print(self.GridAPI.get_recurring_buy_order_details(algoId="581191143417970688"))
+
+    # def test_get_recurring_buy_sub_orders(self):
+    #     print(self.GridAPI.get_recurring_buy_sub_orders(algoId="581191143417970688"))
+
+    #581191143417970688
+
 if __name__ == '__main__':
     unittest.main()

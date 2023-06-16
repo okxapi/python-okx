@@ -37,8 +37,6 @@ class Client(object):
             response = self.client.get(request_path, headers=header)
         elif method == c.POST:
             response = self.client.post(request_path, data=body, headers=header)
-        if not str(response.status_code).startswith('2'):
-            raise exceptions.OkxAPIException(response)
         return response.json()
 
     def _request_without_params(self, method, request_path):

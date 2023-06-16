@@ -1,12 +1,12 @@
 
 import unittest
-from ..okx import BlockTrading
+from okx import BlockTrading
 class BlockTradingTest(unittest.TestCase):
     def setUp(self):
-        api_key = 'ef06bf27-6a01-4797-b801-e3897031e45d'
-        api_secret_key = 'D3620B2660203350EEE80FDF5BE0C960'
-        passphrase = 'Beijing123'
-        self.BlockTradingAPI = BlockTrading.BlockTradingAPI(use_server_time=False, flag='1')
+        api_key = 'a6f1e378-1c03-472d-ada0-710f4d51eebf'
+        api_secret_key = '74A6E1E03700D5EFCC2BBB7782170189'
+        passphrase = 'Qa131415!'
+        self.BlockTradingAPI = BlockTrading.BlockTradingAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag='1')
 
     """
     def test_get_counter_parties(self):
@@ -42,7 +42,46 @@ class BlockTradingTest(unittest.TestCase):
     """
 
 
-    def test_get_public_trades(self):
-        print(self.BlockTradingAPI.get_public_trades())
+    # def test_get_public_trades(self):
+    #     print(self.BlockTradingAPI.get_public_trades())
+
+    # def test_get_quote_products(self):
+    #     print(self.BlockTradingAPI.get_quote_products())
+
+    def test_create_rfqs(self):
+        counterparties=['8924']
+        legs =[{
+            'instId':"BTC-USDT",
+            'sz':'25',
+            'side':'buy',
+            'posSide':'net',
+            'tdMode':'cross',
+            'ccy':'USDT'
+        }]
+        print(self.BlockTradingAPI.create_rfq(counterparties,allowPartialExecution='true',tag='1234',legs = legs))
+
+    # def test_execute_quotes(self):
+    #     legs = [{
+    #                 'instId':"BTC-USDT",
+    #                 'sz':'0.0001',
+    #             }]
+    #     print(self.BlockTradingAPI.execute_quote("3IR9E68","3IR9E80",legs))
+
+    # def test_create_quotes(self):
+    #     legs = [{
+    #         'instId': "BTC-USDT",
+    #         'sz': '25',
+    #         'side': 'buy',
+    #         'posSide': 'net',
+    #         'tdMode': 'cross',
+    #         'ccy': 'USDT'
+    #     }]
+    #     print(self.BlockTradingAPI.create_quote(rfqId='3IR9BT8',quoteSide='buy',legs=legs))
+
+    # def test_get_trade(self):
+    #     print(self.BlockTradingAPI.get_trades())
+
+
+
 if __name__ == '__main__':
     unittest.main()

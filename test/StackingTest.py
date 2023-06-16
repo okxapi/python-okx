@@ -1,5 +1,5 @@
 import unittest
-from ..okx import Status
+from okx import Status
 
 class StackingTest(unittest.TestCase):
     def setUp(self):
@@ -22,15 +22,6 @@ class StackingTest(unittest.TestCase):
     
     def test_purcase(self):
         print(self.StackingAPI.purchase(1456,"USDT","100","0"))
-    def test_redeem(self):
-        print(self.StackingAPI.redeem())
-    def test_cencel(self):
-        print(self.StackingAPI.cancel())
-    def test_order_activity(self):
-        print(self.StackingAPI.get_activity_orders())
-    def test_order_history(self):
-        print(self.StackingAPI.stack_get_order_history())
-
 
 if __name__ == "__main__":
     unittest.main()

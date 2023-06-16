@@ -76,3 +76,57 @@ class GridAPI(Client):
             'duration':duration
         }
         return self._request_with_params(GET, GRID_AI_PARAM, params)
+
+    # - Place recurring buy order
+    def place_recurring_buy_order(self, stgyName='', recurringList=[], period='', recurringDay='', recurringTime='',
+                                  timeZone='', amt='', investmentCcy='', tdMode='', algoClOrdId='', tag=''):
+        params = {'stgyName': stgyName, 'recurringList': recurringList, 'period': period, 'recurringDay': recurringDay,
+                  'recurringTime': recurringTime,
+                  'timeZone': timeZone, 'amt': amt, 'investmentCcy': investmentCcy, 'tdMode': tdMode,
+                  'algoClOrdId': algoClOrdId, 'tag': tag}
+        return self._request_with_params(POST, PLACE_RECURRING_BUY_ORDER, params)
+
+    # - Amend recurring buy order
+    def amend_recurring_buy_order(self, algoId='', stgyName=''):
+        params = {'algoId': algoId, 'stgyName': stgyName}
+        return self._request_with_params(POST, AMEND_RECURRING_BUY_ORDER, params)
+
+    # - Stop recurring buy order
+    def stop_recurring_buy_order(self, orders_data):
+        return self._request_with_params(POST, STOP_RECURRING_BUY_ORDER, orders_data)
+
+    # - Get recurring buy order list
+    def get_recurring_buy_order_list(self, algoId='', after='', before='', limit=''):
+        params = {
+            'algoId': algoId,
+            'after': after,
+            'before': before,
+            'limit': limit
+        }
+        return self._request_with_params(GET, GET_RECURRING_BUY_ORDER_LIST, params)
+
+    # - Get recurring buy order history
+    def get_recurring_buy_order_history(self, algoId='', after='', before='', limit=''):
+        params = {
+            'algoId': algoId,
+            'after': after,
+            'before': before,
+            'limit': limit
+        }
+        return self._request_with_params(GET, GET_RECURRING_BUY_ORDER_HISTORY, params)
+
+    # - Get recurring buy order details
+    def get_recurring_buy_order_details(self, algoId=''):
+        params = {'algoId': algoId}
+        return self._request_with_params(GET, GET_RECURRING_BUY_ORDER_DETAILS, params)
+
+    # - Get recurring buy sub orders
+    def get_recurring_buy_sub_orders(self, algoId='', ordId='', after='', before='', limit=''):
+        params = {
+            'algoId': algoId,
+            'ordId': ordId,
+            'after': after,
+            'before': before,
+            'limit': limit
+        }
+        return self._request_with_params(GET, GET_RECURRING_BUY_SUB_ORDERS, params)
