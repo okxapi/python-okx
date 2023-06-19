@@ -2,7 +2,7 @@ build/
 dist/
 python_okx.egg-info/
 *.DS_Store
-**/test/__pycache__
+**/**/__pycache__
 
 ### STS ###
 .apt_generated
