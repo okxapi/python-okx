@@ -4,9 +4,9 @@ from okx import Account
 
 class AccountTest(unittest.TestCase):
     def setUp(self):
-        api_key = 'e2ea07df-15ca-405c-9e23-addb4aca8a42'
-        api_secret_key = 'DE69BED90FF154085B56020A88B2638A'
-        passphrase = '12345678aA.'
+        api_key = 'your_apiKey'
+        api_secret_key = 'your_secretKey'
+        passphrase = 'your_secretKey'
         self.AccountAPI = Account.AccountAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag='1')
     '''
     POSITIONS_HISTORY = '/api/v5/account/positions-history' #need add
