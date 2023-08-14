@@ -14,9 +14,9 @@ BLOCK_TRADES = '/api/v5/market/block-trades'#need to add
 
 class MarketAPITest(unittest.TestCase):
     def setUp(self):
-        api_key = 'ef06bf27-6a01-4797-b801-e3897031e45d'
-        api_secret_key = 'D3620B2660203350EEE80FDF5BE0C960'
-        passphrase = 'Beijing123'
+        api_key = 'your_apiKey'
+        api_secret_key = 'your_secretKey'
+        passphrase = 'your_secretKey'
         self.MarketApi = MarketData.MarketAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag='1')
     '''
     

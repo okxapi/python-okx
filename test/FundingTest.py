@@ -4,9 +4,9 @@ from okx import Funding
 
 class FundingTest(unittest.TestCase):
     def setUp(self):
-        api_key = 'cfa1017d-940a-445f-af52-b340cbd6b0e0'
-        api_secret_key = '6C50A4E980230A4BBE7046411DED0276'
-        passphrase = '123456aA.'
+        api_key = 'your_apiKey'
+        api_secret_key = 'your_secretKey'
+        passphrase = 'your_secretKey'
         self.FundingAPI = Funding.FundingAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag='0')
     """
     CANCEL_WITHDRAWAL = '/api/v5/asset/cancel-withdrawal' #need add

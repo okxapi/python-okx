@@ -3,9 +3,9 @@ from okx import SubAccount
 
 class SubAccountTest(unittest.TestCase):
     def setUp(self):
-        api_key = 'e2ea07df-15ca-405c-9e23-addb4aca8a42'
-        api_secret_key = 'DE69BED90FF154085B56020A88B2638A'
-        passphrase = '12345678aA.'
+        api_key = 'your_apiKey'
+        api_secret_key = 'your_secretKey'
+        passphrase = 'your_secretKey'
         self.SubAccountApi = SubAccount.SubAccountAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag='1')
     '''
     ENTRUST_SUBACCOUNT_LIST = '/api/v5/users/entrust-subaccount-list' #need to add
@@ -45,6 +45,9 @@ class SubAccountTest(unittest.TestCase):
 
     def test_get_sub_account_borrow_interest_and_limit(self):
         print(self.SubAccountApi.get_sub_account_borrow_interest_and_limit(subAcct='coretrading7'))
+
+    # def test_get_history_of_managed_subAccount_transfer(self):
+    #     print(self.SubAccountApi.get_history_of_managed_subAccount_transfer())
 
 if __name__ == "__main__":
     unittest.main()

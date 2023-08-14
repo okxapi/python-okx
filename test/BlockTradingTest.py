@@ -3,9 +3,9 @@ import unittest
 from okx import BlockTrading
 class BlockTradingTest(unittest.TestCase):
     def setUp(self):
-        api_key = 'a6f1e378-1c03-472d-ada0-710f4d51eebf'
-        api_secret_key = '74A6E1E03700D5EFCC2BBB7782170189'
-        passphrase = 'Qa131415!'
+        api_key = 'your_apiKey'
+        api_secret_key = 'your_secretKey'
+        passphrase = 'your_secretKey'
         self.BlockTradingAPI = BlockTrading.BlockTradingAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag='1')
 
     """

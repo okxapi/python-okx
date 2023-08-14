@@ -3,9 +3,9 @@ from okx import CopyTrading
 
 class CopyTradingTest(unittest.TestCase):
     def setUp(self):
-        api_key = 'd4ee8839-1142-41c0-add5-e2e82a91efd2'
-        api_secret_key = '57E5BEFAB7BD024A91647819E9BCA285'
-        passphrase = '123456aA.'
+        api_key = 'your_apiKey'
+        api_secret_key = 'your_secretKey'
+        passphrase = 'your_secretKey'
         self.StackingAPI = CopyTrading.CopyTradingAPI(api_key, api_secret_key, passphrase, use_server_time=False,
                                                       flag='0')
 

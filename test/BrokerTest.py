@@ -1,18 +1,12 @@
 
 import unittest
-from ..okx import NDBroker
+from okx import NDBroker
 
 class BrokerTest(unittest.TestCase):
     def setUp(self):
-        '''
-
-        52c37310-a8b0-454a-8191-3250acff2626
-        EC37534156E6B8C32E78FE8D8C1D506B
-        Hanhao0.0
-        '''
-        api_key = '52c37310-a8b0-454a-8191-3250acff2626'
-        api_secret_key = 'EC37534156E6B8C32E78FE8D8C1D506B'
-        passphrase = 'Hanhao0.0'
+        api_key = 'your_apiKey'
+        api_secret_key = 'your_secretKey'
+        passphrase = 'your_secretKey'
         self.NDBrokerAPI = NDBroker.NDBrokerAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag='1')
 
     '''
@@ -59,12 +53,13 @@ class BrokerTest(unittest.TestCase):
     def test_rebate_daily(self):
         print(self.NDBrokerAPI.get_rebate_daily())
     
-
-
-    def test_create_rebate_per_order(self):
-        print(self.NDBrokerAPI.generate_rebate_per_orders("20220501","20220801"))
     '''
-    def test_get_rebate_per_order(self):
-        print(self.NDBrokerAPI.get_rebate_per_orders("false",begin="20220501",end = "20220801"))
+
+    # def test_get_subaccount_info(self):
+    #     print(self.NDBrokerAPI.get_subaccount_info())
+
+    def test_set_nd_subaccount_asset_in_demo_trading(self):
+        print(self.NDBrokerAPI.set_nd_subaccount_asset_in_demo_trading(subAcct="zihaond4",ccy = "BTC"))
+
 if __name__ == '__main__':
   unittest.main()

@@ -4,9 +4,9 @@ from ..okx import TradingData
 
 class TradingDataTest(unittest.TestCase):
     def setUp(self):
-        api_key = '52c37310-a8b0-454a-8191-3250acff2626'
-        api_secret_key = 'EC37534156E6B8C32E78FE8D8C1D506B'
-        passphrase = 'Hanhao0.0'
+        api_key = 'your_apiKey'
+        api_secret_key = 'your_secretKey'
+        passphrase = 'your_secretKey'
         self.TradingDataAPI = TradingData.TradingDataAPI(api_key, api_secret_key, passphrase, use_server_time=False,
                                                          flag='1')
     """
