@@ -8,8 +8,8 @@ https://github.com/okxapi/python-okx
 #### OKX API Telegram
 https://t.me/OKXAPI
 #### API trading tutorials
-- Spot trading: https://www.okx.com/learn/spot-trading-with-jupyter-notebook
-- Derivative trading: https://www.okx.com/learn/derivatives-trading-with-jupyter-notebook
+- Spot trading: https://www.okx.com/help/how-can-i-do-spot-trading-with-the-jupyter-notebook
+- Derivative trading: https://www.okx.com/help/how-can-i-do-derivatives-trading-with-the-jupyter-notebook
 
 Make sure you update often and check the [Changelog](https://www.okx.com/docs-v5/log_en/) for new features and bug fixes.
 
