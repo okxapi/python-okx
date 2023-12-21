@@ -6,7 +6,6 @@ class TradeTest(unittest.TestCase):
         api_secret_key = 'your_secretKey'
         passphrase = 'your_secretKey'
         self.tradeApi = Trade.TradeAPI(api_key, api_secret_key, passphrase, False, '1')
-    """
     def test_place_order(self):
         print(self.tradeApi.place_order("BTC-USDT",tdMode="cross",clOrdId="asCai1",side="buy",ordType="limit",sz="0.01",px="18000"))
     def test_cancel_order(self):
@@ -109,7 +108,7 @@ class TradeTest(unittest.TestCase):
         print(self.tradeApi.get_oneclick_repay_list('cross'))
         def test_oneclick_repay(self):
         print(self.tradeApi.oneclick_repay(['BTC'],'USDT'))
-"""
+
 #485903392536264704
     #485936482235191296
     # def test_oneclick_repay_history(self):
