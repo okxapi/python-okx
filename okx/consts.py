@@ -138,8 +138,8 @@ TAKER_FLOW = '/api/v5/rubik/stat/option/taker-block-volume'
 # TRADE-Complete
 PLACR_ORDER = '/api/v5/trade/order'
 BATCH_ORDERS = '/api/v5/trade/batch-orders'
-CANAEL_ORDER = '/api/v5/trade/cancel-order'
-CANAEL_BATCH_ORDERS = '/api/v5/trade/cancel-batch-orders'
+CANCEL_ORDER = '/api/v5/trade/cancel-order'
+CANCEL_BATCH_ORDERS = '/api/v5/trade/cancel-batch-orders'
 AMEND_ORDER = '/api/v5/trade/amend-order'
 AMEND_BATCH_ORDER = '/api/v5/trade/amend-batch-orders'
 CLOSE_POSITION = '/api/v5/trade/close-position'
@@ -279,8 +279,8 @@ GET_UNREALIZED_PROFIT_SHARING_DETAILS = '/api/v5/copytrading/unrealized-profit-s
 
 # Spread Trading˚
 SPREAD_PLACE_ORDER= '/api/v5/sprd/order'
-SPREAD_CANAEL_ORDER = '/api/v5/sprd/cancel-order'
-SPREAD_CANAEL_ALL_ORDERS = '/api/v5/sprd/mass-cancel'
+SPREAD_CANCEL_ORDER = '/api/v5/sprd/cancel-order'
+SPREAD_CANCEL_ALL_ORDERS = '/api/v5/sprd/mass-cancel'
 SPREAD_GET_ORDER_DETAILS = '/api/v5/sprd/order'
 SPREAD_GET_ACTIVE_ORDERS = '/api/v5/sprd/orders-pending'
 SPREAD_GET_ORDERS = '/api/v5/sprd/orders-history'

@@ -16,7 +16,7 @@ def initLoginParams(useServerTime: bool, apiKey, passphrase, secretKey):
     sign = base64.b64encode(d)
     arg = {"apiKey": apiKey, "passphrase": passphrase, "timestamp": timestamp, "sign": sign.decode("utf-8")}
     payload = {"op": "login", "args": [arg]}
-    return json.dumps(payload, ensure_ascii=False).encode("utf8")
+    return json.dumps(payload)
 
 
 def isNotBlankStr(param: str) -> bool:

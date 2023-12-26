@@ -25,11 +25,11 @@ class TradeAPI(Client):
     # Cancel Order
     def cancel_order(self, instId, ordId='', clOrdId=''):
         params = {'instId': instId, 'ordId': ordId, 'clOrdId': clOrdId}
-        return self._request_with_params(POST, CANAEL_ORDER, params)
+        return self._request_with_params(POST, CANCEL_ORDER, params)
 
     # Cancel Multiple Orders
     def cancel_multiple_orders(self, orders_data):
-        return self._request_with_params(POST, CANAEL_BATCH_ORDERS, orders_data)
+        return self._request_with_params(POST, CANCEL_BATCH_ORDERS, orders_data)
 
     # Amend Order
     def amend_order(self, instId, cxlOnFail='', ordId='', clOrdId='', reqId='', newSz='', newPx='', newTpTriggerPx='',
