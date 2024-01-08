@@ -1,6 +1,6 @@
 import asyncio
 
-from okx.websocket.WsPprivateAsync import WsPrivateAsync
+from okx.websocket.WsPrivateAsync import WsPrivateAsync
 
 
 def privateCallback(message):
