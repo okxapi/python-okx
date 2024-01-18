@@ -44,12 +44,17 @@ class AccountAPI(Client):
     def get_account_config(self):
         return self._request_without_params(GET, ACCOUNT_CONFIG)
 
-    # Get Account Configuration
+    # Set Account Level
+    def set_account_level(self, acctLv):
+        params = {'acctLv': acctLv}
+        return self._request_with_params(POST, ACCOUNT_LEVEL, params)
+    
+    # Set Position Mode
     def set_position_mode(self, posMode):
         params = {'posMode': posMode}
         return self._request_with_params(POST, POSITION_MODE, params)
 
-    # Get Account Configuration
+    # Set Leverage 
     def set_leverage(self, lever, mgnMode, instId='', ccy='', posSide=''):
         params = {'lever': lever, 'mgnMode': mgnMode, 'instId': instId, 'ccy': ccy, 'posSide': posSide}
         return self._request_with_params(POST, SET_LEVERAGE, params)
