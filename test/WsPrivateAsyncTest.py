@@ -18,7 +18,7 @@ async def main():
     )
     await ws.start()
     args = []
-    arg1 = {"channel": "account", "instType": "BTC"}
+    arg1 = {"channel": "account", "ccy": "BTC"}
     arg2 = {"channel": "orders", "instType": "ANY"}
     arg3 = {"channel": "balance_and_position"}
     args.append(arg1)
