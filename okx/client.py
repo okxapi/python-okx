@@ -1,13 +1,15 @@
 import json
 
 import httpx
+from httpx import Client
 
 from . import consts as c, utils, exceptions
 
 
-class Client(object):
+class Client(Client):
 
-    def __init__(self, api_key = '-1', api_secret_key = '-1', passphrase = '-1', use_server_time=False, flag='1', base_api = c.API_URL,debug = 'True'):
+    def __init__(self, api_key='-1', api_secret_key='-1', passphrase='-1', use_server_time=False, flag='1',base_api=c.API_URL, debug='True', proxy=None):
+        super().__init__(base_url=base_api, http2=True, proxy= proxy)
         self.API_KEY = api_key
         self.API_SECRET_KEY = api_secret_key
         self.PASSPHRASE = passphrase
@@ -15,7 +17,6 @@ class Client(object):
         self.flag = flag
         self.domain = base_api
         self.debug = debug
-        self.client = httpx.Client(base_url=base_api, http2=True)
 
     def _request(self, method, request_path, params):
         if method == c.GET:
@@ -34,9 +35,9 @@ class Client(object):
             print('domain:',self.domain)
             print('url:',request_path)
         if method == c.GET:
-            response = self.client.get(request_path, headers=header)
+            response = self.get(request_path, headers=header)
         elif method == c.POST:
-            response = self.client.post(request_path, data=body, headers=header)
+            response = self.post(request_path, data=body, headers=header)
         return response.json()
 
     def _request_without_params(self, method, request_path):
@@ -47,7 +48,7 @@ class Client(object):
 
     def _get_timestamp(self):
         request_path = c.API_URL + c.SERVER_TIMESTAMP_URL
-        response = self.client.get(request_path)
+        response = self.get(request_path)
         if response.status_code == 200:
             return response.json()['data'][0]['ts']
         else:

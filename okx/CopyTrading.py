@@ -4,8 +4,9 @@ from .consts import *
 
 class CopyTradingAPI(Client):
     def __init__(self, api_key='-1', api_secret_key='-1', passphrase='-1', use_server_time=False, flag='1',
-                 domain='https://www.okx.com', debug=True):
-        Client.__init__(self, api_key, api_secret_key, passphrase, use_server_time, flag, domain, debug)
+                 domain='https://www.okx.com', debug=True, proxy=None):
+        Client.__init__(self, api_key, api_secret_key, passphrase, use_server_time, flag, domain, debug,
+                        proxy=proxy)
 
     # Get existing leading positions
     def get_existing_leading_positions(self, instId=''):
@@ -25,7 +26,8 @@ class CopyTradingAPI(Client):
         return self._request_with_params(GET, GET_LEADING_POSITIONS_HISTORY, params)
 
     # Place leading stop order
-    def place_leading_stop_order(self, subPosId='', tpTriggerPx='', slTriggerPx='', tpTriggerPxType='', slTriggerPxType=''):
+    def place_leading_stop_order(self, subPosId='', tpTriggerPx='', slTriggerPx='', tpTriggerPxType='',
+                                 slTriggerPxType=''):
         params = {
             'subPosId': subPosId,
             'tpTriggerPx': tpTriggerPx,

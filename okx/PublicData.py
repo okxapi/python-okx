@@ -4,8 +4,8 @@ from .consts import *
 
 class PublicAPI(Client):
 
-    def __init__(self, api_key='-1', api_secret_key='-1', passphrase='-1', use_server_time=False, flag='1', domain = 'https://www.okx.com',debug = True):
-        Client.__init__(self, api_key, api_secret_key, passphrase, use_server_time, flag, domain,debug)
+    def __init__(self, api_key='-1', api_secret_key='-1', passphrase='-1', use_server_time=False, flag='1', domain = 'https://www.okx.com',debug = True, proxy=None):
+        Client.__init__(self, api_key, api_secret_key, passphrase, use_server_time, flag, domain, debug,proxy)
 
     # Get Instruments
     def get_instruments(self, instType, uly='', instId='',instFamily = ''):

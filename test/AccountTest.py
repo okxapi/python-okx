@@ -4,19 +4,20 @@ from okx import Account
 
 class AccountTest(unittest.TestCase):
     def setUp(self):
-        api_key = 'your_apiKey'
-        api_secret_key = 'your_secretKey'
-        passphrase = 'your_secretKey'
-        self.AccountAPI = Account.AccountAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag='1')
-    '''
+        proxy = "http://125.106.203.126:10423";
+        api_key = 'aee24256-7393-422f-90d9-47cc4028ce39'
+        api_secret_key = 'FF517E627F6A702E2BF50F311F245D2A'
+        passphrase = 'hylHYL950525,.'
+        self.AccountAPI = Account.AccountAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag='1',proxy=proxy,timeout=30)
+    # '''
     POSITIONS_HISTORY = '/api/v5/account/positions-history' #need add
     GET_PM_LIMIT = '/api/v5/account/position-tiers' #need add
     ACCOUNT_RISK = '/api/v5/account/risk-state' #need add
-    def test_account_risk(self):
-        print(self.AccountAPI.get_account_risk())
-
-    def test_get_pm_limit(self):
-        print(self.AccountAPI.get_pm_limit("SWAP","BTC-USDT"))
+    # def test_account_risk(self):
+    #     print(self.AccountAPI.get_account_risk())
+    #
+    # def test_get_pm_limit(self):
+    #     print(self.AccountAPI.get_pm_limit("SWAP","BTC-USDT"))
     #positions-history
     def test_get_positions_history(self):
         print(self.AccountAPI.get_positions_history())
@@ -72,7 +73,7 @@ class AccountTest(unittest.TestCase):
         print(self.AccountAPI.get_simulated_margin())
     def test_get_greeks(self):
         print(self.AccountAPI.get_greeks())
-    '''
+    # '''
     # def test_simulated_margin(self):
     #     print(self.AccountAPI.get_simulated_margin())
 
