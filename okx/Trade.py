@@ -1,21 +1,26 @@
-from .client import Client
+import json
+
+from .okxclient import OkxClient
 from .consts import *
 
 
-class TradeAPI(Client):
+class TradeAPI(OkxClient):
 
-    def __init__(self, api_key='-1', api_secret_key='-1', passphrase='-1', use_server_time=False, flag='1', domain = 'https://www.okx.com',debug = True, proxy=None):
-        Client.__init__(self, api_key, api_secret_key, passphrase, use_server_time, flag, domain, debug,proxy)
+    def __init__(self, api_key='-1', api_secret_key='-1', passphrase='-1', use_server_time=False, flag='1',
+                 domain='https://www.okx.com', debug=True, proxy=None):
+        OkxClient.__init__(self, api_key, api_secret_key, passphrase, use_server_time, flag, domain, debug, proxy)
 
     # Place Order
     def place_order(self, instId, tdMode, side, ordType, sz, ccy='', clOrdId='', tag='', posSide='', px='',
                     reduceOnly='', tgtCcy='', tpTriggerPx='', tpOrdPx='', slTriggerPx='', slOrdPx='',
-                    tpTriggerPxType='', slTriggerPxType='', quickMgnType='', stpId='', stpMode=''):
+                    tpTriggerPxType='', slTriggerPxType='', quickMgnType='', stpId='', stpMode='',
+                    attachAlgoOrds=None):
         params = {'instId': instId, 'tdMode': tdMode, 'side': side, 'ordType': ordType, 'sz': sz, 'ccy': ccy,
                   'clOrdId': clOrdId, 'tag': tag, 'posSide': posSide, 'px': px, 'reduceOnly': reduceOnly,
                   'tgtCcy': tgtCcy, 'tpTriggerPx': tpTriggerPx, 'tpOrdPx': tpOrdPx, 'slTriggerPx': slTriggerPx,
                   'slOrdPx': slOrdPx, 'tpTriggerPxType': tpTriggerPxType, 'slTriggerPxType': slTriggerPxType,
                   'quickMgnType': quickMgnType, 'stpId': stpId, 'stpMode': stpMode}
+        params['attachAlgoOrds'] = attachAlgoOrds
         return self._request_with_params(POST, PLACR_ORDER, params)
 
     # Place Multiple Orders
@@ -33,11 +38,13 @@ class TradeAPI(Client):
 
     # Amend Order
     def amend_order(self, instId, cxlOnFail='', ordId='', clOrdId='', reqId='', newSz='', newPx='', newTpTriggerPx='',
-                    newTpOrdPx='', newSlTriggerPx='', newSlOrdPx='', newTpTriggerPxType='', newSlTriggerPxType=''):
+                    newTpOrdPx='', newSlTriggerPx='', newSlOrdPx='', newTpTriggerPxType='', newSlTriggerPxType='',
+                    attachAlgoOrds=''):
         params = {'instId': instId, 'cxlOnFailc': cxlOnFail, 'ordId': ordId, 'clOrdId': clOrdId, 'reqId': reqId,
                   'newSz': newSz, 'newPx': newPx, 'newTpTriggerPx': newTpTriggerPx, 'newTpOrdPx': newTpOrdPx,
                   'newSlTriggerPx': newSlTriggerPx, 'newSlOrdPx': newSlOrdPx, 'newTpTriggerPxType': newTpTriggerPxType,
                   'newSlTriggerPxType': newSlTriggerPxType}
+        params['attachAlgoOrds'] = attachAlgoOrds
         return self._request_with_params(POST, AMEND_ORDER, params)
 
     # Amend Multiple Orders
@@ -56,9 +63,10 @@ class TradeAPI(Client):
         return self._request_with_params(GET, ORDER_INFO, params)
 
     # Get Order List
-    def get_order_list(self, instType='', uly='', instId='', ordType='', state='', after='', before='', limit='',instFamily = ''):
+    def get_order_list(self, instType='', uly='', instId='', ordType='', state='', after='', before='', limit='',
+                       instFamily=''):
         params = {'instType': instType, 'uly': uly, 'instId': instId, 'ordType': ordType, 'state': state,
-                  'after': after, 'before': before, 'limit': limit,'instFamily':instFamily}
+                  'after': after, 'before': before, 'limit': limit, 'instFamily': instFamily}
         return self._request_with_params(GET, ORDERS_PENDING, params)
 
     # Get Order History (last 7 days）
@@ -78,9 +86,9 @@ class TradeAPI(Client):
         return self._request_with_params(GET, ORDERS_HISTORY_ARCHIVE, params)
 
     # Get Transaction Details
-    def get_fills(self, instType='', uly='', instId='', ordId='', after='', before='', limit='',instFamily = ''):
+    def get_fills(self, instType='', uly='', instId='', ordId='', after='', before='', limit='', instFamily=''):
         params = {'instType': instType, 'uly': uly, 'instId': instId, 'ordId': ordId, 'after': after, 'before': before,
-                  'limit': limit,'instFamily':instFamily}
+                  'limit': limit, 'instFamily': instFamily}
         return self._request_with_params(GET, ORDER_FILLS, params)
 
     # Place Algo Order
@@ -90,16 +98,17 @@ class TradeAPI(Client):
                          triggerPx='', orderPx='', tgtCcy='', pxVar='',
                          pxSpread='',
                          szLimit='', pxLimit='', timeInterval='', tpTriggerPxType='', slTriggerPxType='',
-                         callbackRatio='',callbackSpread='',activePx='',tag='',triggerPxType='',closeFraction=''
-                         ,quickMgnType='',algoClOrdId=''):
+                         callbackRatio='', callbackSpread='', activePx='', tag='', triggerPxType='', closeFraction=''
+                         , quickMgnType='', algoClOrdId=''):
         params = {'instId': instId, 'tdMode': tdMode, 'side': side, 'ordType': ordType, 'sz': sz, 'ccy': ccy,
                   'posSide': posSide, 'reduceOnly': reduceOnly, 'tpTriggerPx': tpTriggerPx, 'tpOrdPx': tpOrdPx,
                   'slTriggerPx': slTriggerPx, 'slOrdPx': slOrdPx, 'triggerPx': triggerPx, 'orderPx': orderPx,
                   'tgtCcy': tgtCcy, 'pxVar': pxVar, 'szLimit': szLimit, 'pxLimit': pxLimit,
                   'timeInterval': timeInterval,
                   'pxSpread': pxSpread, 'tpTriggerPxType': tpTriggerPxType, 'slTriggerPxType': slTriggerPxType,
-                  'callbackRatio' : callbackRatio, 'callbackSpread':callbackSpread,'activePx':activePx,
-                  'tag':tag,'triggerPxType':triggerPxType,'closeFraction':closeFraction,'quickMgnType':quickMgnType,'algoClOrdId':algoClOrdId}
+                  'callbackRatio': callbackRatio, 'callbackSpread': callbackSpread, 'activePx': activePx,
+                  'tag': tag, 'triggerPxType': triggerPxType, 'closeFraction': closeFraction,
+                  'quickMgnType': quickMgnType, 'algoClOrdId': algoClOrdId}
         return self._request_with_params(POST, PLACE_ALGO_ORDER, params)
 
     # Cancel Algo Order
@@ -107,11 +116,12 @@ class TradeAPI(Client):
         return self._request_with_params(POST, CANCEL_ALGOS, params)
 
     # Cancel Advance Algos
-    def cancel_advance_algos(self,params):
+    def cancel_advance_algos(self, params):
         return self._request_with_params(POST, Cancel_Advance_Algos, params)
 
     # Get Algo Order List
-    def order_algos_list(self, ordType='', algoId='', instType='', instId='', after='', before='', limit='',algoClOrdId=''):
+    def order_algos_list(self, ordType='', algoId='', instType='', instId='', after='', before='', limit='',
+                         algoClOrdId=''):
         params = {'ordType': ordType, 'algoId': algoId, 'instType': instType, 'instId': instId, 'after': after,
                   'before': before, 'limit': limit, 'algoClOrdId': algoClOrdId}
         return self._request_with_params(GET, ORDERS_ALGO_OENDING, params)
@@ -123,49 +133,49 @@ class TradeAPI(Client):
         return self._request_with_params(GET, ORDERS_ALGO_HISTORY, params)
 
     # Get Transaction Details History
-    def get_fills_history(self, instType, uly='', instId='', ordId='', after='', before='', limit='',instFamily=''):
+    def get_fills_history(self, instType, uly='', instId='', ordId='', after='', before='', limit='', instFamily=''):
         params = {'instType': instType, 'uly': uly, 'instId': instId, 'ordId': ordId, 'after': after, 'before': before,
-                  'limit': limit,'instFamily':instFamily}
+                  'limit': limit, 'instFamily': instFamily}
         return self._request_with_params(GET, ORDERS_FILLS_HISTORY, params)
 
     def get_easy_convert_currency_list(self):
         return self._request_without_params(GET, EASY_CONVERT_CURRENCY_LIST)
 
-    def easy_convert(self,fromCcy = [],toCcy = ''):
+    def easy_convert(self, fromCcy=[], toCcy=''):
         params = {
-            'fromCcy':fromCcy,
-            'toCcy':toCcy
+            'fromCcy': fromCcy,
+            'toCcy': toCcy
         }
         return self._request_with_params(POST, EASY_CONVERT, params)
 
-    def get_easy_convert_history(self,before = '',after = '',limit = ''):
+    def get_easy_convert_history(self, before='', after='', limit=''):
         params = {
-            'before':before,
-            'after':after,
-            'limit':limit
+            'before': before,
+            'after': after,
+            'limit': limit
         }
-        return self._request_with_params(GET,CONVERT_EASY_HISTORY,params)
+        return self._request_with_params(GET, CONVERT_EASY_HISTORY, params)
 
-    def get_oneclick_repay_list(self,debtType = ''):
+    def get_oneclick_repay_list(self, debtType=''):
         params = {
-            'debtType':debtType
+            'debtType': debtType
         }
-        return self._request_with_params(GET,ONE_CLICK_REPAY_SUPPORT,params)
+        return self._request_with_params(GET, ONE_CLICK_REPAY_SUPPORT, params)
 
-    def oneclick_repay(self,debtCcy = [] , repayCcy=''):
+    def oneclick_repay(self, debtCcy=[], repayCcy=''):
         params = {
-            'debtCcy':debtCcy,
-            'repayCcy':repayCcy
+            'debtCcy': debtCcy,
+            'repayCcy': repayCcy
         }
-        return self._request_with_params(POST,ONE_CLICK_REPAY,params)
+        return self._request_with_params(POST, ONE_CLICK_REPAY, params)
 
-    def oneclick_repay_history(self,after = '',before = '',limit = ''):
+    def oneclick_repay_history(self, after='', before='', limit=''):
         params = {
-            'after':after,
-            'before':before,
-            'limit':limit
+            'after': after,
+            'before': before,
+            'limit': limit
         }
-        return self._request_with_params(GET,ONE_CLICK_REPAY_HISTORY,params)
+        return self._request_with_params(GET, ONE_CLICK_REPAY_HISTORY, params)
 
     # Get algo order details
     def get_algo_order_details(self, algoId='', algoClOrdId=''):

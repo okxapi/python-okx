@@ -1,11 +1,11 @@
-from .client import Client
+from .okxclient import OkxClient
 from .consts import *
 
 
-class AccountAPI(Client):
+class AccountAPI(OkxClient):
 
-    def __init__(self, api_key='-1', api_secret_key='-1', passphrase='-1', use_server_time=False, flag='1', domain = 'https://www.okx.com',debug = True,proxy = None,timeout = 30):
-        Client.__init__(self, api_key, api_secret_key, passphrase, use_server_time, flag, domain, debug,proxy,timeout)
+    def __init__(self, api_key='-1', api_secret_key='-1', passphrase='-1', use_server_time=False, flag='1', domain = 'https://www.okx.com',debug = True,proxy = None):
+        OkxClient.__init__(self, api_key, api_secret_key, passphrase, use_server_time, flag, domain, debug, proxy)
 
     # Get Positions
     def get_position_risk(self, instType=''):
