@@ -53,6 +53,7 @@ GET_VIP_LOAN_ORDER_DETAIL= '/api/v5/account/vip-loan-order-detail'
 SET_RISK_OFFSET_TYPE = '/api/v5/account/set-riskOffset-type'
 SET_AUTO_LOAN = '/api/v5/account/set-auto-loan'
 ACTIVSTE_OPTION = '/api/v5/account/activate-option'
+POSITION_BUILDER = '/api/v5/account/position-builder'
 
 # funding-complete-testcomplete
 DEPOSIT_ADDRESS = '/api/v5/asset/deposit-address'
