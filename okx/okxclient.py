@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timezone
 
 import httpx
 from httpx import Client
@@ -50,6 +51,7 @@ class OkxClient(Client):
         request_path = c.API_URL + c.SERVER_TIMESTAMP_URL
         response = self.get(request_path)
         if response.status_code == 200:
-            return response.json()['data'][0]['ts']
+            ts = datetime.fromtimestamp(int(response.json()['data'][0]['ts']) / 1000.0, tz=timezone.utc)
+            return ts.isoformat(timespec='milliseconds').replace('+00:00', 'Z')
         else:
             return ""
