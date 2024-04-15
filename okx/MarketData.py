@@ -44,7 +44,7 @@ class MarketAPI(OkxClient):
     # Get Index Candlesticks
     def get_index_candlesticks(self, instId, after='', before='', bar='', limit=''):
         params = {'instId': instId, 'after': after, 'before': before, 'bar': bar, 'limit': limit}
-        return self._request_with_params(GET, INDEX_CANSLES, params)
+        return self._request_with_params(GET, INDEX_CANDLES, params)
 
     # Get Mark Price Candlesticks
     def get_mark_price_candlesticks(self, instId, after='', before='', bar='', limit=''):
