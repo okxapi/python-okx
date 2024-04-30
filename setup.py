@@ -22,6 +22,7 @@ setuptools.setup(
         "importlib-metadata",
         "httpx[http2]",
         "keyring",
+        "loguru",
         "requests",
         "Twisted",
         "pyOpenSSL"
