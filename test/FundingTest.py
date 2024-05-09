@@ -58,6 +58,8 @@ class FundingTest(unittest.TestCase):
         print(self.FundingAPI.get_lending_rate_summary('BTC'))
     """
 
+    def test_get_non_tradable_assets(self):
+        print(self.FundingAPI.get_non_tradable_assets())
     # def test_get_lending_summary(self):
     #     print(self.FundingAPI.get_lending_rate_summary('BTC'))
     # def test_get_lending_rate_history(self):

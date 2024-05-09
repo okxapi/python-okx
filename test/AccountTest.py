@@ -21,8 +21,8 @@ class AccountTest(unittest.TestCase):
     # def test_get_pm_limit(self):
     #     print(self.AccountAPI.get_pm_limit("SWAP","BTC-USDT"))
     # positions-history
-    # def test_get_positions_history(self):
-    #     print(self.AccountAPI.get_positions_history())
+    def test_get_positions_history(self):
+        print(self.AccountAPI.get_positions_history())
     # def test_positions_builder(self):
     #     print("Both real and virtual positions and assets are calculated")
     #     sim_pos = [{'instId': 'BTC-USDT-SWAP', 'pos': '10'}, {'instId': 'BTC-USDT-SWAP', 'pos': '10'}]

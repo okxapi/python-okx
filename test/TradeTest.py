@@ -163,7 +163,6 @@ class TradeTest(unittest.TestCase):
     #     print(self.tradeApi.get_oneclick_repay_list('cross'))
     #     def test_oneclick_repay(self):
     #     print(self.tradeApi.oneclick_repay(['BTC'],'USDT'))
-    # """
     # 485903392536264704
     # 485936482235191296
     # def test_oneclick_repay_history(self):
