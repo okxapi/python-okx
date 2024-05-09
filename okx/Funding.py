@@ -8,6 +8,11 @@ class FundingAPI(OkxClient):
     def __init__(self, api_key='-1', api_secret_key='-1', passphrase='-1', use_server_time=None, flag='1', domain = 'https://www.okx.com',debug = True, proxy=None):
         OkxClient.__init__(self, api_key, api_secret_key, passphrase, use_server_time, flag, domain, debug, proxy)
 
+    # Get Non Tradable Assets
+    def get_non_tradable_assets(self, ccy: str = ''):
+        params = {'ccy': ccy}
+        return self._request_with_params(GET, NON_TRADABLE_ASSETS, params)
+
     # Get Deposit Address
     def get_deposit_address(self, ccy):
         params = {'ccy': ccy}
