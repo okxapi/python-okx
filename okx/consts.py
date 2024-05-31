@@ -54,6 +54,7 @@ SET_RISK_OFFSET_TYPE = '/api/v5/account/set-riskOffset-type'
 SET_AUTO_LOAN = '/api/v5/account/set-auto-loan'
 ACTIVSTE_OPTION = '/api/v5/account/activate-option'
 POSITION_BUILDER = '/api/v5/account/position-builder'
+GET_INSTRUMENTS = '/api/v5/account/instruments'
 
 # funding-complete-testcomplete
 NON_TRADABLE_ASSETS = '/api/v5/asset/non-tradable-assets'

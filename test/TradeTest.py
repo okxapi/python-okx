@@ -125,8 +125,8 @@ class TradeTest(unittest.TestCase):
     #     print(self.tradeApi.get_orders_history("SPOT"))
     # def test_get_order_histry_archive(self):
     #     print(self.tradeApi.orders_history_archive("SPOT"))
-    # def test_get_fills(self):
-    #     print(self.tradeApi.get_fills("SPOT"))
+    def test_get_fills(self):
+        print(self.tradeApi.get_fills(begin='1717045609000',end='1717045609100'))
     # def test_get_fills_history(self):
     #     print(self.tradeApi.get_fills_history("SPOT"))
     # def test_get_order_algo_pending(self):
