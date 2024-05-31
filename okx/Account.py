@@ -49,9 +49,9 @@ class AccountAPI(OkxClient):
 
     # Get Bills Details (recent 3 months)
     def get_account_bills_archive(self, instType='', ccy='', mgnMode='', ctType='', type='', subType='', after='', before='',
-                          limit=''):
+                          limit='',begin='',end=''):
         params = {'instType': instType, 'ccy': ccy, 'mgnMode': mgnMode, 'ctType': ctType, 'type': type,
-                  'subType': subType, 'after': after, 'before': before, 'limit': limit}
+                  'subType': subType, 'after': after, 'before': before, 'limit': limit,'begin':begin,'end':end}
         return self._request_with_params(GET, BILLS_ARCHIVE, params)
 
     # Get Account Configuration
@@ -88,6 +88,10 @@ class AccountAPI(OkxClient):
     def get_leverage(self, instId, mgnMode):
         params = {'instId': instId, 'mgnMode': mgnMode}
         return self._request_with_params(GET, GET_LEVERAGE, params)
+    # Get instruments
+    def get_instruments(self, instType='', ugly = '',instFamily='',instId=''):
+        params = {'instType': instType, 'ugly': ugly, 'instFamily': instFamily, 'instId': instId}
+        return self._request_with_params(GET,GET_INSTRUMENTS,params)
 
     # Get the maximum loan of isolated MARGIN
     def get_max_loan(self, instId, mgnMode, mgnCcy):

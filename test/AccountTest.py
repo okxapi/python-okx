@@ -23,6 +23,10 @@ class AccountTest(unittest.TestCase):
     # positions-history
     def test_get_positions_history(self):
         print(self.AccountAPI.get_positions_history())
+    def test_get_instruments(self):
+        print(self.AccountAPI.get_instruments(instType='SPOT'))
+    def test_get_account_bills_archive(self):
+        print(self.AccountAPI.get_account_bills_archive(begin='1715780962300',end='1716998400000'))
     # def test_positions_builder(self):
     #     print("Both real and virtual positions and assets are calculated")
     #     sim_pos = [{'instId': 'BTC-USDT-SWAP', 'pos': '10'}, {'instId': 'BTC-USDT-SWAP', 'pos': '10'}]
