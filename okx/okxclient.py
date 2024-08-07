@@ -6,6 +6,8 @@ import httpx
 from httpx import Client
 from datetime import datetime, timezone
 
+from loguru import logger
+
 from . import consts as c, utils, exceptions
 
 
@@ -37,8 +39,9 @@ class OkxClient(Client):
             header = utils.get_header_no_sign(self.flag, self.debug)
         response = None
         if self.debug == True:
-            print('domain:',self.domain)
-            print('url:',request_path)
+            logger.debug(f'domain: {self.domain}')
+            logger.debug(f'url: {request_path}')
+            logger.debug(f'body:{body}')
         if method == c.GET:
             response = self.get(request_path, headers=header)
         elif method == c.POST:

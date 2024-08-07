@@ -1,15 +1,16 @@
 import unittest
 
+from loguru import logger
+
 from okx import Account
 
 
 class AccountTest(unittest.TestCase):
     def setUp(self):
-        proxy = "http://43.152.113.72:19206"
-        api_key = 'your_apiKey'
-        api_secret_key = 'your_secretKey'
-        passphrase = 'your_secretKey'
-        self.AccountAPI = Account.AccountAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag='1',                                         proxy=proxy)
+        api_key = '52049394-3c72-4c06-8d87-d6399450c264'
+        api_secret_key = 'E532EB5AF81E6E50A2875225FEDC9150'
+        passphrase = 'Fixedloan2024!'
+        self.AccountAPI = Account.AccountAPI(api_key, api_secret_key, passphrase, flag='1')
 
     # '''
     # POSITIONS_HISTORY = '/api/v5/account/positions-history' #need add
@@ -21,12 +22,12 @@ class AccountTest(unittest.TestCase):
     # def test_get_pm_limit(self):
     #     print(self.AccountAPI.get_pm_limit("SWAP","BTC-USDT"))
     # positions-history
-    def test_get_positions_history(self):
-        print(self.AccountAPI.get_positions_history())
-    def test_get_instruments(self):
-        print(self.AccountAPI.get_instruments(instType='SPOT'))
-    def test_get_account_bills_archive(self):
-        print(self.AccountAPI.get_account_bills_archive(begin='1715780962300',end='1716998400000'))
+    # def test_get_positions_history(self):
+    #     print(self.AccountAPI.get_positions_history())
+    # def test_get_instruments(self):
+    #     print(self.AccountAPI.get_instruments(instType='SPOT'))
+    # def test_get_account_bills_archive(self):
+    #     print(self.AccountAPI.get_account_bills_archive(begin='1715780962300',end='1716998400000'))
     # def test_positions_builder(self):
     #     print("Both real and virtual positions and assets are calculated")
     #     sim_pos = [{'instId': 'BTC-USDT-SWAP', 'pos': '10'}, {'instId': 'BTC-USDT-SWAP', 'pos': '10'}]
@@ -124,7 +125,20 @@ class AccountTest(unittest.TestCase):
 
     # def test_simulated_margin(self):
     #     print(self.AccountAPI.get_simulated_margin(spotOffsetType='3'))
-
+    # def test_get_fix_loan_borrowing_limit(self):
+    #     logger.debug(f'{self.AccountAPI.get_fix_loan_borrowing_limit()}')
+    # def test_get_fix_loan_borrowing_quote(self):
+    #     logger.debug(f'{self.AccountAPI.get_fix_loan_borrowing_quote(type="normal")}')
+    # def test_place_fix_loan_borrowing_order(self):
+    #     logger.debug(f'{self.AccountAPI.place_fix_loan_borrowing_order(ccy="BTC", amt="0.1515", maxRate="0.001", term="30D", reborrow=True, reborrowRate="0.01")}')
+    # def test_amend_fix_loan_borrowing_order(self):
+    #     logger.debug(f'{self.AccountAPI.amend_fix_loan_borrowing_order(ordId="2407301043344857",reborrow=True,renewMaxRate="0.01")}')
+    # def test_fix_loan_manual_reborrow(self):
+    #     logger.debug(f'{self.AccountAPI.fix_loan_manual_reborrow(ordId="2407301043344857",maxRate="0.1")}')
+    # def test_repay_fix_loan_borrowing_order(self):
+    #     logger.info(f'{self.AccountAPI.repay_fix_loan_borrowing_order(ordId="2407301054407907")}')
+    # def test_get_fix_loan_borrowing_orders_list(self):
+    #     logger.debug(self.AccountAPI.get_fix_loan_borrowing_orders_list(ordId="2407301054407907"))
 
 if __name__ == '__main__':
     unittest.main()

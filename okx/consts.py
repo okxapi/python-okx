@@ -55,6 +55,13 @@ SET_AUTO_LOAN = '/api/v5/account/set-auto-loan'
 ACTIVSTE_OPTION = '/api/v5/account/activate-option'
 POSITION_BUILDER = '/api/v5/account/position-builder'
 GET_INSTRUMENTS = '/api/v5/account/instruments'
+BORROWING_LIMIT = '/api/v5/account/fixed-loan/borrowing-limit'
+BORROWING_QUOTE = '/api/v5/account/fixed-loan/borrowing-quote'
+PLACE_BORROWING_ORDER= '/api/v5/account/fixed-loan/borrowing-order'
+AMEND_BORROWING_ORDER='/api/v5/account/fixed-loan/amend-borrowing-order'
+MANUAL_REBORROW = '/api/v5/account/fixed-loan/manual-reborrow'
+REPAY_BORROWING_ORDER='/api/v5/account/fixed-loan/repay-borrowing-order'
+BORROWING_ORDERS_LIST='/api/v5/account/fixed-loan/borrowing-orders-list'
 
 # funding-complete-testcomplete
 NON_TRADABLE_ASSETS = '/api/v5/asset/non-tradable-assets'
@@ -292,3 +299,14 @@ SPREAD_GET_SPREADS = '/api/v5/sprd/spreads'
 SPREAD_GET_ORDER_BOOK = '/api/v5/sprd/books'
 SPREAD_GET_TICKER = '/api/v5/sprd/ticker'
 SPREAD_GET_PUBLIC_TRADES = '/api/v5/sprd/public-trades'
+
+# Simple earn fixed
+LENDING_OFFERS = '/api/v5/finance/fixed-loan/lending-offers'
+LENDING_APY_HISTORY='/api/v5/finance/fixed-loan/lending-apy-history'
+PENDING_LENDING_VOLUME = '/api/v5/finance/fixed-loan/pending-lending-volume'
+PLACE_LENDING_ORDER= '/api/v5/finance/fixed-loan/lending-order'
+AMEND_LENDING_ORDER='/api/v5/finance/fixed-loan/amend-lending-order'
+LENDING_ORDERS_LIST='/api/v5/finance/fixed-loan/lending-orders-list'
+LENDING_SUB_ORDERS='/api/v5/finance/fixed-loan/lending-sub-orders'
+
+
