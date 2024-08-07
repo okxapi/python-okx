@@ -1,6 +1,9 @@
 import hmac
 import base64
 import datetime
+
+from loguru import logger
+
 from . import consts as c
 
 
@@ -12,7 +15,7 @@ def sign(message, secretKey):
 
 def pre_hash(timestamp, method, request_path, body,debug = True):
     if debug == True:
-        print('body: ',body)
+        logger.debug(f'body: {body}')
     return str(timestamp) + str.upper(method) + request_path + body
 
 
@@ -25,7 +28,7 @@ def get_header(api_key, sign, timestamp, passphrase, flag,debug = True):
     header[c.OK_ACCESS_PASSPHRASE] = passphrase
     header['x-simulated-trading'] = flag
     if debug == True:
-        print('header: ',header)
+        logger.debug(f'header: {header}')
     return header
 
 def get_header_no_sign(flag,debug = True):
@@ -33,7 +36,7 @@ def get_header_no_sign(flag,debug = True):
     header[c.CONTENT_TYPE] = c.APPLICATION_JSON
     header['x-simulated-trading'] = flag
     if debug == True:
-        print('header: ',header)
+        logger.debug(f'header: {header}')
     return header
 
 def parse_params_to_str(params):
@@ -42,7 +45,6 @@ def parse_params_to_str(params):
         if(value != ''):
             url = url + str(key) + '=' + str(value) + '&'
     url = url[0:-1]
-    #print('url:',url)
     return url
 
 
