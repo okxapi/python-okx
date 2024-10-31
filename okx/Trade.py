@@ -183,11 +183,11 @@ class TradeAPI(OkxClient):
         return self._request_with_params(GET, GET_ALGO_ORDER_DETAILS, params)
 
     # Amend algo order
-    def amend_algo_order(self, instId='', algoId='', algoClOrdId='', cxlOnFail='', reqId='', newSz='',
+    def amend_algo_order(self, instId='', algoId='', algoClOrdId='', cxlOnFail='', reqId='', newSz='', newTriggerPx='', newOrdPx='',
                          newTpTriggerPx='', newTpOrdPx='', newSlTriggerPx='', newSlOrdPx='', newTpTriggerPxType='',
                          newSlTriggerPxType=''):
         params = {'instId': instId, 'algoId': algoId, 'algoClOrdId': algoClOrdId, 'cxlOnFail': cxlOnFail,
-                  'reqId': reqId, 'newSz': newSz, 'newTpTriggerPx': newTpTriggerPx, 'newTpOrdPx': newTpOrdPx,
+                  'reqId': reqId, 'newSz': newSz, 'newTriggerPx': newTriggerPx, 'newOrdPx': newOrdPx, 'newTpTriggerPx': newTpTriggerPx, 'newTpOrdPx': newTpOrdPx,
                   'newSlTriggerPx': newSlTriggerPx, 'newSlOrdPx': newSlOrdPx,
                   'newTpTriggerPxType': newTpTriggerPxType, 'newSlTriggerPxType': newSlTriggerPxType}
         return self._request_with_params(POST, AMEND_ALGO_ORDER, params)
