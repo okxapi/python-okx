@@ -68,6 +68,10 @@ class EarningAPI(OkxClient):
         }
         return self._request_with_params(POST, STACK_ETH_PURCHASE, params)
 
+    def eth_product_info(self):
+
+        return self._request_without_params(GET, STACK_ETH_PRODUCT_INFO)
+
     def eth_redeem(self, amt=''):
 
         params = {
