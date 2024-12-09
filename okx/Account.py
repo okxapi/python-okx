@@ -88,8 +88,8 @@ class AccountAPI(OkxClient):
         return self._request_with_params(POST, ADJUSTMENT_MARGIN, params)
 
     # Get Leverage
-    def get_leverage(self, instId, mgnMode):
-        params = {'instId': instId, 'mgnMode': mgnMode}
+    def get_leverage(self, mgnMode, ccy='', instId=''):
+        params = {'instId': instId, 'mgnMode': mgnMode, 'ccy': ccy}
         return self._request_with_params(GET, GET_LEVERAGE, params)
 
     # Get instruments
@@ -294,3 +294,23 @@ class AccountAPI(OkxClient):
         if limit is not None:
             params['limit'] = limit
         return self._request_with_params(GET, BORROWING_ORDERS_LIST, params)
+
+    def spot_manual_borrow_repay(self, ccy=None, side=None, amt=None):
+        params = {}
+        if ccy is not None:
+            params['ccy'] = ccy
+        if side is not None:
+            params['side'] = side
+        if amt is not None:
+            params['amt'] = amt
+        return self._request_with_params(POST, MANUAL_REBORROW_REPAY, params)
+
+    def set_auto_repay(self, autoRepay=False):
+        params = {}
+        if autoRepay is not None:
+            params['autoRepay'] = autoRepay
+        return self._request_with_params(POST, SET_AUTO_REPAY, params)
+
+    def spot_borrow_repay_history(self, ccy='', type='', after='', before='', limit=''):
+        params = {'ccy': ccy, 'type': type, 'after': after, 'before': before, 'limit': limit}
+        return self._request_with_params(GET, GET_BORROW_REPAY_HISTORY, params)

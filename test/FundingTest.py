@@ -58,8 +58,8 @@ class FundingTest(unittest.TestCase):
         print(self.FundingAPI.get_lending_rate_summary('BTC'))
     """
 
-    def test_get_non_tradable_assets(self):
-        print(self.FundingAPI.get_non_tradable_assets())
+    # def test_get_non_tradable_assets(self):
+    #     print(self.FundingAPI.get_non_tradable_assets())
     # def test_get_lending_summary(self):
     #     print(self.FundingAPI.get_lending_rate_summary('BTC'))
     # def test_get_lending_rate_history(self):
@@ -68,8 +68,8 @@ class FundingTest(unittest.TestCase):
     # def test_get_non_tradable_assets(self):
     #     print(self.FundingAPI.get_non_tradable_assets())
 
-    def test_get_deposit_withdraw_status(self):
-        print(self.FundingAPI.get_deposit_withdraw_status(wdId='84804812'))
+    # def test_get_deposit_withdraw_status(self):
+    #     print(self.FundingAPI.get_deposit_withdraw_status(wdId='84804812'))
 
     # def test_get_withdrawal_history(self):
     #     print(self.FundingAPI.get_withdrawal_history())
@@ -77,8 +77,8 @@ class FundingTest(unittest.TestCase):
     # def test_get_deposit_history(self):
     #     print(self.FundingAPI.get_deposit_history())
 
-    # def test_withdrawal(self):
-    #     print(self.FundingAPI.withdrawal(ccy='USDT',amt='1',dest='3',toAddr='18740405107',fee='0',areaCode='86'))
+    def test_withdrawal(self):
+        print(self.FundingAPI.withdrawal(ccy='USDT',amt='1',dest='3',toAddr='18740405107',areaCode='86'))
 
 if __name__ == '__main__':
     unittest.main()
