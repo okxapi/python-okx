@@ -140,5 +140,12 @@ class AccountTest(unittest.TestCase):
     # def test_get_fix_loan_borrowing_orders_list(self):
     #     logger.debug(self.AccountAPI.get_fix_loan_borrowing_orders_list(ordId="2407301054407907"))
 
+    # def test_spot_manual_borrow_repay(self):
+    #     logger.debug(f'{self.AccountAPI.spot_manual_borrow_repay(ccy="USDT",side="borrow",amt=1)}')
+    # def test_set_auto_repay(self):
+    #     logger.info(f'{self.AccountAPI.set_auto_repay(autoRepay=True)}')
+    # def test_spot_borrow_repay_history(self):
+    #     logger.debug(self.AccountAPI.spot_borrow_repay_history(ccy="USDT",type="auto_borrow",after="1597026383085"))
+
 if __name__ == '__main__':
     unittest.main()

@@ -62,6 +62,9 @@ AMEND_BORROWING_ORDER='/api/v5/account/fixed-loan/amend-borrowing-order'
 MANUAL_REBORROW = '/api/v5/account/fixed-loan/manual-reborrow'
 REPAY_BORROWING_ORDER='/api/v5/account/fixed-loan/repay-borrowing-order'
 BORROWING_ORDERS_LIST='/api/v5/account/fixed-loan/borrowing-orders-list'
+MANUAL_REBORROW_REPAY = '/api/v5/account/spot-manual-borrow-repay'
+SET_AUTO_REPAY='/api/v5/account/set-auto-repay'
+GET_BORROW_REPAY_HISTORY='/api/v5/account/spot-borrow-repay-history'
 
 # funding-complete-testcomplete
 NON_TRADABLE_ASSETS = '/api/v5/asset/non-tradable-assets'
