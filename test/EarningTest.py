@@ -57,5 +57,20 @@ class EarningTest(unittest.TestCase):
     # def test_eth_apy_history(self):
     #     print(self.StackingAPI.eth_apy_history(days="7"))
 
+    # def test_sol_purchase(self):
+    #     print(self.StackingAPI.sol_purchase(amt="1"))
+
+    # def test_sol_redeem(self):
+    #     print(self.StackingAPI.sol_redeem(amt="1"))
+
+    # def test_sol_balance(self):
+    #     print(self.StackingAPI.sol_balance())
+
+    # def test_sol_purchase_redeem_history(self):
+    #     print(self.StackingAPI.sol_purchase_redeem_history(type="purchase", status="", after="", before="", limit=""))
+
+    # def test_sol_apy_history(self):
+    #     print(self.StackingAPI.sol_apy_history(days="7"))
+
 if __name__ == "__main__":
     unittest.main()
