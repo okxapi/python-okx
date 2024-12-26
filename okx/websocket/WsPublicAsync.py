@@ -4,8 +4,7 @@ import logging
 
 from okx.websocket.WebSocketFactory import WebSocketFactory
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("WsPublic")
+logger = logging.getLogger(__name__)
 
 
 class WsPublicAsync:
@@ -21,7 +20,7 @@ class WsPublicAsync:
 
     async def consume(self):
         async for message in self.websocket:
-            logger.info("Received message: {%s}", message)
+            logger.debug("Received message: {%s}", message)
             if self.callback:
                 self.callback(message)
 
