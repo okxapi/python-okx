@@ -76,3 +76,4 @@ Note
     https://github.com/Rapptz/discord.py/issues/1996
     https://github.com/aaugustin/websockets/issues/587
     ```
+https://www.okx.com/docs-v5/en/#order-book-trading-trade-post-cancel-order
