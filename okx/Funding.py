@@ -5,7 +5,7 @@ from .consts import *
 class FundingAPI(OkxClient):
 
 
-    def __init__(self, api_key='-1', api_secret_key='-1', passphrase='-1', use_server_time=None, flag='1', domain = 'https://www.okx.com',debug = True, proxy=None):
+    def __init__(self, api_key='-1', api_secret_key='-1', passphrase='-1', use_server_time=None, flag='1', domain = 'https://www.okx.com',debug = False, proxy=None):
         OkxClient.__init__(self, api_key, api_secret_key, passphrase, use_server_time, flag, domain, debug, proxy)
 
     # Get Non Tradable Assets
@@ -35,8 +35,8 @@ class FundingAPI(OkxClient):
         return self._request_with_params(POST, FUNDS_TRANSFER, params)
 
     # Withdrawal
-    def withdrawal(self, ccy, amt, dest, toAddr, fee, chain='', areaCode='', clientId=''):
-        params = {'ccy': ccy, 'amt': amt, 'dest': dest, 'toAddr': toAddr, 'fee': fee, 'chain': chain,
+    def withdrawal(self, ccy, amt, dest, toAddr, chain='', areaCode='', clientId=''):
+        params = {'ccy': ccy, 'amt': amt, 'dest': dest, 'toAddr': toAddr, 'chain': chain,
                   'areaCode': areaCode, 'clientId': clientId}
         return self._request_with_params(POST, WITHDRAWAL_COIN, params)
 
