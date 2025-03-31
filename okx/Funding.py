@@ -41,8 +41,8 @@ class FundingAPI(OkxClient):
         return self._request_with_params(POST, WITHDRAWAL_COIN, params)
 
     # Get Deposit History
-    def get_deposit_history(self, ccy='', state='', after='', before='', limit='', txId='', depId='', fromWdId=''):
-        params = {'ccy': ccy, 'state': state, 'after': after, 'before': before, 'limit': limit, 'txId': txId,
+    def get_deposit_history(self, ccy='', type='', state='', after='', before='', limit='', txId='', depId='', fromWdId=''):
+        params = {'ccy': ccy, 'type': type, 'state': state, 'after': after, 'before': before, 'limit': limit, 'txId': txId,
                   'depId': depId, 'fromWdId': fromWdId}
         return self._request_with_params(GET, DEPOSIT_HISTORY, params)
 
