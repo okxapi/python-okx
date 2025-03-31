@@ -20,8 +20,6 @@ class MarketAPITest(unittest.TestCase):
         self.MarketApi = MarketData.MarketAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag='1')
     '''
     
-    def test_oracle(self):
-        print(self.MarketApi.get_oracle())
     def test_index_component(self):
         print(self.MarketApi.get_index_components("BTC-USDT"))
     def test_exchange_rate(self):
