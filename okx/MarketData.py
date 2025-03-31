@@ -60,10 +60,6 @@ class MarketAPI(OkxClient):
     def get_volume(self):
         return self._request_without_params(GET, VOLUMNE)
 
-    # Get Oracle
-    def get_oracle(self):
-        return self._request_without_params(GET, ORACLE)
-
     # Get Tier
     def get_tier(self, instType='', tdMode='', uly='', instId='', ccy='', tier=''):
         params = {'instType': instType, 'tdMode': tdMode, 'uly': uly, 'instId': instId, 'ccy': ccy, 'tier': tier}

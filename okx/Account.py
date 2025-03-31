@@ -27,13 +27,15 @@ class AccountAPI(OkxClient):
         params = {'instType': instType, 'instId': instId}
         return self._request_with_params(GET, POSITION_INFO, params)
 
-    def position_builder(self, inclRealPosAndEq=False, spotOffsetType=None, greeksType=None, simPos=None,
+    def position_builder(self, acctLv=None,inclRealPosAndEq=False, lever=None, greeksType=None, simPos=None,
                          simAsset=None):
         params = {}
+        if acctLv is not None:
+            params['acctLv'] = acctLv
         if inclRealPosAndEq is not None:
             params['inclRealPosAndEq'] = inclRealPosAndEq
-        if spotOffsetType is not None:
-            params['spotOffsetType'] = spotOffsetType
+        if lever is not None:
+            params['spotOffsetType'] = lever
         if greeksType is not None:
             params['greksType'] = greeksType
         if simPos is not None:

@@ -142,13 +142,6 @@ class TradeTest(unittest.TestCase):
     #
     #
     #     print(self.tradeApi.cancel_algo_order(params))
-    #     def test_cancel_adv_algos(self):
-    #     params = [{
-    #         'algoId': '485936482235191296',
-    #         'instId': 'BTC-USDT-SWAP'
-    #     }]
-    #
-    #     print(self.tradeApi.cancel_advance_algos(params)))
     #     def test_orders_algo_pending(self):
     #     print(self.tradeApi.order_algos_list(ordType='iceberg'))
     #     def test_algo_order_history(self):
