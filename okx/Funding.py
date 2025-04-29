@@ -79,27 +79,6 @@ class FundingAPI(OkxClient):
         params = {'ccy':ccy, 'invoice':invoice, 'memo':memo}
         return self._request_with_params(POST, WITHDRAWAL_LIGHTNING, params)
 
-    # POST SET LENDING RATE
-    def set_lending_rate(self, ccy, rate):
-        params = {'ccy': ccy, 'rate': rate}
-        return self._request_with_params(POST, SET_LENDING_RATE, params)
-
-    # GET LENDING HISTORY
-    def get_lending_history(self, ccy='', before='', after='', limit='' ):
-        params = {'ccy': ccy, 'after': after, 'before': before, 'limit': limit }
-        return self._request_with_params(GET, LENDING_HISTORY, params)
-
-    # GET LENDING RATE HISTORY
-    def get_lending_rate_history(self, ccy='',after = '',before = '',limit = '' ):
-        params = {'ccy': ccy,'after':after,'before':before,'limit':limit}
-        return self._request_with_params(GET, LENDING_RATE_HISTORY, params)
-
-    # GET LENDING RATE SUMMARY
-    def get_lending_rate_summary(self, ccy=''):
-        params = {'ccy': ccy}
-        return self._request_with_params(GET, LENDING_RATE_SUMMARY, params)
-
-
     #POST /api/v5/asset/cancel-withdrawal
     def cancel_withdrawal(self,wdId = ''):
         params = {
@@ -120,13 +99,6 @@ class FundingAPI(OkxClient):
             'ccy':ccy
         }
         return self._request_with_params(GET, ASSET_VALUATION, params)
-
-    #GET / api / v5 / asset / saving - balance
-    def get_saving_balance(self,ccy = ''):
-        params = {
-            'ccy':ccy
-        }
-        return self._request_with_params(GET, GET_SAVING_BALANCE, params)
 
     #Get non-tradable assets
     def get_non_tradable_assets(self, ccy=''):
