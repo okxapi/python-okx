@@ -12,14 +12,10 @@ class TradeAPI(OkxClient):
 
     # Place Order
     def place_order(self, instId, tdMode, side, ordType, sz, ccy='', clOrdId='', tag='', posSide='', px='',
-                    reduceOnly='', tgtCcy='', tpTriggerPx='', tpOrdPx='', slTriggerPx='', slOrdPx='',
-                    tpTriggerPxType='', slTriggerPxType='', quickMgnType='', stpId='', stpMode='',
-                    attachAlgoOrds=None):
+                    reduceOnly='', tgtCcy='', stpMode='', attachAlgoOrds=None, pxUsd='', pxVol='', banAmend=''):
         params = {'instId': instId, 'tdMode': tdMode, 'side': side, 'ordType': ordType, 'sz': sz, 'ccy': ccy,
                   'clOrdId': clOrdId, 'tag': tag, 'posSide': posSide, 'px': px, 'reduceOnly': reduceOnly,
-                  'tgtCcy': tgtCcy, 'tpTriggerPx': tpTriggerPx, 'tpOrdPx': tpOrdPx, 'slTriggerPx': slTriggerPx,
-                  'slOrdPx': slOrdPx, 'tpTriggerPxType': tpTriggerPxType, 'slTriggerPxType': slTriggerPxType,
-                  'quickMgnType': quickMgnType, 'stpId': stpId, 'stpMode': stpMode}
+                  'tgtCcy': tgtCcy, 'stpMode': stpMode, 'pxUsd': pxUsd, 'pxVol': pxVol, 'banAmend': banAmend}
         params['attachAlgoOrds'] = attachAlgoOrds
         return self._request_with_params(POST, PLACR_ORDER, params)
 
@@ -187,3 +183,21 @@ class TradeAPI(OkxClient):
                   'newSlTriggerPx': newSlTriggerPx, 'newSlOrdPx': newSlOrdPx,
                   'newTpTriggerPxType': newTpTriggerPxType, 'newSlTriggerPxType': newSlTriggerPxType}
         return self._request_with_params(POST, AMEND_ALGO_ORDER, params)
+
+    def get_oneclick_repay_list_v2(self):
+        return self._request_without_params(GET, ONE_CLICK_REPAY_SUPPORT_V2)
+
+    def oneclick_repay_v2(self, debtCcy='', repayCcyList=[]):
+        params = {
+            'debtCcy': debtCcy,
+            'repayCcyList': repayCcyList
+        }
+        return self._request_with_params(POST, ONE_CLICK_REPAY_V2, params)
+
+    def oneclick_repay_history_v2(self, after='', before='', limit=''):
+        params = {
+            'after': after,
+            'before': before,
+            'limit': limit
+        }
+        return self._request_with_params(GET, ONE_CLICK_REPAY_HISTORY_V2, params)
