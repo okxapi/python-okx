@@ -66,7 +66,7 @@ def save_optimization_results(results_df, file_path='optimization_results.csv', 
     # 保存为CSV（保留4位小数，添加时间戳表头）
     import time
     timestamp = time.strftime("%Y%m%d_%H%M%S")
-    file_name = f"{timestamp}_{file_path}" if save_all else file_path
+    file_name = f"data/{timestamp}_{file_path}" if save_all else file_path
     df_to_save[selected_columns].to_csv(
         file_name,
         index=False,

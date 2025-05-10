@@ -17,7 +17,7 @@ def main():
         param_ranges=param_ranges,
         initial_balance=100000,
         fees=(0.001, 0.001),
-        max_workers=4
+        max_workers=8
     )
 
     # 打印前5名最优参数组合
