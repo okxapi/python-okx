@@ -7,7 +7,7 @@ import pandas as pd
 from datetime import datetime
 
 
-def main():
+def get_ai_predict():
     print("===== BTC 价格预测分析系统 =====")
     print(f"分析时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("--------------------------------\n")
@@ -83,13 +83,13 @@ def main():
         print("=======================\n")
 
         # 8. 保存结果到文件
-        with open(f"btc_prediction_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json", "w") as f:
+        with open(f"result/btc_prediction_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json", "w") as f:
             json.dump(prediction, f, indent=4)
         print("分析结果已保存到文件")
+
+        return prediction
 
     except Exception as e:
         print(f"分析过程中发生错误: {e}")
 
 
-if __name__ == "__main__":
-    main()
