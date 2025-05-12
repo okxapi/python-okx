@@ -4,8 +4,11 @@ from datetime import datetime
 import openai
 import json
 from typing import Dict, Any
-from config import OPENAI_API_KEY
+
+import requests
+# from config import OPENAI_API_KEY
 from dotenv import load_dotenv
+from openai import OpenAI
 
 # 加载环境变量
 load_dotenv()
@@ -15,6 +18,7 @@ API_KEY = os.getenv("OKX_API_KEY")
 API_SECRET = os.getenv("OKX_API_SECRET")
 PASSPHRASE = os.getenv("OKX_API_PASSPHRASE")
 ENV_FLAG = os.getenv("OKX_ENV_FLAG")
+OPENAI_API_KEY = os.getenv("OPEN_AI_KEY")
 
 
 class AIAnalyzer:
@@ -60,7 +64,9 @@ class AIAnalyzer:
            - MA200：${data['technical_indicators']['MA200']:.2f}
            - RSI：{data['technical_indicators']['RSI']:.2f}
            - MACD：{data['technical_indicators']['MACD']:.2f}
+"""
 
+        """
         3. 链上数据：
            - 交易所余额：{data['onchain_data']['exchange_balance']:.2f} BTC
            - 交易所净流入：{data['onchain_data']['exchange_flow']:.2f} BTC (24h)
@@ -75,20 +81,48 @@ class AIAnalyzer:
 
         # 调用 OpenAI API
         try:
-            response = openai.ChatCompletion.create(
-                model="gpt-4",
-                messages=[
+
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {OPENAI_API_KEY}",
+                "HTTP-Referer": "https://yourwebsite.com",  # 必须是你控制的域名
+                "X-Title": "ChatGPT Plugin",  # 你的应用名称
+            }
+
+            data = {
+                "model": "qwen/qwen3-235b-a22b:free",
+                "messages": [
                     {"role": "system", "content": AIAnalyzer.SYSTEM_PROMPT},
                     {"role": "user", "content": user_prompt}
                 ],
-                temperature=0.3,  # 较低的温度使结果更确定性
-                max_tokens=1000
+                "temperature": 0.3,
+            }
+
+            response = requests.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers=headers,
+                data=json.dumps(data)
             )
 
-            # 解析 AI 响应
-            analysis = json.loads(response.choices[0].message.content)
-            analysis["analysis_date"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            return analysis
+            # 处理响应
+            if response.status_code == 200:
+                result = response.json()
+                print(result)
+                # 处理返回的结果
+                # 解析 AI 响应
+                message_content = result["choices"][0]["message"]["content"].replace("```json","").replace("```","")
+
+                # 解析 JSON 数据
+                try:
+                    analysis_data = json.loads(message_content)
+                except json.JSONDecodeError as e:
+                    print("JSON 解析错误:", e)
+                    analysis_data = {}
+                analysis_data["analysis_date"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                return analysis_data
+            else:
+                print(f"请求失败: {response.status_code}, {response.text}")
+
 
         except Exception as e:
             print(f"Error generating AI analysis: {e}")

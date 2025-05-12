@@ -1,6 +1,7 @@
 import json
 
-from technical_indicators import calculate_technical_indicators
+from CoinGeckoAPI import CoinGeckoAPI
+from myWork.ai.analysis.technical_indicators import calculate_technical_indicators
 from ai_analysis import AIAnalyzer
 import pandas as pd
 from datetime import datetime
@@ -35,9 +36,10 @@ def main():
         print(f"MACD: {technical_indicators['MACD']:.2f}\n")
 
         # 4. 获取链上数据
+        '''
         print("正在获取链上数据...")
-        glassnode_api = GlassnodeAPI()
-        onchain_data = glassnode_api.get_btc_onchain_data()
+        #glassnode_api = GlassnodeAPI()
+        # onchain_data = glassnode_api.get_btc_onchain_data()
         print(f"交易所余额: {onchain_data['exchange_balance']:.2f} BTC")
         print(f"24h 交易所净流入: {onchain_data['exchange_flow']:.2f} BTC")
         print(f"巨鲸交易数: {onchain_data['whale_transactions']} 笔")
@@ -45,16 +47,17 @@ def main():
 
         # 5. 获取恐惧与贪婪指数
         print("正在获取恐惧与贪婪指数...")
-        fear_greed_index = get_fear_greed_index()
+        #fear_greed_index = get_fear_greed_index()
         print(f"恐惧与贪婪指数: {fear_greed_index}\n")
+        '''
 
         # 6. 生成 AI 分析
         print("正在生成 AI 分析...")
         analysis_data = {
             "price_data": price_data,
             "technical_indicators": technical_indicators,
-            "onchain_data": onchain_data,
-            "fear_greed_index": fear_greed_index
+            # "onchain_data": onchain_data,
+            # "fear_greed_index": fear_greed_index
         }
 
         analyzer = AIAnalyzer()
