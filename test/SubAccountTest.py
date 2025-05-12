@@ -36,9 +36,6 @@ class SubAccountTest(unittest.TestCase):
 
     '''
 
-    # def test_get_the_user_affiliate_rebate_information(self):
-    #     print(self.SubAccountApi.get_the_user_affiliate_rebate_information(apiKey='3af380a7-72af-4cc6-80d1-4b5a34ea69ad'))
-
     # def test_set_sub_accounts_VIP_loan(self):
     #     print(self.SubAccountApi.set_sub_accounts_VIP_loan(enable='true',alloc=[{'subAcct':'coretrading7',
     #                                                                              'loanAlloc':'1'}]))
