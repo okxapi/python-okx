@@ -237,7 +237,7 @@ class TradeTest(unittest.TestCase):
     def test_get_oneclick_repay_list_v2(self):
         print(self.tradeApi.get_oneclick_repay_list_v2())
     def test_oneclick_repay_v2(self):
-        print(self.tradeApi.oneclick_repay_v2(['BTC'],['USDT']))
+        print(self.tradeApi.oneclick_repay_v2('BTC',['USDT']))
     def test_oneclick_repay_history_v2(self):
         print(self.tradeApi.oneclick_repay_history_v2())
 

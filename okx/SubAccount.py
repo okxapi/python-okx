@@ -59,13 +59,6 @@ class SubAccountAPI(OkxClient):
         }
         return self._request_with_params(GET, GET_ASSET_SUBACCOUNT_BALANCE, params)
 
-    # - Get the user's affiliate rebate information
-    def get_the_user_affiliate_rebate_information(self, apiKey=''):
-        params = {
-            'apiKey': apiKey
-        }
-        return self._request_with_params(GET, GET_THE_USER_AFFILIATE_REBATE, params)
-
     # - Set sub_accounts VIP loan%
     def set_sub_accounts_VIP_loan(self, enable='', alloc=[]):
         params = {
