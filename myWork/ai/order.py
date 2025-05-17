@@ -65,11 +65,11 @@ def execute_trades(analysis):
         print("没有有效的分析结果，无法执行交易")
         return
 
-    advice = analysis["advice"]
-    entry_price = analysis["entry_price"]
-    stop_loss_price = analysis["stop_loss_price"]
-    add_position_price = analysis["add_position_price"]
-    target_price = analysis["target_price"]
+    advice = analysis["trading_advice"]
+    entry_price = advice["entry_point"]
+    stop_loss_price = advice["stop_loss"]
+    add_position_price = analysis["resistance_level"]
+    target_price = advice["target_profit"]
 
     print(f"分析建议: {advice}")
     print(f"入场价格: {entry_price}")
@@ -219,6 +219,14 @@ def main():
 
 
 if __name__ == "__main__":
+    '''
     while True:
         main()
         time.sleep(150)  # 每2.5分钟执行一次策略
+    '''
+    filename = "result/btc_prediction_20250513_021802.json"
+
+    # 读取文件
+    with open(filename, "r", encoding="utf-8") as f:
+        prediction = json.load(f)
+    execute_trades(prediction)

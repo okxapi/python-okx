@@ -4,8 +4,8 @@ import numpy as np
 def backtest_strategy(
         df,
         initial_balance=10000,
-        buy_ratio=0.5,  # 买入资金比例（0 < ratio ≤ 1）
-        sell_ratio=0.5,  # 卖出持仓比例（0 < ratio ≤ 1）
+        buy_ratio=0.5,  # 买入资金占总资金的比例（0 < ratio ≤ 1）
+        sell_ratio=0.5,  # 卖出资金占总资金的比例（0 < ratio ≤ 1）
         buy_fee_rate=0.001,
         sell_fee_rate=0.001
 ):
@@ -16,10 +16,15 @@ def backtest_strategy(
 
     for idx, row in df.iterrows():
         signal, close_price = row['signal'], row['c']
+        # 计算当前总资产价值
+        total_value = balance + holdings * close_price
 
-        if signal == 1 and balance > 0:
-            # 按比例买入：使用buy_ratio比例的可用资金
-            planned_invest = balance * buy_ratio
+        if signal == 1:
+            # 按比例买入：使用buy_ratio比例的总资金
+            planned_invest = total_value * buy_ratio
+            # 确保不超过可用资金
+            if planned_invest > balance:
+                planned_invest = balance
             available_invest = planned_invest * (1 - buy_fee_rate)  # 扣除手续费后的实际使用金额
             amount = available_invest / close_price  # 实际购买数量
 
@@ -39,8 +44,13 @@ def backtest_strategy(
             balance -= planned_invest  # 扣除计划投入的资金（含手续费）
 
         elif signal == -1 and holdings > 0:
-            # 按比例卖出：卖出sell_ratio比例的持仓
-            planned_sell = holdings * sell_ratio  # 计划卖出数量
+            # 按比例卖出：卖出sell_ratio比例的总资金对应的持仓
+            planned_sell_value = total_value * sell_ratio  # 计划卖出的价值
+            # 确保不会卖出超过当前持有的价值
+            if planned_sell_value > holdings * close_price:
+                planned_sell_value = holdings * close_price
+            # 计算需要卖出的数量
+            planned_sell = planned_sell_value / close_price
             total_proceeds = planned_sell * close_price
             available_proceeds = total_proceeds * (1 - sell_fee_rate)  # 扣除手续费后的到账金额
 
@@ -49,7 +59,8 @@ def backtest_strategy(
                 'type': 'sell',
                 'price': close_price,
                 'ratio': sell_ratio,  # 记录使用的卖出比例
-                'planned_sell': planned_sell,
+                'planned_sell_value': planned_sell_value,  # 计划卖出的价值
+                'planned_sell': planned_sell,  # 计划卖出的数量
                 'actual_proceeds': available_proceeds,  # 扣除手续费后的到账金额
                 'amount': planned_sell,
                 'balance_after': balance + available_proceeds,  # 可用资金增加

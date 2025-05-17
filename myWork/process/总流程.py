@@ -12,7 +12,7 @@ backtest_result = backtest_strategy(
     signal_df,
     initial_balance=100000,
     buy_ratio=0.5,       # 每次用50%资金买入
-    sell_ratio=0.3,      # 每次卖出30%持仓
+    sell_ratio=0.5,      # 每次卖出30%持仓
     buy_fee_rate=0.001,
     sell_fee_rate=0.001
 )
