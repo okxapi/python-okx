@@ -1,3 +1,5 @@
+import pickle
+
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
@@ -83,3 +85,16 @@ if __name__ == "__main__":
     print("测试集X形状:", X_test.shape)
     print("训练集y形状:", y_train.shape)
     print("测试集y形状:", y_test.shape)
+
+    # 保存训练和测试数据（numpy数组）
+    np.save("X_train.npy", X_train)
+    np.save("X_test.npy", X_test)
+    np.save("y_train.npy", y_train)
+    np.save("y_test.npy", y_test)
+
+    # 保存标准化器（scaler）
+    with open("scaler.pkl", "wb") as f:
+        pickle.dump(scaler, f)
+
+    # 保存处理后的DataFrame（推荐使用Parquet格式）
+    df_processed.to_parquet("df_processed.parquet")
