@@ -3,6 +3,8 @@ import time
 
 import requests
 
+from myWork.another.all import process_trade_records
+
 
 def get_data(user_name):
     url = "https://www.okx.com/priapi/v5/ecotrade/public/community/user/trade-records"
@@ -103,6 +105,7 @@ def save_trade_records_to_csv(new_data, file_path="trade_records.csv"):
             writer.writerows(new_records)
 
         print(f"成功写入 {len(new_records)} 条新记录到 {file_path}")
+        process_trade_records()
     else:
         print("无新记录需要写入（已全部去重）")
 
@@ -116,8 +119,11 @@ except FileNotFoundError:
 
 # 遍历参数并定期处理
 while True:
-    for param in params:
-        a = get_data(param)
-        new_data = a.get("data", [])
-        save_trade_records_to_csv(new_data)
+    try:
+        for param in params:
+            a = get_data(param)
+            new_data = a.get("data", [])
+            save_trade_records_to_csv(new_data)
+    except:
+        continue
     time.sleep(60)  # 处理完所有参数后等待60秒

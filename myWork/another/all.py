@@ -211,7 +211,10 @@ def process_trade_records(file_path: str = "trade_records.csv") -> None:
     os.replace(temp_file, file_path)
     print(f"处理完成，更新文件: {file_path}")
 
-while True:
-    # 执行处理
-    process_trade_records()
-    time.sleep(5)
+# while True:
+#     try:
+#     # 执行处理
+#         process_trade_records()
+#     except:
+#         continue
+#     time.sleep(5)
