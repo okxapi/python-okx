@@ -1,3 +1,5 @@
+import pickle
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -64,6 +66,7 @@ def train_lstm_model(X_train, y_train, X_test, y_test,
 
     # 初始化模型
     model = LSTMModel(input_size, hidden_size, num_layers, output_size).to(device)
+    model.load_state_dict(torch.load('best_lstm_model.pth'))
 
     # 定义损失函数和优化器
     criterion = nn.MSELoss()
@@ -76,6 +79,7 @@ def train_lstm_model(X_train, y_train, X_test, y_test,
     best_val_loss = float('inf')
 
     for epoch in range(epochs):
+        print("開始訓練")
         model.train()
         train_loss = 0
         for X_batch, y_batch in train_loader:
@@ -109,8 +113,8 @@ def train_lstm_model(X_train, y_train, X_test, y_test,
             best_val_loss = val_loss
             torch.save(model.state_dict(), 'best_lstm_model.pth')
 
-        if (epoch + 1) % 10 == 0:
-            print(f'Epoch [{epoch + 1}/{epochs}], Train Loss: {train_loss:.6f}, Val Loss: {val_loss:.6f}')
+
+        print(f'Epoch [{epoch + 1}/{epochs}], Train Loss: {train_loss:.6f}, Val Loss: {val_loss:.6f}')
 
     # 加载最佳模型
     model.load_state_dict(torch.load('best_lstm_model.pth'))
@@ -147,7 +151,7 @@ def plot_training_history(history):
     plt.ylabel('Loss')
     plt.legend()
     plt.grid(True)
-    plt.show()
+    plt.savefig(f"history.png", dpi=300)
 
 
 def plot_predictions(y_true, y_pred, title='Price Prediction'):
@@ -160,14 +164,22 @@ def plot_predictions(y_true, y_pred, title='Price Prediction'):
     plt.ylabel('Price')
     plt.legend()
     plt.grid(True)
-    plt.show()
+    plt.savefig(f"prediction.png", dpi=300)
 
 
 def main(file_path, lookback=60, forecast=1, split_ratio=0.8):
     # 准备数据
-    X_train, X_test, y_train, y_test, scaler, df_processed = prepare_training_data(
-        file_path, lookback, forecast, split_ratio
-    )
+    X_train = np.load("X_train.npy")
+    X_test = np.load("X_test.npy")
+    y_train = np.load("y_train.npy")
+    y_test = np.load("y_test.npy")
+
+    # 加载scaler
+    with open("scaler.pkl", "rb") as f:
+        scaler = pickle.load(f)
+
+    # 加载DataFrame
+    # df_processed = pd.read_parquet("df_processed.parquet")
 
     # 确定输入特征数量
     input_size = X_train.shape[2]
@@ -180,16 +192,16 @@ def main(file_path, lookback=60, forecast=1, split_ratio=0.8):
     model, history = train_lstm_model(
         X_train, y_train, X_test, y_test,
         input_size=input_size,
-        hidden_size=64,
+        hidden_size=16,
         num_layers=2,
         output_size=forecast,
-        batch_size=64,
-        epochs=50,
+        batch_size=16,
+        epochs=0,
         lr=0.001,
         device=device
     )
-
-    # 绘制训练历史
+    #
+    # # 绘制训练历史
     plot_training_history(history)
 
     # 在测试集上预测
