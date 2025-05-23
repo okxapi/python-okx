@@ -14,9 +14,9 @@ passphrase = os.getenv("OKX_API_PASSPHRASE")
 ENV_FLAG = os.getenv("OKX_ENV_FLAG")
 
 # API实例
-trade_api = TradeAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag='0')
-market_api = MarketData.MarketAPI(flag='0')
-public_api = PublicData.PublicAPI(flag='0')
+trade_api = TradeAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag=ENV_FLAG)
+market_api = MarketData.MarketAPI(flag=ENV_FLAG)
+public_api = PublicData.PublicAPI(flag=ENV_FLAG)
 
 # 缓存产品信息，避免重复查询
 instrument_cache = {}
@@ -57,22 +57,41 @@ def get_instrument_info(inst_id: str) -> Optional[Dict]:
         return None
 
 
+from functools import lru_cache
+from datetime import datetime, timedelta
+
+
 def get_realtime_price(inst_id: str) -> Dict[str, float]:
-    """获取实时行情数据"""
-    try:
-        result = market_api.get_ticker(instId=inst_id)
-        if result["code"] == "0" and len(result["data"]) > 0:
-            data = result["data"][0]
-            return {
-                "ask_px": float(data["askPx"]),
-                "bid_px": float(data["bidPx"])
-            }
-        else:
-            print(f"行情查询失败: {result.get('msg', '无错误信息')}")
+    """获取实时行情数据(带2分钟缓存)"""
+
+    @lru_cache(maxsize=128)
+    def _get_cached_price(inst_id: str, timestamp: str) -> Dict[str, float]:
+        """内部缓存函数，通过时间戳控制缓存有效期"""
+        try:
+            result = market_api.get_ticker(instId=inst_id)
+            if result["code"] == "0" and len(result["data"]) > 0:
+                data = result["data"][0]
+                return {
+                    "ask_px": float(data["askPx"]),
+                    "bid_px": float(data["bidPx"])
+                }
+            else:
+                print(f"行情查询失败: {result.get('msg', '无错误信息')}")
+                return {}
+        except Exception as e:
+            print(f"行情接口异常: {str(e)}")
             return {}
-    except Exception as e:
-        print(f"行情接口异常: {str(e)}")
-        return {}
+
+    # 生成2分钟精度的时间戳作为缓存key
+    current_time = datetime.now()
+    # 计算当前时间向下取整到最近的2分钟
+    timestamp = current_time - timedelta(minutes=current_time.minute % 2,
+                                         seconds=current_time.second,
+                                         microseconds=current_time.microsecond)
+    # 将时间戳转为字符串作为缓存标识
+    timestamp_str = timestamp.strftime("%Y%m%d%H%M")
+
+    return _get_cached_price(inst_id, timestamp_str)
 
 
 def process_trade_records(file_path: str = "trade_records.csv") -> None:
@@ -192,6 +211,7 @@ def process_trade_records(file_path: str = "trade_records.csv") -> None:
     os.replace(temp_file, file_path)
     print(f"处理完成，更新文件: {file_path}")
 
-
-# 执行处理
-process_trade_records()
+while True:
+    # 执行处理
+    process_trade_records()
+    time.sleep(5)
