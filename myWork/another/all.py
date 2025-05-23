@@ -1,10 +1,10 @@
 import csv
 import time
-from typing import List, Dict
+from typing import List, Dict, Optional
 import os
 from dotenv import load_dotenv
 from okx.Trade import TradeAPI
-from okx import MarketData  # 新增行情查询模块
+from okx import MarketData, PublicData
 
 # 初始化API客户端
 load_dotenv()
@@ -13,10 +13,49 @@ api_secret_key = os.getenv("OKX_API_SECRET")
 passphrase = os.getenv("OKX_API_PASSPHRASE")
 ENV_FLAG = os.getenv("OKX_ENV_FLAG")
 
-# 交易API
-trade_api = TradeAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag=ENV_FLAG)
-# 行情API
-market_api = MarketData.MarketAPI(flag=ENV_FLAG)  # 实盘环境，模拟盘请改为1
+# API实例
+trade_api = TradeAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag='0')
+market_api = MarketData.MarketAPI(flag='0')
+public_api = PublicData.PublicAPI(flag='0')
+
+# 缓存产品信息，避免重复查询
+instrument_cache = {}
+
+
+def get_instrument_info(inst_id: str) -> Optional[Dict]:
+    """获取产品基础信息，包括最小下单量等参数"""
+    global instrument_cache
+
+    # 优先使用缓存
+    if inst_id in instrument_cache:
+        return instrument_cache[inst_id]
+
+    try:
+        # 根据instId推断instType
+        if "-SWAP" in inst_id:
+            inst_type = "SWAP"
+        elif "-FUTURES" in inst_id:
+            inst_type = "FUTURES"
+        elif "-OPTION" in inst_id:
+            inst_type = "OPTION"
+        elif "-MARGIN" in inst_id:
+            inst_type = "MARGIN"
+        else:
+            inst_type = "SPOT"
+
+        # 查询产品信息
+        result = public_api.get_instruments(instType=inst_type, instId=inst_id)
+        if result["code"] == "0" and len(result["data"]) > 0:
+            info = result["data"][0]
+            instrument_cache[inst_id] = info
+            return info
+        else:
+            print(f"获取{inst_id}产品信息失败: {result.get('msg', '无错误信息')}")
+            return None
+    except Exception as e:
+        print(f"查询产品信息异常: {str(e)}")
+        return None
+
 
 def get_realtime_price(inst_id: str) -> Dict[str, float]:
     """获取实时行情数据"""
@@ -25,8 +64,8 @@ def get_realtime_price(inst_id: str) -> Dict[str, float]:
         if result["code"] == "0" and len(result["data"]) > 0:
             data = result["data"][0]
             return {
-                "ask_px": float(data["askPx"]),  # 卖一价
-                "bid_px": float(data["bidPx"])   # 买一价
+                "ask_px": float(data["askPx"]),
+                "bid_px": float(data["bidPx"])
             }
         else:
             print(f"行情查询失败: {result.get('msg', '无错误信息')}")
@@ -35,10 +74,11 @@ def get_realtime_price(inst_id: str) -> Dict[str, float]:
         print(f"行情接口异常: {str(e)}")
         return {}
 
+
 def process_trade_records(file_path: str = "trade_records.csv") -> None:
     temp_file = "temp_trade_records.csv"
     with open(file_path, "r", encoding="utf-8") as infile, \
-         open(temp_file, "w", encoding="utf-8", newline="") as outfile:
+            open(temp_file, "w", encoding="utf-8", newline="") as outfile:
 
         reader = csv.DictReader(infile)
         headers = reader.fieldnames
@@ -61,6 +101,13 @@ def process_trade_records(file_path: str = "trade_records.csv") -> None:
                 writer.writerow(row)
                 continue
 
+            # 获取产品信息
+            instrument_info = get_instrument_info(uly)
+            if not instrument_info:
+                print(f"跳过{row['ordId']}: 无法获取产品信息")
+                writer.writerow(row)
+                continue
+
             # 获取实时行情
             price_data = get_realtime_price(uly)
             if not price_data:
@@ -70,24 +117,37 @@ def process_trade_records(file_path: str = "trade_records.csv") -> None:
 
             # 动态调整价格
             if side == "buy":
-                # 买单价格不能超过卖一价
                 adjusted_px = min(original_px, price_data["ask_px"])
             elif side == "sell":
-                # 卖单价格不能低于买一价
                 adjusted_px = max(original_px, price_data["bid_px"])
             else:
                 print(f"未知方向{side}，使用原始价格")
                 adjusted_px = original_px
 
-            # 价格调整日志
-            if adjusted_px != original_px:
-                print(f"订单{row['ordId']}价格调整: {original_px} → {adjusted_px}")
-
-            # 计算数量（保留8位小数，OKX通常要求4-8位，具体看交易对）
+            # 计算下单数量
             base_sz = value_amount / original_px
-            adjusted_sz = base_sz * 0.00035
-            sz = f"{adjusted_sz:.8f}"
-            px = f"{adjusted_px:.8f}"
+            adjusted_sz = base_sz * 0.035
+
+            # 数量精度处理
+            min_sz = float(instrument_info["minSz"])
+            lot_sz = float(instrument_info["lotSz"])
+
+            # 确保数量符合最小下单量要求
+            if adjusted_sz < min_sz:
+                print(f"订单{row['ordId']}数量{adjusted_sz}低于最小下单量{min_sz}，调整为最小下单量")
+                adjusted_sz = min_sz
+
+            # 按精度舍入
+            def round_to_step(value: float, step: float) -> float:
+                """按指定步长舍入"""
+                return round(value / step) * step
+
+            final_sz = round_to_step(adjusted_sz, lot_sz)
+
+            # 再次检查是否满足最小下单量
+            if final_sz < min_sz:
+                final_sz = min_sz
+                print(f"订单{row['ordId']}舍入后数量{final_sz}仍低于最小下单量")
 
             # 构造交易参数
             trade_params = {
@@ -96,41 +156,42 @@ def process_trade_records(file_path: str = "trade_records.csv") -> None:
                 "side": side,
                 "ccy": "USDT",
                 "ordType": "limit",
-                "sz": sz,
-                "px": px
+                "sz": f"{final_sz:.8f}",  # 数量精度
+                "px": f"{adjusted_px:.8f}"  # 价格精度
             }
 
-            # 执行下单（带重试机制）
+            # 执行下单
             max_retries = 3
             for attempt in range(max_retries):
                 try:
-                    print(f"[{attempt+1}/{max_retries}] 提交订单: {trade_params}")
+                    print(f"[{attempt + 1}/{max_retries}] 提交订单: {trade_params}")
                     result = trade_api.place_order(**trade_params)
                     if result["code"] == "0":
                         print(f"订单{row['ordId']}成功: {result['data']}")
                         row["alias"] = "none"
                         break
                     else:
-                        # 处理特定错误（如价格限制）
                         error = result["data"][0]
+                        print(f"订单失败: {error['sMsg']}")
+
+                        # 处理特定错误
                         if error["sCode"] == "51137" and "buy orders" in error["sMsg"]:
-                            # 从错误信息中提取最高限价（备用方案）
                             new_px = float(error["sMsg"].split("is ")[1].split(". ")[0])
                             print(f"触发价格限制，使用强制限价: {new_px}")
                             trade_params["px"] = f"{new_px:.8f}"
                         else:
-                            print(f"订单失败: {error['sMsg']}")
                             row["alias"] = "none"
                             break
                 except Exception as e:
                     print(f"下单异常: {str(e)}")
                     if attempt == max_retries - 1:
                         row["alias"] = "none"
-            time.sleep(1)  # 增加间隔避免API限流
+            time.sleep(1)  # API调用间隔
             writer.writerow(row)
 
     os.replace(temp_file, file_path)
     print(f"处理完成，更新文件: {file_path}")
+
 
 # 执行处理
 process_trade_records()
