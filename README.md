@@ -5,8 +5,6 @@ If you came here looking to purchase cryptocurrencies from the OKX exchange, ple
 
 #### Source code
 https://github.com/okxapi/python-okx
-#### OKX API Telegram
-https://t.me/OKXAPI
 #### API trading tutorials
 - Spot trading: https://www.okx.com/help/how-can-i-do-spot-trading-with-the-jupyter-notebook
 - Derivative trading: https://www.okx.com/help/how-can-i-do-derivatives-trading-with-the-jupyter-notebook
