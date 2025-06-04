@@ -14,6 +14,7 @@ class WsPublicAsync:
         self.callback = None
         self.loop = asyncio.get_event_loop()
         self.factory = WebSocketFactory(url)
+        self.websocket = None
 
     async def connect(self):
         self.websocket = await self.factory.connect()
