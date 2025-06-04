@@ -19,6 +19,7 @@ class WsPrivateAsync:
         self.passphrase = passphrase
         self.secretKey = secretKey
         self.useServerTime = useServerTime
+        self.websocket = None
 
     async def connect(self):
         self.websocket = await self.factory.connect()
