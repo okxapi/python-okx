@@ -23,8 +23,9 @@ def save_strategy_performance(db_config, performance, strategy_config, start_tim
              trade_count, dca_count, take_profit_count, win_rate, final_portfolio_value,
              price_drop_threshold, max_time_since_last_trade, min_time_since_last_trade,
              take_profit_threshold, initial_capital, initial_investment_ratio, initial_dca_value,
+             total_fees,
              start_time, end_time)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
 
             # 执行插入
@@ -45,6 +46,7 @@ def save_strategy_performance(db_config, performance, strategy_config, start_tim
                 strategy_config['initial_capital'],
                 strategy_config['initial_investment_ratio'],
                 strategy_config['initial_dca_value'],
+                strategy_config['total_fees'],
                 start_time,
                 end_time
             ))

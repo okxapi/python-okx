@@ -5,10 +5,12 @@ from datetime import datetime, timedelta
 import pymysql
 import random
 
+
 class DCAStrategy:
     def __init__(self, price_drop_threshold=0.02, max_time_since_last_trade=7,
                  min_time_since_last_trade=3, take_profit_threshold=0.01,
-                 initial_capital=100000, initial_investment_ratio=0.5, initial_dca_value=0.1):
+                 initial_capital=100000, initial_investment_ratio=0.5, initial_dca_value=0.1,
+                 buy_fee_rate=0.001, sell_fee_rate=0.001):
         """
         初始化DCA策略参数
 
@@ -19,7 +21,10 @@ class DCAStrategy:
         take_profit_threshold: 止盈阈值(百分比)
         initial_capital: 初始资金
         initial_investment_ratio: 初始投资使用的资金比例
+        buy_fee_rate: 买入交易费用比例
+        sell_fee_rate: 卖出交易费用比例
         """
+        self.portfolio_df = None
         self.price_drop_threshold = price_drop_threshold
         self.max_time_since_last_trade = max_time_since_last_trade
         self.min_time_since_last_trade = min_time_since_last_trade
@@ -27,6 +32,8 @@ class DCAStrategy:
         self.initial_capital = initial_capital
         self.initial_investment_ratio = initial_investment_ratio
         self.initial_dca_value = initial_dca_value
+        self.buy_fee_rate = buy_fee_rate
+        self.sell_fee_rate = sell_fee_rate
 
         # 策略状态
         self.positions = []  # 持仓记录
@@ -91,9 +98,17 @@ class DCAStrategy:
         if self.portfolio['position'] == 0:
             # 使用设定比例的资金建立初始仓位
             amount_to_invest = self.portfolio['cash'] * self.initial_investment_ratio
+
+            # 计算包含交易费用的总金额
+            total_amount = amount_to_invest / (1 - self.buy_fee_rate)
+
+            # 计算实际支付的交易费用
+            fee = total_amount - amount_to_invest
+
+            # 计算可购买的份额
             shares_to_buy = amount_to_invest / current_price
 
-            self.portfolio['cash'] -= amount_to_invest
+            self.portfolio['cash'] -= total_amount
             self.portfolio['position'] = shares_to_buy
             self.portfolio['avg_price'] = current_price
             self.portfolio['last_trade_time'] = current_time
@@ -107,7 +122,8 @@ class DCAStrategy:
                 'price': current_price,
                 'position': shares_to_buy,
                 'cash': self.portfolio['cash'],
-                'portfolio_value': self.portfolio['cash'] + self.portfolio['position'] * current_price
+                'portfolio_value': self.portfolio['cash'] + self.portfolio['position'] * current_price,
+                'fee': fee
             })
 
             return
@@ -163,15 +179,22 @@ class DCAStrategy:
         else:
             amount_to_invest = self.initial_dca_amount
 
+        # 计算包含交易费用的总金额
+        total_amount = amount_to_invest / (1 - self.buy_fee_rate)
+
+        # 计算实际支付的交易费用
+        fee = total_amount - amount_to_invest
+
+        # 计算可购买的份额
         shares_to_buy = amount_to_invest / current_price
 
         # 更新平均价格
-        total_value = (self.portfolio['position'] * self.portfolio['avg_price']) + amount_to_invest
+        total_value = (self.portfolio['position'] * self.portfolio['avg_price']) + total_amount
         total_shares = self.portfolio['position'] + shares_to_buy
         new_avg_price = total_value / total_shares
 
         # 更新投资组合
-        self.portfolio['cash'] -= amount_to_invest
+        self.portfolio['cash'] -= total_amount
         self.portfolio['position'] = total_shares
         self.portfolio['avg_price'] = new_avg_price
         self.portfolio['last_trade_time'] = current_time
@@ -185,7 +208,8 @@ class DCAStrategy:
             'cash': self.portfolio['cash'],
             'avg_price': new_avg_price,
             'portfolio_value': self.portfolio['cash'] + total_shares * current_price,
-            'dca_amount': amount_to_invest
+            'dca_amount': amount_to_invest,
+            'fee': fee
         })
 
     def calculate_performance(self, df):
@@ -224,6 +248,10 @@ class DCAStrategy:
         # 计算DCA使用次数
         dca_count = len([t for t in self.trades if t['type'] == 'DCA'])
 
+        # 计算总交易费用
+        total_fees = sum(t['fee'] for t in self.trades if 'fee' in t)
+        # print(total_fees)
+
         return {
             'total_return': total_return,
             'annualized_return': annualized_return,
@@ -233,16 +261,25 @@ class DCAStrategy:
             'dca_count': dca_count,
             'take_profit_count': len(take_profit_trades),
             'win_rate': win_rate,
-            'final_portfolio_value': self.portfolio_df['portfolio_value'].iloc[-1]
+            'final_portfolio_value': self.portfolio_df['portfolio_value'].iloc[-1],
+            'total_fees': total_fees
         }
 
     def _execute_take_profit(self, current_time, current_price):
         """执行止盈操作"""
-        # 卖出全部持仓
+        # 计算持仓价值
         position_value = self.portfolio['position'] * current_price
-        profit = position_value - (self.portfolio['position'] * self.portfolio['avg_price'])
 
-        self.portfolio['cash'] += position_value
+        # 计算交易费用
+        fee = position_value * self.sell_fee_rate
+
+        # 计算扣除交易费用后的实际收入
+        actual_income = position_value - fee
+
+        # 计算利润
+        profit = actual_income - (self.portfolio['position'] * self.portfolio['avg_price'])
+
+        self.portfolio['cash'] += actual_income
         self.portfolio['position'] = 0
         self.portfolio['avg_price'] = 0
         self.portfolio['last_trade_time'] = current_time
@@ -255,7 +292,8 @@ class DCAStrategy:
             'position': 0,
             'cash': self.portfolio['cash'],
             'profit': profit,
-            'portfolio_value': self.portfolio['cash']
+            'portfolio_value': self.portfolio['cash'],
+            'fee': fee
         })
 
     def plot_performance(self):
@@ -310,4 +348,4 @@ class DCAStrategy:
         plt.grid(True)
 
         plt.tight_layout()
-        plt.show()
+        plt.show()    
