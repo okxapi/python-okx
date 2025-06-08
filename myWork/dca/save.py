@@ -1,22 +1,14 @@
 import pymysql
 
+from myWork.dca.mysql_read import MySQLDataReader
+from myWork.dca.stg import DCAStrategy
+
 
 def save_strategy_performance(db_config, performance, strategy_config, start_time, end_time):
-    """
-    将策略回测结果和配置参数保存到MySQL数据库
-    """
+    """将策略回测结果和配置参数保存到MySQL数据库"""
     try:
-        # 连接数据库
-        connection = pymysql.connect(
-            host=db_config['host'],
-            user=db_config['user'],
-            password=db_config['password'],
-            database=db_config['database'],
-            port=db_config['port']
-        )
-
+        connection = pymysql.connect(**db_config)
         with connection.cursor() as cursor:
-            # SQL插入语句
             sql = """
             INSERT INTO strategy_performance 
             (total_return, annualized_return, sharpe_ratio, max_drawdown, 
@@ -25,10 +17,8 @@ def save_strategy_performance(db_config, performance, strategy_config, start_tim
              take_profit_threshold, initial_capital, initial_investment_ratio, initial_dca_value,
              total_fees,
              start_time, end_time)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s ,%s)
             """
-
-            # 执行插入
             cursor.execute(sql, (
                 performance['total_return'],
                 performance['annualized_return'],
@@ -46,18 +36,44 @@ def save_strategy_performance(db_config, performance, strategy_config, start_tim
                 strategy_config['initial_capital'],
                 strategy_config['initial_investment_ratio'],
                 strategy_config['initial_dca_value'],
-                strategy_config['total_fees'],
+                performance.get('total_fees', 0),
                 start_time,
                 end_time
             ))
-
-        # 提交事务
         connection.commit()
-        print("策略表现数据已成功保存到数据库")
+        print("\n数据已成功提交到数据库")
 
     except Exception as e:
-        print(f"保存数据到数据库时出错: {e}")
+        print(f"\n保存数据到数据库时出错: {e}")
+        import traceback
+        traceback.print_exc()
     finally:
-        # 关闭连接
         if connection:
             connection.close()
+
+
+def run_strategy(config, db_config, start_time, end_time):
+    """运行策略并返回性能指标"""
+    try:
+        reader = MySQLDataReader(**db_config)
+        reader.connect()
+        df = reader.get_sorted_history_data(start_time, end_time)
+        reader.disconnect()
+
+        if df.empty:
+            print("未获取到任何数据")
+            return None
+
+        strategy = DCAStrategy(**config)
+        performance = strategy.backtest(df)
+
+        # 保存到数据库
+        save_strategy_performance(db_config, performance, config, start_time, end_time)
+
+        return {
+            'config': config,
+            'performance': performance
+        }
+    except Exception as e:
+        print(f"运行策略时发生错误: {e}")
+        return None
