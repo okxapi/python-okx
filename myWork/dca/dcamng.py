@@ -13,9 +13,6 @@ from myWork.dca.save import run_strategy
 from myWork.dca.stg import DCAStrategy
 
 
-
-
-
 def parameter_range_training(db_config, base_config, param_ranges, start_time, end_time, n_jobs=1):
     """
     执行参数范围训练，测试不同参数组合的策略表现
@@ -96,19 +93,19 @@ def main():
 
     # 定义要测试的参数范围
     parameter_ranges = {
-        'price_drop_threshold': [0.01, 0.02, 0.03, 0.05],  # 价格下跌1-5%
+        'price_drop_threshold': [0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.05],  # 价格下跌1-5%
         'max_time_since_last_trade': [24, 48, 72, 96, 120],  # 最长无交易时间1-5小时
-        'min_time_since_last_trade': [6, 12, 24, 48],  # 最短无交易时间0.25-2小时
+        'min_time_since_last_trade': [6, 12, 24, 36, 48],  # 最短无交易时间0.25-2小时
         'take_profit_threshold': [0.005, 0.01, 0.015, 0.02],  # 止盈阈值0.5-2%
-        'initial_investment_ratio': [0.05, 0.1, 0.2, 0.3],  # 初始投资比例
-        'initial_dca_value': [0.02, 0.035, 0.05, 0.07]  # 初始DCA值
+        'initial_investment_ratio': [0.05, 0.1, 0.015, 0.2, 0.025, 0.3],  # 初始投资比例
+        'initial_dca_value': [0.02, 0.025, 0.03, 0.035, 0.04, 0.045, 0.05, 0.07]  # 初始DCA值
     }
 
     # 初始资金通常不作为优化参数，但可以测试不同的值
     # 这里我们保持初始资金不变
 
     # 执行参数范围训练 (使用4个CPU核心并行处理)
-    parameter_range_training(db_config, base_strategy_config, parameter_ranges, start_time, end_time, n_jobs=1)
+    parameter_range_training(db_config, base_strategy_config, parameter_ranges, start_time, end_time, n_jobs=4)
 
 
 if __name__ == "__main__":

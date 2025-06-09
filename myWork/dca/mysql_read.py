@@ -63,13 +63,14 @@ class MySQLDataReader:
             print(f"执行查询失败: {e}")
             raise
 
-    def get_sorted_history_data(self, start_time=None, end_time=None, limit=None):
+    def get_sorted_history_data(self, start_time=None, end_time=None, currency=None, limit=None):
         """
         获取sorted_history表中的数据
 
         参数:
         start_time: 开始时间，默认为None，表示不限制
         end_time: 结束时间，默认为None，表示不限制
+        currency: 币种，默认为None，表示不限制
         limit: 返回记录数限制，默认为None，表示不限制
 
         返回:
@@ -86,6 +87,10 @@ class MySQLDataReader:
         if end_time:
             conditions.append("ts <= %s")
             params.append(end_time)
+
+        if currency:
+            conditions.append("currency = %s")  # 添加币种条件
+            params.append(currency)
 
         if conditions:
             query += " WHERE " + " AND ".join(conditions)

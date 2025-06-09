@@ -4,22 +4,23 @@ from myWork.dca.mysql_read import MySQLDataReader
 from myWork.dca.stg import DCAStrategy
 
 
-def save_strategy_performance(db_config, performance, strategy_config, start_time, end_time):
+def save_strategy_performance(db_config, performance, strategy_config, start_time, end_time, currency):
     """将策略回测结果和配置参数保存到MySQL数据库"""
     try:
         connection = pymysql.connect(**db_config)
         with connection.cursor() as cursor:
             sql = """
             INSERT INTO strategy_performance 
-            (total_return, annualized_return, sharpe_ratio, max_drawdown, 
+            (currency, total_return, annualized_return, sharpe_ratio, max_drawdown, 
              trade_count, dca_count, take_profit_count, win_rate, final_portfolio_value,
              price_drop_threshold, max_time_since_last_trade, min_time_since_last_trade,
              take_profit_threshold, initial_capital, initial_investment_ratio, initial_dca_value,
              total_fees,
              start_time, end_time)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s ,%s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
             cursor.execute(sql, (
+                currency,  # 添加币种参数
                 performance['total_return'],
                 performance['annualized_return'],
                 performance['sharpe_ratio'],
@@ -41,10 +42,10 @@ def save_strategy_performance(db_config, performance, strategy_config, start_tim
                 end_time
             ))
         connection.commit()
-        print("\n数据已成功提交到数据库")
+        print(f"\n{currency} 数据已成功提交到数据库")
 
     except Exception as e:
-        print(f"\n保存数据到数据库时出错: {e}")
+        print(f"\n保存{currency}数据到数据库时出错: {e}")
         import traceback
         traceback.print_exc()
     finally:
@@ -57,7 +58,7 @@ def run_strategy(config, db_config, start_time, end_time):
     try:
         reader = MySQLDataReader(**db_config)
         reader.connect()
-        df = reader.get_sorted_history_data(start_time, end_time)
+        df = reader.get_sorted_history_data(start_time, end_time, config.get('currency', 'UNKNOWN'))
         reader.disconnect()
 
         if df.empty:
@@ -67,8 +68,15 @@ def run_strategy(config, db_config, start_time, end_time):
         strategy = DCAStrategy(**config)
         performance = strategy.backtest(df)
 
-        # 保存到数据库
-        save_strategy_performance(db_config, performance, config, start_time, end_time)
+        # 保存到数据库，从配置中获取币种
+        save_strategy_performance(
+            db_config,
+            performance,
+            config,
+            start_time,
+            end_time,
+            config.get('currency', 'UNKNOWN')  # 从配置中获取币种，如果没有则使用默认值
+        )
 
         return {
             'config': config,
