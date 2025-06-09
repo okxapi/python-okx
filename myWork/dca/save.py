@@ -6,7 +6,7 @@ from myWork.dca.mysql_read import MySQLDataReader
 from myWork.dca.stg import DCAStrategy
 
 
-def save_strategy_performance(db_config, performance, strategy_config, start_time, end_time, currency):
+def save_strategy_performance(db_config, performance, strategy_config, start_time, end_time, currency, debug=False):
     """将策略回测结果和配置参数保存到MySQL数据库"""
     # 定义需要验证的字段列表
     required_performance_fields = [
@@ -81,36 +81,48 @@ def save_strategy_performance(db_config, performance, strategy_config, start_tim
                 end_time
             )
 
-            # 打印参数信息用于调试
-            print("\n准备插入的参数:")
-            print(f"currency: {currency}")
-            for field in required_performance_fields:
-                print(f"performance['{field}']: {performance[field]} ({type(performance[field])})")
-            for field in required_strategy_fields:
-                print(f"strategy_config['{field}']: {strategy_config[field]} ({type(strategy_config[field])})")
-            print(f"total_fees: {performance.get('total_fees', 0)}")
-            print(f"start_time: {start_time} ({type(start_time)})")
-            print(f"end_time: {end_time} ({type(end_time)})")
+            # 仅在debug模式下打印参数信息
+            if debug:
+                print("\n准备插入的参数:")
+                print(f"currency: {currency}")
+                for field in required_performance_fields:
+                    print(f"performance['{field}']: {performance[field]} ({type(performance[field])})")
+                for field in required_strategy_fields:
+                    print(f"strategy_config['{field}']: {strategy_config[field]} ({type(strategy_config[field])})")
+                print(f"total_fees: {performance.get('total_fees', 0)}")
+                print(f"start_time: {start_time} ({type(start_time)})")
+                print(f"end_time: {end_time} ({type(end_time)})")
 
             cursor.execute(sql, params)
         connection.commit()
-        print(f"\n{currency} 数据已成功提交到数据库")
+
+        # 仅在debug模式下打印成功信息
+        if debug:
+            print(f"\n{currency} 数据已成功提交到数据库")
 
     except ValueError as ve:
-        print(f"\n数据验证错误: {ve}")
+        # 仅在debug模式下打印错误信息
+        if debug:
+            print(f"\n数据验证错误: {ve}")
         raise
     except TypeError as te:
-        print(f"\n类型错误: {te}")
+        # 仅在debug模式下打印错误信息
+        if debug:
+            print(f"\n类型错误: {te}")
         raise
     except pymysql.Error as e:
-        print(f"\nMySQL错误 ({e.args[0]}): {e.args[1]}")
-        # 获取错误的SQL语句
-        print(f"错误的SQL: {cursor.mogrify(sql, params).decode('utf-8')}")
+        # 仅在debug模式下打印数据库错误信息
+        if debug:
+            print(f"\nMySQL错误 ({e.args[0]}): {e.args[1]}")
+            # 获取错误的SQL语句
+            print(f"错误的SQL: {cursor.mogrify(sql, params).decode('utf-8')}")
         raise
     except Exception as e:
-        print(f"\n保存{currency}数据到数据库时出错: {e}")
-        import traceback
-        traceback.print_exc()
+        # 仅在debug模式下打印其他错误信息
+        if debug:
+            print(f"\n保存{currency}数据到数据库时出错: {e}")
+            import traceback
+            traceback.print_exc()
         raise
     finally:
         if connection and connection.open:

@@ -4,9 +4,14 @@ import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import pymysql
 import random
+import multiprocessing
+from functools import lru_cache
+from cachetools import TTLCache
+from cachetools.keys import hashkey
+
 
 class MySQLDataReader:
-    def __init__(self, host, user, password, database, port=3306, charset='utf8mb4'):
+    def __init__(self, host, user, password, database, port=3306, charset='utf8mb4', cache_maxsize=10, cache_ttl=3600):
         """
         初始化数据库连接参数
 
@@ -17,6 +22,8 @@ class MySQLDataReader:
         database: 数据库名称
         port: 数据库端口，默认为3306
         charset: 字符集，默认为utf8mb4
+        cache_maxsize: 缓存最多存储的数据集数量
+        cache_ttl: 缓存数据的有效时间(秒)
         """
         self.host = host
         self.user = user
@@ -25,6 +32,9 @@ class MySQLDataReader:
         self.port = port
         self.charset = charset
         self.connection = None
+        self.cache = TTLCache(maxsize=cache_maxsize, ttl=cache_ttl)
+        # 使用进程锁替代线程锁
+        self.lock = multiprocessing.RLock()
 
     def connect(self):
         """建立数据库连接"""
@@ -65,7 +75,7 @@ class MySQLDataReader:
 
     def get_sorted_history_data(self, start_time=None, end_time=None, currency=None, limit=None):
         """
-        获取sorted_history表中的数据
+        获取sorted_history表中的数据，支持多进程缓存读取
 
         参数:
         start_time: 开始时间，默认为None，表示不限制
@@ -76,37 +86,66 @@ class MySQLDataReader:
         返回:
         pandas DataFrame格式的数据
         """
-        query = "SELECT * FROM sorted_history_sui"
-        conditions = []
-        params = []
+        # 生成缓存键
+        key = hashkey(start_time, end_time, currency, limit)
 
-        if start_time:
-            conditions.append("ts >= %s")
-            params.append(start_time)
+        # 进程安全的缓存读取
+        with self.lock:
+            if key in self.cache:
+                print(f"从缓存获取数据: start={start_time}, end={end_time}, currency={currency}, limit={limit}")
+                return self.cache[key].copy()  # 返回副本，避免修改缓存数据
 
-        if end_time:
-            conditions.append("ts <= %s")
-            params.append(end_time)
+            # 缓存未命中，从数据库读取
+            query = "SELECT * FROM sorted_history_sui"
+            conditions = []
+            params = []
 
-        # if currency:
-        #     conditions.append("currency = %s")  # 添加币种条件
-        #     params.append(currency)
+            if start_time:
+                conditions.append("ts >= %s")
+                params.append(start_time)
 
-        if conditions:
-            query += " WHERE " + " AND ".join(conditions)
+            if end_time:
+                conditions.append("ts <= %s")
+                params.append(end_time)
 
-        query += " ORDER BY ts ASC"
+            # if currency:
+            #     conditions.append("currency = %s")  # 添加币种条件
+            #     params.append(currency)
 
-        if limit:
-            query += f" LIMIT {limit}"
+            if conditions:
+                query += " WHERE " + " AND ".join(conditions)
 
-        result = self.execute_query(query, params)
+            query += " ORDER BY ts ASC"
 
-        # 转换为DataFrame
-        df = pd.DataFrame(result)
+            if limit:
+                query += f" LIMIT {limit}"
 
-        # 确保ts列是datetime类型
-        if 'ts' in df.columns:
-            df['ts'] = pd.to_datetime(df['ts'])
+            result = self.execute_query(query, params)
 
-        return df
+            # 转换为DataFrame
+            df = pd.DataFrame(result)
+
+            # 确保ts列是datetime类型
+            if 'ts' in df.columns:
+                df['ts'] = pd.to_datetime(df['ts'])
+
+            # 缓存数据
+            self.cache[key] = df.copy()  # 存储副本，避免外部修改
+            print(f"已缓存数据: start={start_time}, end={end_time}, currency={currency}, limit={limit}")
+
+            return df
+
+    def clear_cache(self):
+        """清空缓存"""
+        with self.lock:
+            self.cache.clear()
+            print("缓存已清空")
+
+    def get_cache_info(self):
+        """获取缓存信息"""
+        with self.lock:
+            return {
+                'current_size': len(self.cache),
+                'max_size': self.cache.maxsize,
+                'ttl': self.cache.ttl
+            }
