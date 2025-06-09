@@ -69,7 +69,7 @@ def parameter_range_training(db_config, base_config, param_ranges, start_time, e
 def main():
     # 配置数据库连接信息
     db_config = {
-        'host': 'localhost',
+        'host': '192.168.123.11',
         'user': 'root',
         'password': 'qwe12345',
         'database': 'trading_db',
@@ -84,7 +84,8 @@ def main():
         'take_profit_threshold': 0.01,  # 止盈阈值
         'initial_capital': 100000,  # 初始资金
         'initial_investment_ratio': 0.1,  # 初始投资比例
-        'initial_dca_value': 0.035  # 初始DCA值
+        'initial_dca_value': 0.035,  # 初始DCA值
+        # 'currency':"SUI"
     }
 
     # 配置数据时间范围

@@ -225,7 +225,7 @@ class ParameterTrainingSystem:
         return best_result
 
 
-def run_distributed_training_worker(worker_id, db_config, config_id, start_time, end_time):
+def run_distributed_training_worker(worker_id, config_id, db_config, start_time, end_time):
     """分布式训练工作进程，处理待训练的参数组合"""
     system = ParameterTrainingSystem(db_config)
     config_details = system.get_config_details(config_id)
@@ -255,13 +255,12 @@ def run_distributed_training_worker(worker_id, db_config, config_id, start_time,
                 # 合并基础配置和当前参数
                 config = base_config.copy()
                 config.update(parameters)
-                # 将币种添加到配置中
-                config['currency'] = task_currency
+                config['currency'] = task_currency  # 将币种添加到配置中
 
-                # 运行策略
+                # 运行策略（注意：这里假设run_strategy需要币种参数）
                 result = run_strategy(
-                    db_config=db_config,
                     config=config,
+                    db_config=db_config,
                     start_time=start_time,
                     end_time=end_time
                 )
@@ -350,6 +349,7 @@ def main():
 
     # 本地多进程分布式训练示例
     with Pool(processes=4) as pool:
+        # 使用partial绑定db_config、start_time、end_time为关键字参数
         worker_func = partial(
             run_distributed_training_worker,
             db_config=db_config,
@@ -357,11 +357,12 @@ def main():
             end_time=end_time
         )
 
-        # 为每个币种启动工作进程
+        # worker_args 只需要传递 worker_id 和 config_id
         worker_args = [(f"{currency}-worker-{i}", config_id)
                        for currency, config_id in config_ids.items()
-                       for i in range(2)]  # 每个币种使用2个工作进程
+                       for i in range(2)]  # 每个币种启动2个工作进程
 
+        # 使用starmap传递(worker_id, config_id)
         list(tqdm(pool.starmap(worker_func, worker_args), total=len(worker_args)))
 
     # 获取每个币种的最佳参数组合

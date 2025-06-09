@@ -76,7 +76,7 @@ class MySQLDataReader:
         返回:
         pandas DataFrame格式的数据
         """
-        query = "SELECT * FROM sorted_history"
+        query = "SELECT * FROM sorted_history_sui"
         conditions = []
         params = []
 
@@ -88,9 +88,9 @@ class MySQLDataReader:
             conditions.append("ts <= %s")
             params.append(end_time)
 
-        if currency:
-            conditions.append("currency = %s")  # 添加币种条件
-            params.append(currency)
+        # if currency:
+        #     conditions.append("currency = %s")  # 添加币种条件
+        #     params.append(currency)
 
         if conditions:
             query += " WHERE " + " AND ".join(conditions)
