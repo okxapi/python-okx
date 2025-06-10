@@ -1,16 +1,14 @@
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from datetime import datetime, timedelta
-import pymysql
-import random
+import datetime
+from functools import partial
 from itertools import product
 from multiprocessing import Pool
-from functools import partial
+
+import numpy as np
+import pandas as pd
 from tqdm import tqdm
-from myWork.dca.mysql_read import MySQLDataReader
-from myWork.dca.save import run_strategy
-from myWork.dca.stg import DCAStrategy
+
+from myWork.dca.test.mysql_read import MySQLDataReader
+from myWork.dca.test.save import run_strategy_df
 
 
 def parameter_range_training(db_config, base_config, param_ranges, start_time, end_time, n_jobs=1):
@@ -40,10 +38,15 @@ def parameter_range_training(db_config, base_config, param_ranges, start_time, e
             config[name] = value
         all_configs.append(config)
 
+    reader = MySQLDataReader(**db_config)
+    reader.connect()
+    df = reader.get_sorted_history_data(start_time, end_time, config.get('currency', 'UNKNOWN'))
+    reader.disconnect()
+
     # 使用多进程并行运行回测
     with Pool(processes=n_jobs) as pool:
-        func = partial(run_strategy, db_config=db_config,
-                       start_time=start_time, end_time=end_time)
+        func = partial(run_strategy_df, db_config=db_config,
+                       start_time=start_time, end_time=end_time, df=df)
         results = list(tqdm(pool.imap(func, all_configs), total=total_runs))
 
     # 过滤掉失败的结果
@@ -89,24 +92,29 @@ def main():
     }
 
     # 配置数据时间范围
-    end_time = datetime.now()
-    start_time = end_time - pd.Timedelta(days=90)
+    end_time = datetime.datetime(2025, 6, 8)  # 设置结束时间为2025年6月8日
+    start_time = end_time - pd.Timedelta(days=120)  # 开始时间为结束时间前120天
 
     # 定义要测试的参数范围
+    def generate_range(min_val, max_val, step):
+        """生成从min到max的等间隔数值列表"""
+        return list(np.arange(min_val, max_val + step, step))
+
     parameter_ranges = {
-        'price_drop_threshold': [0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.05],  # 价格下跌1-5%
-        'max_time_since_last_trade': [24, 48, 72, 96, 120],  # 最长无交易时间1-5小时
-        'min_time_since_last_trade': [6, 12, 24, 36, 48],  # 最短无交易时间0.25-2小时
-        'take_profit_threshold': [0.005, 0.01, 0.015, 0.02],  # 止盈阈值0.5-2%
-        'initial_investment_ratio': [0.05, 0.1, 0.015, 0.2, 0.025, 0.3],  # 初始投资比例
-        'initial_dca_value': [0.02, 0.025, 0.03, 0.035, 0.04, 0.045, 0.05, 0.07]  # 初始DCA值
+        'price_drop_threshold': generate_range(0.01, 0.05, 0.005),  # 价格下跌1-5%
+        'max_time_since_last_trade': generate_range(24, 120, 24),  # 最长无交易时间1-5天
+        'min_time_since_last_trade': generate_range(6, 48, 6),  # 最短无交易时间0.25-2天
+        'take_profit_threshold': generate_range(0.005, 0.03, 0.005),  # 止盈阈值0.5-2%
+        'initial_investment_ratio': generate_range(0.05, 0.3, 0.05),  # 初始投资比例5-30%
+        'initial_dca_value': generate_range(0.02, 0.06
+                                            , 0.005)  # 初始DCA值2-7%
     }
 
     # 初始资金通常不作为优化参数，但可以测试不同的值
     # 这里我们保持初始资金不变
 
     # 执行参数范围训练 (使用4个CPU核心并行处理)
-    parameter_range_training(db_config, base_strategy_config, parameter_ranges, start_time, end_time, n_jobs=4)
+    parameter_range_training(db_config, base_strategy_config, parameter_ranges, start_time, end_time, n_jobs=8)
 
 
 if __name__ == "__main__":

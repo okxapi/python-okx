@@ -2,8 +2,8 @@ from datetime import datetime
 
 import pymysql
 
-from myWork.dca.mysql_read import MySQLDataReader
-from myWork.dca.stg import DCAStrategy
+from myWork.dca.test.mysql_read import MySQLDataReader
+from myWork.dca.test.stg import DCAStrategy
 
 
 def save_strategy_performance(db_config, performance, strategy_config, start_time, end_time, currency, debug=False):
@@ -129,20 +129,20 @@ def save_strategy_performance(db_config, performance, strategy_config, start_tim
             connection.close()
 
 
-def run_strategy(config, db_config, start_time, end_time):
+def run_strategy_df(config, db_config, start_time, end_time, df):
     """运行策略并返回性能指标"""
     try:
-        reader = MySQLDataReader(**db_config)
-        reader.connect()
-        df = reader.get_sorted_history_data(start_time, end_time, config.get('currency', 'UNKNOWN'))
-        reader.disconnect()
 
         if df.empty:
-            print("未获取到任何数据")
-            return None
+            reader = MySQLDataReader(**db_config)
+            reader.connect()
+            df = reader.get_sorted_history_data(start_time, end_time, config.get('currency', 'UNKNOWN'))
+            reader.disconnect()
+
+        df1 = df.copy(deep=True)  # 确保所有层级数据独立
 
         strategy = DCAStrategy(**config)
-        performance = strategy.backtest(df)
+        performance = strategy.backtest(df1)
 
         # 保存到数据库，从配置中获取币种
         save_strategy_performance(

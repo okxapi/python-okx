@@ -47,51 +47,6 @@ class DCAStrategy:
         }
         self.initial_dca_amount = None  # 记录首次DCA金额
 
-    def prepare_data(self, df):
-        """准备策略所需的数据"""
-        # 确保数据按时间排序
-        df = df.sort_values('ts')
-
-        # 计算价格变动百分比
-        df['price_change_pct'] = df['close'].pct_change()
-
-        return df.dropna()
-
-    def backtest(self, df):
-        """回测策略"""
-        df = self.prepare_data(df)
-
-        # 记录每日资产变化
-        portfolio_values = []
-        dates = []
-
-        # 初始化上次交易价格为第一个价格点
-        self.portfolio['last_trade_price'] = df['close'].iloc[0]
-
-        for i, row in df.iterrows():
-            current_price = row['close']
-            current_time = row['ts']
-
-            # 记录日期和当前资产价值
-            dates.append(current_time)
-            portfolio_value = self.portfolio['cash'] + self.portfolio['position'] * current_price
-            portfolio_values.append(portfolio_value)
-
-            # 更新峰值价值
-            if portfolio_value > self.portfolio['peak_value']:
-                self.portfolio['peak_value'] = portfolio_value
-
-            # 执行交易逻辑
-            self._execute_trading_logic(current_time, current_price)
-
-        # 转换为DataFrame以便分析
-        self.portfolio_df = pd.DataFrame({
-            'date': dates,
-            'portfolio_value': portfolio_values
-        })
-
-        return self.calculate_performance(df)
-
     def _execute_trading_logic(self, current_time, current_price):
         """执行交易逻辑"""
         # 如果没有持仓，创建初始仓位
@@ -212,6 +167,82 @@ class DCAStrategy:
             'fee': fee
         })
 
+    def _execute_take_profit(self, current_time, current_price):
+        """执行止盈操作"""
+        # 计算持仓价值
+        position_value = self.portfolio['position'] * current_price
+
+        # 计算交易费用
+        fee = position_value * self.sell_fee_rate
+
+        # 计算扣除交易费用后的实际收入
+        actual_income = position_value - fee
+
+        # 计算利润
+        profit = actual_income - (self.portfolio['position'] * self.portfolio['avg_price'])
+
+        self.portfolio['cash'] += actual_income
+        self.portfolio['position'] = 0
+        self.portfolio['avg_price'] = 0
+        self.portfolio['last_trade_time'] = current_time
+        self.portfolio['last_trade_price'] = current_price
+
+        self.trades.append({
+            'time': current_time,
+            'type': 'TAKE_PROFIT',
+            'price': current_price,
+            'position': 0,
+            'cash': self.portfolio['cash'],
+            'profit': profit,
+            'portfolio_value': self.portfolio['cash'],
+            'fee': fee
+        })
+
+    def prepare_data(self, df):
+        """准备策略所需的数据"""
+        # 确保数据按时间排序
+        df = df.sort_values('ts')
+
+        # 计算价格变动百分比
+        df['price_change_pct'] = df['close'].pct_change()
+
+        return df.dropna()
+
+    def backtest(self, df):
+        """回测策略"""
+        df = self.prepare_data(df)
+
+        # 记录每日资产变化
+        portfolio_values = []
+        dates = []
+
+        # 初始化上次交易价格为第一个价格点
+        self.portfolio['last_trade_price'] = df['close'].iloc[0]
+
+        for i, row in df.iterrows():
+            current_price = row['close']
+            current_time = row['ts']
+
+            # 记录日期和当前资产价值
+            dates.append(current_time)
+            portfolio_value = self.portfolio['cash'] + self.portfolio['position'] * current_price
+            portfolio_values.append(portfolio_value)
+
+            # 更新峰值价值
+            if portfolio_value > self.portfolio['peak_value']:
+                self.portfolio['peak_value'] = portfolio_value
+
+            # 执行交易逻辑
+            self._execute_trading_logic(current_time, current_price)
+
+        # 转换为DataFrame以便分析
+        self.portfolio_df = pd.DataFrame({
+            'date': dates,
+            'portfolio_value': portfolio_values
+        })
+
+        return self.calculate_performance(df)
+
     def calculate_performance(self, df):
         """计算策略表现指标"""
         if not hasattr(self, 'portfolio_df'):
@@ -265,37 +296,6 @@ class DCAStrategy:
             'total_fees': total_fees
         }
 
-    def _execute_take_profit(self, current_time, current_price):
-        """执行止盈操作"""
-        # 计算持仓价值
-        position_value = self.portfolio['position'] * current_price
-
-        # 计算交易费用
-        fee = position_value * self.sell_fee_rate
-
-        # 计算扣除交易费用后的实际收入
-        actual_income = position_value - fee
-
-        # 计算利润
-        profit = actual_income - (self.portfolio['position'] * self.portfolio['avg_price'])
-
-        self.portfolio['cash'] += actual_income
-        self.portfolio['position'] = 0
-        self.portfolio['avg_price'] = 0
-        self.portfolio['last_trade_time'] = current_time
-        self.portfolio['last_trade_price'] = current_price
-
-        self.trades.append({
-            'time': current_time,
-            'type': 'TAKE_PROFIT',
-            'price': current_price,
-            'position': 0,
-            'cash': self.portfolio['cash'],
-            'profit': profit,
-            'portfolio_value': self.portfolio['cash'],
-            'fee': fee
-        })
-
     def plot_performance(self):
         """绘制策略表现图表"""
         if not hasattr(self, 'portfolio_df'):
@@ -348,4 +348,4 @@ class DCAStrategy:
         plt.grid(True)
 
         plt.tight_layout()
-        plt.show()    
+        plt.show()
