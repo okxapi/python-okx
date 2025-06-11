@@ -5,6 +5,9 @@ import pandas as pd
 import os
 import json
 import random
+
+import pymysql
+from dotenv import load_dotenv
 from tqdm import tqdm
 
 # ======================
@@ -12,7 +15,7 @@ from tqdm import tqdm
 # ======================
 CONFIG = {
     "API_ENV": "0",  # 0: 实盘, 1: 模拟盘
-    "INST_ID": "BTC-USDT",  # 交易对
+    "INST_ID": "SUI-USDT",  # 交易对
     "BAR": "1m",  # 时间粒度 (1s/1m/3m/5m/15m/30m/1H/2H/4H/6H/12H/1D等)
     "LIMIT": 100,  # 每页数据量 (最大100)
     "TIME_RANGE_DAYS": 365,  # 时间范围 (天数)
@@ -23,13 +26,123 @@ CONFIG = {
     "STATE_FILE": "download_state.json",  # 状态保存文件名
     "MAX_RETRIES": 5,  # API请求最大重试次数
     "RETRY_DELAY": 5,  # 重试前等待秒数 (基础值)
-    "RANDOM_DELAY": 3  # 随机延迟上限 (避免请求风暴)
+    "RANDOM_DELAY": 3,  # 随机延迟上限 (避免请求风暴)
+    "MYSQL_TABLE": "sorted_history_sui"  # MySQL表名
 }
+
+load_dotenv()
+
+# 获取配置
+MYSQL_CONN = os.getenv("MYSQL_CONN")
+MYSQL_PASS = os.getenv("MYSQL_PASS")
+
+
+def create_connection():
+    """创建与MySQL数据库的连接"""
+    try:
+        connection = pymysql.connect(
+            host=MYSQL_CONN,
+            port=3306,
+            user='root',
+            password=MYSQL_PASS,
+            database='trading_db',
+            cursorclass=pymysql.cursors.DictCursor
+        )
+        return connection
+    except Exception as e:
+        print(f"数据库连接失败: {e}")
+        return None
+
+
+def create_table_if_not_exists():
+    """如果表不存在，则创建表"""
+    connection = create_connection()
+    if not connection:
+        return False
+
+    try:
+        with connection.cursor() as cursor:
+            # 创建表的SQL语句
+            sql = f"""
+            CREATE TABLE IF NOT EXISTS {CONFIG['MYSQL_TABLE']} (
+                ts DATETIME NOT NULL,
+                open DECIMAL(30,15),
+                high DECIMAL(30,15),
+                low DECIMAL(30,15),
+                close DECIMAL(30,15),
+                volume DECIMAL(30,15),
+                vol_ccy VARCHAR(50),
+                vol_ccy_quote DECIMAL(30,15),
+                confirm VARCHAR(10),
+                PRIMARY KEY (ts)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+            """
+            cursor.execute(sql)
+        connection.commit()
+        print(f"表 {CONFIG['MYSQL_TABLE']} 已准备就绪")
+        return True
+    except Exception as e:
+        print(f"创建表失败: {e}")
+        return False
+    finally:
+        connection.close()
+
+
+def save_to_mysql(df):
+    """将DataFrame数据保存到MySQL表中"""
+    connection = create_connection()
+    if not connection:
+        return False
+
+    try:
+        with connection.cursor() as cursor:
+            # 准备SQL语句
+            sql = f"""
+            INSERT INTO {CONFIG['MYSQL_TABLE']} 
+            (ts, open, high, low, close, volume, vol_ccy, vol_ccy_quote, confirm)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON DUPLICATE KEY UPDATE
+            open = VALUES(open),
+            high = VALUES(high),
+            low = VALUES(low),
+            close = VALUES(close),
+            volume = VALUES(volume),
+            vol_ccy = VALUES(vol_ccy),
+            vol_ccy_quote = VALUES(vol_ccy_quote),
+            confirm = VALUES(confirm)
+            """
+
+            # 准备数据
+            data = []
+            for _, row in df.iterrows():
+                data.append((
+                    row['ts'],
+                    row['open'],
+                    row['high'],
+                    row['low'],
+                    row['close'],
+                    row['volume'],
+                    row['vol_ccy'],
+                    row['vol_ccy_quote'],
+                    row['confirm']
+                ))
+
+            # 批量插入数据
+            cursor.executemany(sql, data)
+        connection.commit()
+        print(f"已成功将 {len(df)} 条数据写入MySQL表 {CONFIG['MYSQL_TABLE']}")
+        return True
+    except Exception as e:
+        print(f"写入MySQL失败: {e}")
+        return False
+    finally:
+        connection.close()
+
 
 # ======================
 # 初始化API客户端
 # ======================
-market_data_api = MarketData.MarketAPI(flag=CONFIG["API_ENV"])
+market_data_api = MarketData.MarketAPI(flag=CONFIG["API_ENV"],proxy='http://127.0.0.1:7890')
 
 
 # ======================
@@ -56,63 +169,6 @@ def save_state(state):
             json.dump(state, f)
     except Exception as e:
         print(f"保存状态文件失败: {e}")
-
-
-# ======================
-# 按时间对整个CSV文件进行排序
-# ======================
-def sort_csv_by_time():
-    temp_file = CONFIG["SAVE_PATH"] + CONFIG["TEMP_FILE"]
-    final_file = CONFIG["SAVE_PATH"] + CONFIG["FINAL_FILE"]
-
-    if not os.path.exists(temp_file):
-        print("错误：找不到临时数据文件")
-        return
-
-    print("开始对数据进行最终排序...")
-
-    # 读取并排序整个文件
-    try:
-        # 分块读取大型CSV文件
-        chunksize = 100000
-        chunks = []
-
-        # 显示读取进度
-        file_size = os.path.getsize(temp_file)
-        progress_bar = tqdm(total=file_size, unit='B', unit_scale=True, desc="读取数据")
-
-        bytes_read = 0
-        for chunk in pd.read_csv(temp_file, chunksize=chunksize):
-            # 将时间戳转换为datetime类型
-            chunk['ts'] = pd.to_datetime(chunk['ts'])
-            # 对每个块进行排序
-            chunk = chunk.sort_values('ts')
-            chunks.append(chunk)
-            bytes_read += chunk.memory_usage(deep=True).sum()
-            progress_bar.update(bytes_read - progress_bar.n)
-
-        progress_bar.close()
-
-        # 合并所有块
-        print("合并并写入排序后的数据...")
-        all_data = pd.concat(chunks, ignore_index=True)
-        del chunks  # 释放内存
-
-        # 写入到新文件
-        all_data.to_csv(final_file, index=False)
-
-        print(f"排序完成！最终文件保存在: {final_file}")
-        print(f"总行数: {len(all_data)}")
-        print(f"时间范围: {all_data['ts'].min()} 至 {all_data['ts'].max()}")
-
-        # 可选：删除临时文件
-        print("正在删除临时文件...")
-        os.remove(temp_file)
-        print("临时文件已删除")
-
-    except Exception as e:
-        print(f"排序过程中发生错误: {e}")
-        print(f"部分数据可能已保存到 {final_file}，但可能不完整")
 
 
 # ======================
@@ -165,6 +221,11 @@ def fetch_data_with_retry(after_ts):
 def main():
     # 创建保存目录
     os.makedirs(CONFIG["SAVE_PATH"], exist_ok=True)
+
+    # 确保MySQL表存在
+    if not create_table_if_not_exists():
+        print("无法创建MySQL表，程序退出")
+        return
 
     # 加载之前的下载状态
     state = load_state()
@@ -251,13 +312,9 @@ def main():
                 # 确保数据按时间正序排列
                 df = df.sort_values("ts").reset_index(drop=True)
 
-                # 保存为CSV文件
-                file_path = f"{CONFIG['SAVE_PATH']}{CONFIG['TEMP_FILE']}"
-                file_exists = os.path.exists(file_path)
-
-                try:
-                    df.to_csv(file_path, mode='a', index=False, header=not file_exists)
-                    print(f"已追加保存 {len(batch_data)} 条数据到文件")
+                # 保存到MySQL表
+                if save_to_mysql(df):
+                    print(f"已成功保存 {len(batch_data)} 条数据到MySQL表")
 
                     # 保存当前状态
                     state = {
@@ -269,11 +326,9 @@ def main():
 
                     # 清空批次数据
                     batch_data = []
-
-                except Exception as e:
-                    print(f"保存文件失败: {str(e)}")
-                    print("请检查保存路径是否存在，或是否有写入权限")
-                    break
+                else:
+                    print("保存数据到MySQL失败，程序退出")
+                    return
 
             # 安全间隔 (避免突发流量)
             time.sleep(0.1)
@@ -299,14 +354,10 @@ def main():
                 df["ts"] = pd.to_datetime(df["ts"].astype(int), unit="ms")
                 df = df.sort_values("ts").reset_index(drop=True)
 
-                file_path = f"{CONFIG['SAVE_PATH']}{CONFIG['TEMP_FILE']}"
-                file_exists = os.path.exists(file_path)
-
-                try:
-                    df.to_csv(file_path, mode='a', index=False, header=not file_exists)
-                    print(f"已保存剩余 {len(batch_data)} 条数据")
-                except Exception as save_e:
-                    print(f"保存剩余数据失败: {str(save_e)}")
+                if save_to_mysql(df):
+                    print(f"已成功保存剩余 {len(batch_data)} 条数据到MySQL表")
+                else:
+                    print("保存剩余数据到MySQL失败")
 
             print("程序已暂停。可随时重新运行以继续下载。")
             return
@@ -322,12 +373,8 @@ def main():
         # 确保数据按时间正序排列
         df = df.sort_values("ts").reset_index(drop=True)
 
-        file_path = f"{CONFIG['SAVE_PATH']}{CONFIG['TEMP_FILE']}"
-        file_exists = os.path.exists(file_path)
-
-        try:
-            df.to_csv(file_path, mode='a', index=False, header=not file_exists)
-            print(f"已追加保存剩余 {len(batch_data)} 条数据到文件")
+        if save_to_mysql(df):
+            print(f"已成功保存剩余 {len(batch_data)} 条数据到MySQL表")
 
             # 删除状态文件，表示下载完成
             state_path = CONFIG["SAVE_PATH"] + CONFIG["STATE_FILE"]
@@ -335,19 +382,14 @@ def main():
                 os.remove(state_path)
                 print("已删除状态文件")
 
-            print(f"\n临时数据已完整保存到文件: {file_path}")
-
-            # 执行最终排序
-            sort_csv_by_time()
-
-        except Exception as e:
-            print(f"保存剩余数据失败: {str(e)}")
-            print("下载未完成，请重新运行程序继续下载")
+            print(f"\n数据已完整保存到MySQL表: {CONFIG['MYSQL_TABLE']}")
+            print(f"总行数: {total_records}")
+        else:
+            print("保存剩余数据到MySQL失败")
     else:
         print("没有需要保存的剩余数据")
-        # 如果没有剩余数据但已下载过部分数据，也执行排序
-        if os.path.exists(CONFIG["SAVE_PATH"] + CONFIG["TEMP_FILE"]):
-            sort_csv_by_time()
+        print(f"\n数据已完整保存到MySQL表: {CONFIG['MYSQL_TABLE']}")
+        print(f"总行数: {total_records}")
 
 
 if __name__ == "__main__":
