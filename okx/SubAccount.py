@@ -3,7 +3,7 @@ from .consts import *
 
 
 class SubAccountAPI(OkxClient):
-    def __init__(self, api_key='-1', api_secret_key='-1', passphrase='-1', use_server_time=None, flag='1', domain = 'https://www.okx.com',debug = True, proxy=None):
+    def __init__(self, api_key='-1', api_secret_key='-1', passphrase='-1', use_server_time=None, flag='1', domain = 'https://www.okx.com',debug = False, proxy=None):
         OkxClient.__init__(self, api_key, api_secret_key, passphrase, use_server_time, flag, domain, debug, proxy)
 
     def get_account_balance(self, subAcct):
@@ -58,13 +58,6 @@ class SubAccountAPI(OkxClient):
             'ccy':ccy
         }
         return self._request_with_params(GET, GET_ASSET_SUBACCOUNT_BALANCE, params)
-
-    # - Get the user's affiliate rebate information
-    def get_the_user_affiliate_rebate_information(self, apiKey=''):
-        params = {
-            'apiKey': apiKey
-        }
-        return self._request_with_params(GET, GET_THE_USER_AFFILIATE_REBATE, params)
 
     # - Set sub_accounts VIP loan%
     def set_sub_accounts_VIP_loan(self, enable='', alloc=[]):

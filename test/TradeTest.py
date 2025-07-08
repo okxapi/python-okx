@@ -125,8 +125,8 @@ class TradeTest(unittest.TestCase):
     #     print(self.tradeApi.get_orders_history("SPOT"))
     # def test_get_order_histry_archive(self):
     #     print(self.tradeApi.orders_history_archive("SPOT"))
-    def test_get_fills(self):
-        print(self.tradeApi.get_fills(begin='1717045609000',end='1717045609100'))
+    # def test_get_fills(self):
+    #     print(self.tradeApi.get_fills(begin='1717045609000',end='1717045609100'))
     # def test_get_fills_history(self):
     #     print(self.tradeApi.get_fills_history("SPOT"))
     # def test_get_order_algo_pending(self):
@@ -142,13 +142,6 @@ class TradeTest(unittest.TestCase):
     #
     #
     #     print(self.tradeApi.cancel_algo_order(params))
-    #     def test_cancel_adv_algos(self):
-    #     params = [{
-    #         'algoId': '485936482235191296',
-    #         'instId': 'BTC-USDT-SWAP'
-    #     }]
-    #
-    #     print(self.tradeApi.cancel_advance_algos(params)))
     #     def test_orders_algo_pending(self):
     #     print(self.tradeApi.order_algos_list(ordType='iceberg'))
     #     def test_algo_order_history(self):
@@ -241,6 +234,12 @@ class TradeTest(unittest.TestCase):
     # def test_close_all_positions(self):
     #     print(self.tradeApi.close_positions(instId="BTC-USDT-SWAP", mgnMode="cross",clOrdId='1213124'))
 
+    def test_get_oneclick_repay_list_v2(self):
+        print(self.tradeApi.get_oneclick_repay_list_v2())
+    def test_oneclick_repay_v2(self):
+        print(self.tradeApi.oneclick_repay_v2('BTC',['USDT']))
+    def test_oneclick_repay_history_v2(self):
+        print(self.tradeApi.oneclick_repay_history_v2())
 
 if __name__ == '__main__':
     unittest.main()

@@ -7,9 +7,9 @@ from okx import Account
 
 class AccountTest(unittest.TestCase):
     def setUp(self):
-        api_key = '52049394-3c72-4c06-8d87-d6399450c264'
-        api_secret_key = 'E532EB5AF81E6E50A2875225FEDC9150'
-        passphrase = 'Fixedloan2024!'
+        api_key = 'your_apiKey'
+        api_secret_key = 'your_secretKey'
+        passphrase = 'your_secretKey'
         self.AccountAPI = Account.AccountAPI(api_key, api_secret_key, passphrase, flag='1')
 
     # '''
@@ -30,9 +30,9 @@ class AccountTest(unittest.TestCase):
     #     print(self.AccountAPI.get_account_bills_archive(begin='1715780962300',end='1716998400000'))
     # def test_positions_builder(self):
     #     print("Both real and virtual positions and assets are calculated")
-    #     sim_pos = [{'instId': 'BTC-USDT-SWAP', 'pos': '10'}, {'instId': 'BTC-USDT-SWAP', 'pos': '10'}]
+    #     sim_pos = [{'instId': 'BTC-USDT-SWAP', 'pos': '10','avgPx': '1'}]
     #     sim_asset = [{'ccy': 'USDT', 'amt': '100'}]
-    #     print(self.AccountAPI.position_builder(inclRealPosAndEq=False, spotOffsetType='1', greeksType='CASH',
+    #     print(self.AccountAPI.position_builder(inclRealPosAndEq=False, greeksType='CASH',
     #                                            simPos=sim_pos, simAsset=sim_asset))
     #
     #     print("Only existing real positions are calculated")
@@ -139,6 +139,13 @@ class AccountTest(unittest.TestCase):
     #     logger.info(f'{self.AccountAPI.repay_fix_loan_borrowing_order(ordId="2407301054407907")}')
     # def test_get_fix_loan_borrowing_orders_list(self):
     #     logger.debug(self.AccountAPI.get_fix_loan_borrowing_orders_list(ordId="2407301054407907"))
+
+    # def test_spot_manual_borrow_repay(self):
+    #     logger.debug(f'{self.AccountAPI.spot_manual_borrow_repay(ccy="USDT",side="borrow",amt=1)}')
+    # def test_set_auto_repay(self):
+    #     logger.info(f'{self.AccountAPI.set_auto_repay(autoRepay=True)}')
+    # def test_spot_borrow_repay_history(self):
+    #     logger.debug(self.AccountAPI.spot_borrow_repay_history(ccy="USDT",type="auto_borrow",after="1597026383085"))
 
 if __name__ == '__main__':
     unittest.main()

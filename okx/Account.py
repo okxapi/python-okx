@@ -5,7 +5,7 @@ from .okxclient import OkxClient
 class AccountAPI(OkxClient):
 
     def __init__(self, api_key='-1', api_secret_key='-1', passphrase='-1', use_server_time=None, flag='1',
-                 domain='https://www.okx.com', debug=True, proxy=None):
+                 domain='https://www.okx.com', debug=False, proxy=None):
         OkxClient.__init__(self, api_key, api_secret_key, passphrase, use_server_time, flag, domain, debug, proxy)
 
     # Get Positions
@@ -27,13 +27,15 @@ class AccountAPI(OkxClient):
         params = {'instType': instType, 'instId': instId}
         return self._request_with_params(GET, POSITION_INFO, params)
 
-    def position_builder(self, inclRealPosAndEq=False, spotOffsetType=None, greeksType=None, simPos=None,
+    def position_builder(self, acctLv=None,inclRealPosAndEq=False, lever=None, greeksType=None, simPos=None,
                          simAsset=None):
         params = {}
+        if acctLv is not None:
+            params['acctLv'] = acctLv
         if inclRealPosAndEq is not None:
             params['inclRealPosAndEq'] = inclRealPosAndEq
-        if spotOffsetType is not None:
-            params['spotOffsetType'] = spotOffsetType
+        if lever is not None:
+            params['spotOffsetType'] = lever
         if greeksType is not None:
             params['greksType'] = greeksType
         if simPos is not None:
@@ -88,8 +90,8 @@ class AccountAPI(OkxClient):
         return self._request_with_params(POST, ADJUSTMENT_MARGIN, params)
 
     # Get Leverage
-    def get_leverage(self, instId, mgnMode):
-        params = {'instId': instId, 'mgnMode': mgnMode}
+    def get_leverage(self, mgnMode, ccy='', instId=''):
+        params = {'instId': instId, 'mgnMode': mgnMode, 'ccy': ccy}
         return self._request_with_params(GET, GET_LEVERAGE, params)
 
     # Get instruments
@@ -217,6 +219,13 @@ class AccountAPI(OkxClient):
         }
         return self._request_with_params(POST, SET_AUTO_LOAN, params)
 
+    # - Set auto loan
+    def set_account_level(self, acctLv):
+        params = {
+            'acctLv': acctLv
+        }
+        return self._request_with_params(POST, SET_ACCOUNT_LEVEL, params)
+
     # - Activate option
     def activate_option(self):
         return self._request_without_params(POST, ACTIVSTE_OPTION)
@@ -294,3 +303,23 @@ class AccountAPI(OkxClient):
         if limit is not None:
             params['limit'] = limit
         return self._request_with_params(GET, BORROWING_ORDERS_LIST, params)
+
+    def spot_manual_borrow_repay(self, ccy=None, side=None, amt=None):
+        params = {}
+        if ccy is not None:
+            params['ccy'] = ccy
+        if side is not None:
+            params['side'] = side
+        if amt is not None:
+            params['amt'] = amt
+        return self._request_with_params(POST, MANUAL_REBORROW_REPAY, params)
+
+    def set_auto_repay(self, autoRepay=False):
+        params = {}
+        if autoRepay is not None:
+            params['autoRepay'] = autoRepay
+        return self._request_with_params(POST, SET_AUTO_REPAY, params)
+
+    def spot_borrow_repay_history(self, ccy='', type='', after='', before='', limit=''):
+        params = {'ccy': ccy, 'type': type, 'after': after, 'before': before, 'limit': limit}
+        return self._request_with_params(GET, GET_BORROW_REPAY_HISTORY, params)

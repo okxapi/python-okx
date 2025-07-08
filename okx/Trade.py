@@ -7,19 +7,15 @@ from .consts import *
 class TradeAPI(OkxClient):
 
     def __init__(self, api_key='-1', api_secret_key='-1', passphrase='-1', use_server_time=None, flag='1',
-                 domain='https://www.okx.com', debug=True, proxy=None):
+                 domain='https://www.okx.com', debug=False, proxy=None):
         OkxClient.__init__(self, api_key, api_secret_key, passphrase, use_server_time, flag, domain, debug, proxy)
 
     # Place Order
     def place_order(self, instId, tdMode, side, ordType, sz, ccy='', clOrdId='', tag='', posSide='', px='',
-                    reduceOnly='', tgtCcy='', tpTriggerPx='', tpOrdPx='', slTriggerPx='', slOrdPx='',
-                    tpTriggerPxType='', slTriggerPxType='', quickMgnType='', stpId='', stpMode='',
-                    attachAlgoOrds=None):
+                    reduceOnly='', tgtCcy='', stpMode='', attachAlgoOrds=None, pxUsd='', pxVol='', banAmend=''):
         params = {'instId': instId, 'tdMode': tdMode, 'side': side, 'ordType': ordType, 'sz': sz, 'ccy': ccy,
                   'clOrdId': clOrdId, 'tag': tag, 'posSide': posSide, 'px': px, 'reduceOnly': reduceOnly,
-                  'tgtCcy': tgtCcy, 'tpTriggerPx': tpTriggerPx, 'tpOrdPx': tpOrdPx, 'slTriggerPx': slTriggerPx,
-                  'slOrdPx': slOrdPx, 'tpTriggerPxType': tpTriggerPxType, 'slTriggerPxType': slTriggerPxType,
-                  'quickMgnType': quickMgnType, 'stpId': stpId, 'stpMode': stpMode}
+                  'tgtCcy': tgtCcy, 'stpMode': stpMode, 'pxUsd': pxUsd, 'pxVol': pxVol, 'banAmend': banAmend}
         params['attachAlgoOrds'] = attachAlgoOrds
         return self._request_with_params(POST, PLACR_ORDER, params)
 
@@ -39,11 +35,11 @@ class TradeAPI(OkxClient):
     # Amend Order
     def amend_order(self, instId, cxlOnFail='', ordId='', clOrdId='', reqId='', newSz='', newPx='', newTpTriggerPx='',
                     newTpOrdPx='', newSlTriggerPx='', newSlOrdPx='', newTpTriggerPxType='', newSlTriggerPxType='',
-                    attachAlgoOrds=''):
+                    attachAlgoOrds='', newTriggerPx='', newOrdPx=''):
         params = {'instId': instId, 'cxlOnFail': cxlOnFail, 'ordId': ordId, 'clOrdId': clOrdId, 'reqId': reqId,
                   'newSz': newSz, 'newPx': newPx, 'newTpTriggerPx': newTpTriggerPx, 'newTpOrdPx': newTpOrdPx,
                   'newSlTriggerPx': newSlTriggerPx, 'newSlOrdPx': newSlOrdPx, 'newTpTriggerPxType': newTpTriggerPxType,
-                  'newSlTriggerPxType': newSlTriggerPxType}
+                  'newSlTriggerPxType': newSlTriggerPxType, 'newTriggerPx': newTriggerPx, 'newOrdPx': newOrdPx}
         params['attachAlgoOrds'] = attachAlgoOrds
         return self._request_with_params(POST, AMEND_ORDER, params)
 
@@ -115,15 +111,10 @@ class TradeAPI(OkxClient):
     def cancel_algo_order(self, params):
         return self._request_with_params(POST, CANCEL_ALGOS, params)
 
-    # Cancel Advance Algos
-    def cancel_advance_algos(self, params):
-        return self._request_with_params(POST, Cancel_Advance_Algos, params)
-
     # Get Algo Order List
-    def order_algos_list(self, ordType='', algoId='', instType='', instId='', after='', before='', limit='',
-                         algoClOrdId=''):
+    def order_algos_list(self, ordType='', algoId='', instType='', instId='', after='', before='', limit=''):
         params = {'ordType': ordType, 'algoId': algoId, 'instType': instType, 'instId': instId, 'after': after,
-                  'before': before, 'limit': limit, 'algoClOrdId': algoClOrdId}
+                  'before': before, 'limit': limit}
         return self._request_with_params(GET, ORDERS_ALGO_PENDING, params)
 
     # Get Algo Order History
@@ -191,3 +182,21 @@ class TradeAPI(OkxClient):
                   'newSlTriggerPx': newSlTriggerPx, 'newSlOrdPx': newSlOrdPx,
                   'newTpTriggerPxType': newTpTriggerPxType, 'newSlTriggerPxType': newSlTriggerPxType}
         return self._request_with_params(POST, AMEND_ALGO_ORDER, params)
+
+    def get_oneclick_repay_list_v2(self):
+        return self._request_without_params(GET, ONE_CLICK_REPAY_SUPPORT_V2)
+
+    def oneclick_repay_v2(self, debtCcy='', repayCcyList=[]):
+        params = {
+            'debtCcy': debtCcy,
+            'repayCcyList': repayCcyList
+        }
+        return self._request_with_params(POST, ONE_CLICK_REPAY_V2, params)
+
+    def oneclick_repay_history_v2(self, after='', before='', limit=''):
+        params = {
+            'after': after,
+            'before': before,
+            'limit': limit
+        }
+        return self._request_with_params(GET, ONE_CLICK_REPAY_HISTORY_V2, params)

@@ -1,4 +1,4 @@
-# http header
+# Http header
 API_URL = 'https://www.okx.com'
 
 CONTENT_TYPE = 'Content-Type'
@@ -18,7 +18,7 @@ POST = "POST"
 
 SERVER_TIMESTAMP_URL = '/api/v5/public/time'
 
-# account-complete-testcomplete
+# Account
 POSITION_RISK='/api/v5/account/account-position-risk'
 ACCOUNT_INFO = '/api/v5/account/balance'
 POSITION_INFO = '/api/v5/account/positions'
@@ -44,14 +44,15 @@ BORROW_REPAY_HISTORY = '/api/v5/account/borrow-repay-history'
 INTEREST_LIMITS = '/api/v5/account/interest-limits'
 SIMULATED_MARGIN = '/api/v5/account/simulated_margin'
 GREEKS = '/api/v5/account/greeks'
-POSITIONS_HISTORY = '/api/v5/account/positions-history' #need add
-GET_PM_LIMIT = '/api/v5/account/position-tiers' #need add
+POSITIONS_HISTORY = '/api/v5/account/positions-history'
+GET_PM_LIMIT = '/api/v5/account/position-tiers'
 GET_VIP_INTEREST_ACCRUED_DATA = '/api/v5/account/vip-interest-accrued'
 GET_VIP_INTEREST_DEDUCTED_DATA = '/api/v5/account/vip-interest-deducted'
 GET_VIP_LOAN_ORDER_LIST= '/api/v5/account/vip-loan-order-list'
 GET_VIP_LOAN_ORDER_DETAIL= '/api/v5/account/vip-loan-order-detail'
 SET_RISK_OFFSET_TYPE = '/api/v5/account/set-riskOffset-type'
 SET_AUTO_LOAN = '/api/v5/account/set-auto-loan'
+SET_ACCOUNT_LEVEL = '/api/v5/account/set-account-level'
 ACTIVSTE_OPTION = '/api/v5/account/activate-option'
 POSITION_BUILDER = '/api/v5/account/position-builder'
 GET_INSTRUMENTS = '/api/v5/account/instruments'
@@ -62,8 +63,11 @@ AMEND_BORROWING_ORDER='/api/v5/account/fixed-loan/amend-borrowing-order'
 MANUAL_REBORROW = '/api/v5/account/fixed-loan/manual-reborrow'
 REPAY_BORROWING_ORDER='/api/v5/account/fixed-loan/repay-borrowing-order'
 BORROWING_ORDERS_LIST='/api/v5/account/fixed-loan/borrowing-orders-list'
+MANUAL_REBORROW_REPAY = '/api/v5/account/spot-manual-borrow-repay'
+SET_AUTO_REPAY='/api/v5/account/set-auto-repay'
+GET_BORROW_REPAY_HISTORY='/api/v5/account/spot-borrow-repay-history'
 
-# funding-complete-testcomplete
+# Funding
 NON_TRADABLE_ASSETS = '/api/v5/asset/non-tradable-assets'
 DEPOSIT_ADDRESS = '/api/v5/asset/deposit-address'
 GET_BALANCES = '/api/v5/asset/balances'
@@ -76,21 +80,16 @@ PURCHASE_REDEMPT = '/api/v5/asset/purchase_redempt'
 BILLS_INFO = '/api/v5/asset/bills'
 DEPOSIT_LIGHTNING = '/api/v5/asset/deposit-lightning'
 WITHDRAWAL_LIGHTNING = '/api/v5/asset/withdrawal-lightning'
-CANCEL_WITHDRAWAL = '/api/v5/asset/cancel-withdrawal' #need add
+CANCEL_WITHDRAWAL = '/api/v5/asset/cancel-withdrawal'
 WITHDRAWAL_HISTORY = '/api/v5/asset/withdrawal-history'
-CONVERT_DUST_ASSETS = '/api/v5/asset/convert-dust-assets' #need add
-ASSET_VALUATION = '/api/v5/asset/asset-valuation' #need add
-SET_LENDING_RATE = '/api/v5/asset/set-lending-rate'
-LENDING_HISTORY = '/api/v5/asset/lending-history'
-LENDING_RATE_HISTORY = '/api/v5/asset/lending-rate-history'
-LENDING_RATE_SUMMARY = '/api/v5/asset/lending-rate-summary'
-GET_SAVING_BALANCE = '/api/v5/asset/saving-balance' #need to add
+CONVERT_DUST_ASSETS = '/api/v5/asset/convert-dust-assets'
+ASSET_VALUATION = '/api/v5/asset/asset-valuation'
 GET_WITHDRAWAL_HISTORY = '/api/v5/asset/withdrawal-history'
 GET_NON_TRADABLE_ASSETS = '/api/v5/asset/non-tradable-assets'
 GET_DEPOSIT_WITHDrAW_STATUS = '/api/v5/asset/deposit-withdraw-status'
 
 
-# Market Data-Complete-testComplete
+# Market Data
 TICKERS_INFO = '/api/v5/market/tickers'
 TICKER_INFO = '/api/v5/market/ticker'
 INDEX_TICKERS = '/api/v5/market/index-tickers'
@@ -101,17 +100,16 @@ INDEX_CANSLES = '/api/v5/market/index-candles'
 MARKPRICE_CANDLES = '/api/v5/market/mark-price-candles'
 MARKET_TRADES = '/api/v5/market/trades'
 VOLUMNE = '/api/v5/market/platform-24-volume'
-ORACLE = '/api/v5/market/open-oracle' #need to update? if it is open oracle
-INDEX_COMPONENTS = '/api/v5/market/index-components' #need to add
-EXCHANGE_RATE = '/api/v5/market/exchange-rate' #need to add
-HISTORY_TRADES = '/api/v5/market/history-trades' #need to add
-BLOCK_TICKERS = '/api/v5/market/block-tickers' #need to add
-BLOCK_TICKER = '/api/v5/market/block-ticker'#need to add
-BLOCK_TRADES = '/api/v5/market/block-trades'#need to add
+INDEX_COMPONENTS = '/api/v5/market/index-components'
+EXCHANGE_RATE = '/api/v5/market/exchange-rate'
+HISTORY_TRADES = '/api/v5/market/history-trades'
+BLOCK_TICKERS = '/api/v5/market/block-tickers'
+BLOCK_TICKER = '/api/v5/market/block-ticker'
+BLOCK_TRADES = '/api/v5/market/block-trades'
 GET_ORDER_LITE_BOOK = '/api/v5/market/books-lite'
 GET_OPTION_TRADES = '/api/v5/market/option/instrument-family-trades'
 
-# Public Data-Complete-testComplete
+# Public Data
 INSTRUMENT_INFO = '/api/v5/public/instruments'
 DELIVERY_EXERCISE = '/api/v5/public/delivery-exercise-history'
 OPEN_INTEREST = '/api/v5/public/open-interest'
@@ -125,15 +123,15 @@ SYSTEM_TIME = '/api/v5/public/time'
 LIQUIDATION_ORDERS = '/api/v5/public/liquidation-orders'
 MARK_PRICE = '/api/v5/public/mark-price'
 TIER = '/api/v5/public/position-tiers'
-INTEREST_LOAN = '/api/v5/public/interest-rate-loan-quota' #need to add
-UNDERLYING = '/api/v5/public/underlying' #need to add
-VIP_INTEREST_RATE_LOAN_QUOTA = '/api/v5/public/vip-interest-rate-loan-quota' #need to add
-INSURANCE_FUND = '/api/v5/public/insurance-fund'#need to add
-CONVERT_CONTRACT_COIN = '/api/v5/public/convert-contract-coin' #need to add
+INTEREST_LOAN = '/api/v5/public/interest-rate-loan-quota'
+UNDERLYING = '/api/v5/public/underlying'
+VIP_INTEREST_RATE_LOAN_QUOTA = '/api/v5/public/vip-interest-rate-loan-quota'
+INSURANCE_FUND = '/api/v5/public/insurance-fund'
+CONVERT_CONTRACT_COIN = '/api/v5/public/convert-contract-coin'
 GET_OPTION_TICKBANDS = '/api/v5/public/instrument-tick-bands'
 GET_OPTION_TRADES = '/api/v5/public/option-trades'
 
-# TRADING DATA-COMPLETE
+# Trading data
 SUPPORT_COIN = '/api/v5/rubik/stat/trading-data/support-coin'
 TAKER_VOLUME = '/api/v5/rubik/stat/taker-volume'
 MARGIN_LENDING_RATIO = '/api/v5/rubik/stat/margin/loan-ratio'
@@ -145,7 +143,7 @@ OPEN_INTEREST_VOLUME_EXPIRY = '/api/v5/rubik/stat/option/open-interest-volume-ex
 INTEREST_VOLUME_STRIKE = '/api/v5/rubik/stat/option/open-interest-volume-strike'
 TAKER_FLOW = '/api/v5/rubik/stat/option/taker-block-volume'
 
-# TRADE-Complete
+# Trade
 PLACR_ORDER = '/api/v5/trade/order'
 BATCH_ORDERS = '/api/v5/trade/batch-orders'
 CANCEL_ORDER = '/api/v5/trade/cancel-order'
@@ -161,64 +159,45 @@ ORDER_FILLS = '/api/v5/trade/fills'
 ORDERS_FILLS_HISTORY = '/api/v5/trade/fills-history'
 PLACE_ALGO_ORDER = '/api/v5/trade/order-algo'
 CANCEL_ALGOS = '/api/v5/trade/cancel-algos'
-Cancel_Advance_Algos = '/api/v5/trade/cancel-advance-algos'
 ORDERS_ALGO_PENDING = '/api/v5/trade/orders-algo-pending'
 ORDERS_ALGO_HISTORY = '/api/v5/trade/orders-algo-history'
 GET_ALGO_ORDER_DETAILS = '/api/v5/trade/order-algo'
 AMEND_ALGO_ORDER = '/api/v5/trade/amend-algos'
-
 EASY_CONVERT_CURRENCY_LIST = '/api/v5/trade/easy-convert-currency-list'
 EASY_CONVERT = '/api/v5/trade/easy-convert'
 CONVERT_EASY_HISTORY = '/api/v5/trade/easy-convert-history'
 ONE_CLICK_REPAY_SUPPORT = '/api/v5/trade/one-click-repay-currency-list'
 ONE_CLICK_REPAY = '/api/v5/trade/one-click-repay'
 ONE_CLICK_REPAY_HISTORY = '/api/v5/trade/one-click-repay-history'
+ONE_CLICK_REPAY_SUPPORT_V2 = '/api/v5/trade/one-click-repay-currency-list-v2'
+ONE_CLICK_REPAY_V2 = '/api/v5/trade/one-click-repay-v2'
+ONE_CLICK_REPAY_HISTORY_V2 = '/api/v5/trade/one-click-repay-history-v2'
 
 
-# SubAccount-complete-testwriteComplete
+# SubAccount
 BALANCE = '/api/v5/account/subaccount/balances'
 BILLs = '/api/v5/asset/subaccount/bills'
 RESET = '/api/v5/users/subaccount/modify-apikey'
 VIEW_LIST = '/api/v5/users/subaccount/list'
 SUBACCOUNT_TRANSFER = '/api/v5/asset/subaccount/transfer'
-ENTRUST_SUBACCOUNT_LIST = '/api/v5/users/entrust-subaccount-list' #need to add
-SET_TRSNSFER_OUT = '/api/v5/users/subaccount/set-transfer-out' #need to add
-GET_ASSET_SUBACCOUNT_BALANCE = '/api/v5/asset/subaccount/balances' #need to add
-GET_THE_USER_AFFILIATE_REBATE = '/api/v5/users/partner/if-rebate'
+ENTRUST_SUBACCOUNT_LIST = '/api/v5/users/entrust-subaccount-list'
+SET_TRSNSFER_OUT = '/api/v5/users/subaccount/set-transfer-out'
+GET_ASSET_SUBACCOUNT_BALANCE = '/api/v5/asset/subaccount/balances'
 SET_SUB_ACCOUNTS_VIP_LOAN = '/api/v5/account/subaccount/set-loan-allocation'
 GET_SUB_ACCOUNT_BORROW_INTEREST_AND_LIMIT = '/api/v5/account/subaccount/interest-limits'
 
-# Broker-all need to implmented-completed
-BROKER_INFO = '/api/v5/broker/nd/info'
-CREATE_SUBACCOUNT = '/api/v5/broker/nd/create-subaccount'
-DELETE_SUBACCOUNT = '/api/v5/broker/nd/delete-subaccount'
-SUBACCOUNT_INFO = '/api/v5/broker/nd/subaccount-info'
-SET_SUBACCOUNT_LEVEL = '/api/v5/broker/nd/set-subaccount-level'
-SET_SUBACCOUNT_FEE_REAT = '/api/v5/broker/nd/set-subaccount-fee-rate'
-SUBACCOUNT_DEPOSIT_ADDRESS = '/api/v5/asset/broker/nd/subaccount-deposit-address'
-SUBACCOUNT_DEPOSIT_HISTORY = '/api/v5/asset/broker/nd/subaccount-deposit-history'
-REBATE_DAILY = '/api/v5/broker/nd/rebate-daily'
-ND_CREAET_APIKEY = '/api/v5/broker/nd/subaccount/apikey'
-ND_SELECT_APIKEY = '/api/v5/broker/nd/subaccount/apikey'
-ND_MODIFY_APIKEY = '/api/v5/broker/nd/subaccount/modify-apikey'
-ND_DELETE_APIKEY = '/api/v5/broker/nd/subaccount/delete-apikey'
-GET_REBATE_PER_ORDERS = '/api/v5/broker/nd/rebate-per-orders'
-REBATE_PER_ORDERS = '/api/v5/broker/nd/rebate-per-orders'
-MODIFY_SUBACCOUNT_DEPOSIT_ADDRESS = '/api/v5/asset/broker/nd/modify-subaccount-deposit-address'
-GET_SUBACCOUNT_DEPOSIT='/api/v5/asset/broker/nd/subaccount-deposit-address'
-
-# Convert-Complete
+# Convert
 GET_CURRENCIES = '/api/v5/asset/convert/currencies'
 GET_CURRENCY_PAIR = '/api/v5/asset/convert/currency-pair'
 ESTIMATE_QUOTE = '/api/v5/asset/convert/estimate-quote'
 CONVERT_TRADE = '/api/v5/asset/convert/trade'
 CONVERT_HISTORY = '/api/v5/asset/convert/history'
 
-# FDBroker -completed
+# FD Broker
 FD_GET_REBATE_PER_ORDERS = '/api/v5/broker/fd/rebate-per-orders'
 FD_REBATE_PER_ORDERS = '/api/v5/broker/fd/rebate-per-orders'
 
-# Rfq/BlcokTrading-completed
+# BlockTrading
 COUNTERPARTIES = '/api/v5/rfq/counterparties'
 CREATE_RFQ = '/api/v5/rfq/create-rfq'
 CANCEL_RFQ = '/api/v5/rfq/cancel-rfq'
@@ -237,7 +216,7 @@ MMP_RESET = '/api/v5/rfq/mmp-reset'
 MARKER_INSTRUMENT_SETTING = '/api/v5/rfq/maker-instrument-settings'
 
 
-# tradingBot-Grid-complete-testcomplete
+# Trading Bot
 GRID_ORDER_ALGO = '/api/v5/tradingBot/grid/order-algo'
 GRID_AMEND_ORDER_ALGO = '/api/v5/tradingBot/grid/amend-order-algo'
 GRID_STOP_ORDER_ALGO = '/api/v5/tradingBot/grid/stop-order-algo'
@@ -247,7 +226,6 @@ GRID_ORDERS_ALGO_DETAILS = '/api/v5/tradingBot/grid/orders-algo-details'
 GRID_SUB_ORDERS = '/api/v5/tradingBot/grid/sub-orders'
 GRID_POSITIONS = '/api/v5/tradingBot/grid/positions'
 GRID_WITHDRAW_INCOME = '/api/v5/tradingBot/grid/withdraw-income'
-#--------need to add:
 GRID_COMPUTE_MARIGIN_BALANCE = '/api/v5/tradingBot/grid/compute-margin-balance'
 GRID_MARGIN_BALANCE = '/api/v5/tradingBot/grid/margin-balance'
 GRID_AI_PARAM = '/api/v5/tradingBot/grid/ai-param'
@@ -259,7 +237,7 @@ GET_RECURRING_BUY_ORDER_HISTORY = '/api/v5/tradingBot/recurring/orders-algo-hist
 GET_RECURRING_BUY_ORDER_DETAILS = '/api/v5/tradingBot/recurring/orders-algo-details'
 GET_RECURRING_BUY_SUB_ORDERS = '/api/v5/tradingBot/recurring/sub-orders'
 
-#stacking - all need to implement-testcomplete
+# Stacking
 STACK_DEFI_OFFERS = '/api/v5/finance/staking-defi/offers'
 STACK_DEFI_PURCHASE = '/api/v5/finance/staking-defi/purchase'
 STACK_DEFI_REDEEM = '/api/v5/finance/staking-defi/redeem'
@@ -272,11 +250,22 @@ SET_LENDING_RATE = '/api/v5/finance/savings/set-lending-rate'
 GET_LENDING_HISTORY = '/api/v5/finance/savings/lending-history'
 GET_PUBLIC_BORROW_INFO = '/api/v5/finance/savings/lending-rate-summary'
 GET_PUBLIC_BORROW_HISTORY = '/api/v5/finance/savings/lending-rate-history'
+STACK_ETH_PRODUCT_INFO = '/api/v5/finance/staking-defi/eth/product-info'
+STACK_ETH_PURCHASE = '/api/v5/finance/staking-defi/eth/purchase'
+STACK_ETH_REDEEM = '/api/v5/finance/staking-defi/eth/redeem'
+STACK_ETH_BALANCE = '/api/v5/finance/staking-defi/eth/balance'
+STACK_ETH_PURCHASE_REDEEM_HISTORY = '/api/v5/finance/staking-defi/eth/purchase-redeem-history'
+STACK_ETH_APY_HISTORY = '/api/v5/finance/staking-defi/eth/apy-history'
+STACK_SOL_PURCHASE = '/api/v5/finance/staking-defi/sol/purchase'
+STACK_SOL_REDEEM = '/api/v5/finance/staking-defi/sol/redeem'
+STACK_SOL_BALANCE = '/api/v5/finance/staking-defi/sol/balance'
+STACK_SOL_PURCHASE_REDEEM_HISTORY = '/api/v5/finance/staking-defi/sol/purchase-redeem-history'
+STACK_SOL_APY_HISTORY = '/api/v5/finance/staking-defi/sol/apy-history'
 
-# status-complete
+# Status
 STATUS = '/api/v5/system/status'
 
-#Copy Trading
+# Copy Trading
 GET_EXISTING_LEADING_POSITIONS = '/api/v5/copytrading/current-subpositions'
 GET_LEADING_POSITIONS_HISTORY = '/api/v5/copytrading/subpositions-history'
 PLACE_LEADING_STOP_ORDER = '/api/v5/copytrading/algo-order'
@@ -300,13 +289,14 @@ SPREAD_GET_ORDER_BOOK = '/api/v5/sprd/books'
 SPREAD_GET_TICKER = '/api/v5/sprd/ticker'
 SPREAD_GET_PUBLIC_TRADES = '/api/v5/sprd/public-trades'
 
-# Simple earn fixed
-LENDING_OFFERS = '/api/v5/finance/fixed-loan/lending-offers'
-LENDING_APY_HISTORY='/api/v5/finance/fixed-loan/lending-apy-history'
-PENDING_LENDING_VOLUME = '/api/v5/finance/fixed-loan/pending-lending-volume'
-PLACE_LENDING_ORDER= '/api/v5/finance/fixed-loan/lending-order'
-AMEND_LENDING_ORDER='/api/v5/finance/fixed-loan/amend-lending-order'
-LENDING_ORDERS_LIST='/api/v5/finance/fixed-loan/lending-orders-list'
-LENDING_SUB_ORDERS='/api/v5/finance/fixed-loan/lending-sub-orders'
+# Flexible loan
+FINANCE_BORROW_CURRENCIES = '/api/v5/finance/flexible-loan/borrow-currencies'
+FINANCE_COLLATERAL_ASSETS = '/api/v5/finance/flexible-loan/collateral-assets'
+FINANCE_MAX_LOAN = '/api/v5/finance/flexible-loan/max-loan'
+FINANCE_MAX_REDEEM = '/api/v5/finance/flexible-loan/max-collateral-redeem-amount'
+FINANCE_ADJUST_COLLATERAL = '/api/v5/finance/flexible-loan/adjust-collateral'
+FINANCE_LOAN_INFO = '/api/v5/finance/flexible-loan/loan-info'
+FINANCE_LOAN_HISTORY = '/api/v5/finance/flexible-loan/loan-history'
+FINANCE_INTEREST_ACCRUED = '/api/v5/finance/flexible-loan/interest-accrued'
 
 
