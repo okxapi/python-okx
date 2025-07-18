@@ -111,6 +111,11 @@ class TradeAPI(OkxClient):
     def cancel_algo_order(self, params):
         return self._request_with_params(POST, CANCEL_ALGOS, params)
 
+    # Get Algo Order Details
+    def order_algo(self, algoId='', algoClOrdId=''):
+        params = {'algoId': algoId, 'algoClOrdId': algoClOrdId}
+        return self._request_with_params(GET, ORDER_ALGO, params)
+
     # Get Algo Order List
     def order_algos_list(self, ordType='', algoId='', instType='', instId='', after='', before='', limit=''):
         params = {'ordType': ordType, 'algoId': algoId, 'instType': instType, 'instId': instId, 'after': after,
