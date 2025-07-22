@@ -23,8 +23,8 @@ class AccountAPI(OkxClient):
         return self._request_with_params(GET, ACCOUNT_INFO, params)
 
     # Get Positions
-    def get_positions(self, instType='', instId=''):
-        params = {'instType': instType, 'instId': instId}
+    def get_positions(self, instType='', instId='', posId=''):
+        params = {'instType': instType, 'instId': instId, 'posId': posId}
         return self._request_with_params(GET, POSITION_INFO, params)
 
     def position_builder(self, acctLv=None,inclRealPosAndEq=False, lever=None, greeksType=None, simPos=None,
