@@ -23,5 +23,8 @@ class SolStakingTest(unittest.TestCase):
     def test_sol_apy_history(self):
         print(self.StackingAPI.sol_apy_history(days="7"))
 
+    def test_sol_product_info(self):
+        print(self.StackingAPI.sol_product_info())
+
 if __name__ == "__main__":
     unittest.main()

@@ -46,3 +46,6 @@ class SolStakingAPI(OkxClient):
             'days': days,
         }
         return self._request_with_params(GET, STACK_SOL_APY_HISTORY, params)
+
+    def sol_product_info(self):
+        return self._request_without_params(GET, STACK_SOL_PRODUCT_INFO)
