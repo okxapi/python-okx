@@ -261,6 +261,7 @@ STACK_SOL_REDEEM = '/api/v5/finance/staking-defi/sol/redeem'
 STACK_SOL_BALANCE = '/api/v5/finance/staking-defi/sol/balance'
 STACK_SOL_PURCHASE_REDEEM_HISTORY = '/api/v5/finance/staking-defi/sol/purchase-redeem-history'
 STACK_SOL_APY_HISTORY = '/api/v5/finance/staking-defi/sol/apy-history'
+STACK_SOL_PRODUCT_INFO = '/api/v5/finance/staking-defi/sol/product-info'
 
 # Status
 STATUS = '/api/v5/system/status'

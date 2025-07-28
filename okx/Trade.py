@@ -95,7 +95,8 @@ class TradeAPI(OkxClient):
                          pxSpread='',
                          szLimit='', pxLimit='', timeInterval='', tpTriggerPxType='', slTriggerPxType='',
                          callbackRatio='', callbackSpread='', activePx='', tag='', triggerPxType='', closeFraction=''
-                         , quickMgnType='', algoClOrdId=''):
+                         , quickMgnType='', algoClOrdId='', tradeQuoteCcy='', tpOrdKind='', cxlOnClosePos=''
+                         , chaseType='', chaseVal='', maxChaseType='', maxChaseVal='', attachAlgoOrds=[]):
         params = {'instId': instId, 'tdMode': tdMode, 'side': side, 'ordType': ordType, 'sz': sz, 'ccy': ccy,
                   'posSide': posSide, 'reduceOnly': reduceOnly, 'tpTriggerPx': tpTriggerPx, 'tpOrdPx': tpOrdPx,
                   'slTriggerPx': slTriggerPx, 'slOrdPx': slOrdPx, 'triggerPx': triggerPx, 'orderPx': orderPx,
@@ -104,7 +105,9 @@ class TradeAPI(OkxClient):
                   'pxSpread': pxSpread, 'tpTriggerPxType': tpTriggerPxType, 'slTriggerPxType': slTriggerPxType,
                   'callbackRatio': callbackRatio, 'callbackSpread': callbackSpread, 'activePx': activePx,
                   'tag': tag, 'triggerPxType': triggerPxType, 'closeFraction': closeFraction,
-                  'quickMgnType': quickMgnType, 'algoClOrdId': algoClOrdId}
+                  'quickMgnType': quickMgnType, 'algoClOrdId': algoClOrdId, 'tradeQuoteCcy': tradeQuoteCcy,
+                  'tpOrdKind': tpOrdKind, 'cxlOnClosePos': cxlOnClosePos, 'chaseType': chaseType, 'chaseVal': chaseVal,
+                  'maxChaseType': maxChaseType, 'maxChaseVal': maxChaseVal, 'attachAlgoOrds': attachAlgoOrds}
         return self._request_with_params(POST, PLACE_ALGO_ORDER, params)
 
     # Cancel Algo Order

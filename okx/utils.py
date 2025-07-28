@@ -42,7 +42,7 @@ def get_header_no_sign(flag,debug = True):
 def parse_params_to_str(params):
     url = '?'
     for key, value in params.items():
-        if(value != ''):
+        if value is not None and value != '':
             url = url + str(key) + '=' + str(value) + '&'
     url = url[0:-1]
     return url
