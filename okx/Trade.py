@@ -127,9 +127,9 @@ class TradeAPI(OkxClient):
         return self._request_with_params(GET, ORDERS_ALGO_HISTORY, params)
 
     # Get Transaction Details History
-    def get_fills_history(self, instType, uly='', instId='', ordId='', after='', before='', limit='', instFamily=''):
+    def get_fills_history(self, instType, uly='', instId='', ordId='', after='', before='', limit='', instFamily='', begin='', end=''):
         params = {'instType': instType, 'uly': uly, 'instId': instId, 'ordId': ordId, 'after': after, 'before': before,
-                  'limit': limit, 'instFamily': instFamily}
+                  'limit': limit, 'instFamily': instFamily, 'begin': begin, 'end': end}
         return self._request_with_params(GET, ORDERS_FILLS_HISTORY, params)
 
     def get_easy_convert_currency_list(self):
