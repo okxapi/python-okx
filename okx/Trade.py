@@ -12,10 +12,10 @@ class TradeAPI(OkxClient):
 
     # Place Order
     def place_order(self, instId, tdMode, side, ordType, sz, ccy='', clOrdId='', tag='', posSide='', px='',
-                    reduceOnly='', tgtCcy='', stpMode='', attachAlgoOrds=None, pxUsd='', pxVol='', banAmend=''):
+                    reduceOnly='', tgtCcy='', stpMode='', attachAlgoOrds=None, pxUsd='', pxVol='', banAmend='', tradeQuoteCcy=''):
         params = {'instId': instId, 'tdMode': tdMode, 'side': side, 'ordType': ordType, 'sz': sz, 'ccy': ccy,
                   'clOrdId': clOrdId, 'tag': tag, 'posSide': posSide, 'px': px, 'reduceOnly': reduceOnly,
-                  'tgtCcy': tgtCcy, 'stpMode': stpMode, 'pxUsd': pxUsd, 'pxVol': pxVol, 'banAmend': banAmend}
+                  'tgtCcy': tgtCcy, 'stpMode': stpMode, 'pxUsd': pxUsd, 'pxVol': pxVol, 'banAmend': banAmend, 'tradeQuoteCcy': tradeQuoteCcy}
         params['attachAlgoOrds'] = attachAlgoOrds
         return self._request_with_params(POST, PLACR_ORDER, params)
 
