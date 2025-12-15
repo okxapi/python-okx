@@ -7,9 +7,9 @@ from okx import Account
 
 class AccountTest(unittest.TestCase):
     def setUp(self):
-        api_key = 'your_apiKey'
-        api_secret_key = 'your_secretKey'
-        passphrase = 'your_secretKey'
+        api_key = 'da097c9c-2f77-4dea-be18-2bfa77d0e394'
+        api_secret_key = '56CC6C72D6B8A46EC993D48C83142A25'
+        passphrase = '123456aA.'
         self.AccountAPI = Account.AccountAPI(api_key, api_secret_key, passphrase, flag='1')
 
     # '''
@@ -146,6 +146,8 @@ class AccountTest(unittest.TestCase):
     #     logger.info(f'{self.AccountAPI.set_auto_repay(autoRepay=True)}')
     # def test_spot_borrow_repay_history(self):
     #     logger.debug(self.AccountAPI.spot_borrow_repay_history(ccy="USDT",type="auto_borrow",after="1597026383085"))
+    def test_set_auto_earn(self):
+        logger.debug(self.AccountAPI.set_auto_earn(earnType='0',ccy="USDT",action="turn_on"))
 
 if __name__ == '__main__':
     unittest.main()

@@ -323,3 +323,7 @@ class AccountAPI(OkxClient):
     def spot_borrow_repay_history(self, ccy='', type='', after='', before='', limit=''):
         params = {'ccy': ccy, 'type': type, 'after': after, 'before': before, 'limit': limit}
         return self._request_with_params(GET, GET_BORROW_REPAY_HISTORY, params)
+
+    def set_auto_earn(self, earnType='', ccy='', action='', apr=''):
+        params = {'earnType': earnType, 'ccy': ccy, 'action': action, 'apr': apr}
+        return self._request_with_params(POST, SET_AUTO_EARN, params)

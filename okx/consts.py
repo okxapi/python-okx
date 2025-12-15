@@ -66,6 +66,7 @@ BORROWING_ORDERS_LIST='/api/v5/account/fixed-loan/borrowing-orders-list'
 MANUAL_REBORROW_REPAY = '/api/v5/account/spot-manual-borrow-repay'
 SET_AUTO_REPAY='/api/v5/account/set-auto-repay'
 GET_BORROW_REPAY_HISTORY='/api/v5/account/spot-borrow-repay-history'
+SET_AUTO_EARN='/api/v5/account/set-auto-earn'
 
 # Funding
 NON_TRADABLE_ASSETS = '/api/v5/asset/non-tradable-assets'
