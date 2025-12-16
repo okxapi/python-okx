@@ -25,27 +25,32 @@ class WsPublicAsync:
             if self.callback:
                 self.callback(message)
 
-    async def subscribe(self, params: list, callback):
+    async def subscribe(self, params: list, callback, id: str = None):
         self.callback = callback
-        payload = json.dumps({
+        payload_dict = {
             "op": "subscribe",
             "args": params
-        })
+        }
+        if id is not None:
+            payload_dict["id"] = id
+        payload = json.dumps(payload_dict)
         await self.websocket.send(payload)
         # await self.consume()
 
-    async def unsubscribe(self, params: list, callback):
+    async def unsubscribe(self, params: list, callback, id: str = None):
         self.callback = callback
-        payload = json.dumps({
+        payload_dict = {
             "op": "unsubscribe",
             "args": params
-        })
+        }
+        if id is not None:
+            payload_dict["id"] = id
+        payload = json.dumps(payload_dict)
         logger.info(f"unsubscribe: {payload}")
         await self.websocket.send(payload)
 
     async def stop(self):
         await self.factory.close()
-        self.loop.stop()
 
     async def start(self):
         logger.info("Connecting to WebSocket...")
