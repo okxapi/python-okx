@@ -21,9 +21,15 @@ async def main():
     arg1 = {"channel": "account", "ccy": "BTC"}
     arg2 = {"channel": "orders", "instType": "ANY"}
     arg3 = {"channel": "balance_and_position"}
+    # Withdrawal info channel 订阅示例，支持 toAddrType 参数
+    # toAddrType: 地址类型
+    # 1: 钱包地址、邮箱、手机号或登录账户名
+    # 2: UID（仅适用于 dest=3 的情况）
+    arg4 = {"channel": "withdrawal-info", "ccy": "USDT", "toAddrType": "1"}
     args.append(arg1)
     args.append(arg2)
     args.append(arg3)
+    args.append(arg4)
     await ws.subscribe(args, callback=privateCallback)
     await asyncio.sleep(30)
     print("-----------------------------------------unsubscribe--------------------------------------------")
