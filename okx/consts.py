@@ -129,6 +129,7 @@ INSURANCE_FUND = '/api/v5/public/insurance-fund'
 CONVERT_CONTRACT_COIN = '/api/v5/public/convert-contract-coin'
 GET_OPTION_TICKBANDS = '/api/v5/public/instrument-tick-bands'
 GET_OPTION_TRADES = '/api/v5/public/option-trades'
+MARKET_DATA_HISTORY = '/api/v5/public/market-data-history'
 
 # Trading data
 SUPPORT_COIN = '/api/v5/rubik/stat/trading-data/support-coin'
