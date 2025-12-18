@@ -27,21 +27,23 @@ class AccountAPI(OkxClient):
         params = {'instType': instType, 'instId': instId, 'posId': posId}
         return self._request_with_params(GET, POSITION_INFO, params)
 
-    def position_builder(self, acctLv=None,inclRealPosAndEq=False, lever=None, greeksType=None, simPos=None,
-                         simAsset=None):
+    def position_builder(self, acctLv=None, inclRealPosAndEq=None, lever=None, greeksType=None, simPos=None,
+                         simAsset=None, idxVol=None):
         params = {}
         if acctLv is not None:
             params['acctLv'] = acctLv
         if inclRealPosAndEq is not None:
             params['inclRealPosAndEq'] = inclRealPosAndEq
         if lever is not None:
-            params['spotOffsetType'] = lever
+            params['lever'] = lever
         if greeksType is not None:
-            params['greksType'] = greeksType
+            params['greeksType'] = greeksType
         if simPos is not None:
             params['simPos'] = simPos
         if simAsset is not None:
             params['simAsset'] = simAsset
+        if idxVol is not None:
+            params['idxVol'] = idxVol
         return self._request_with_params(POST, POSITION_BUILDER, params)
 
     # Get Bills Details (recent 7 days)
