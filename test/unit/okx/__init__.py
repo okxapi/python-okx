@@ -1,2 +1,2 @@
-# Unit tests for okx module
+"""Unit tests for okx package"""
 
