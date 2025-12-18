@@ -436,6 +436,128 @@ class TestAccountAPIPositionBuilderParameterHandling(unittest.TestCase):
         mock_request.assert_called_once_with(c.POST, c.POSITION_BUILDER, expected_params)
 
 
+class TestAccountAPISetAutoEarn(unittest.TestCase):
+    """Unit tests for the set_auto_earn method"""
+
+    def setUp(self):
+        """Set up test fixtures"""
+        self.account_api = AccountAPI(
+            api_key='test_key',
+            api_secret_key='test_secret',
+            passphrase='test_pass',
+            flag='0'
+        )
+
+    @patch.object(AccountAPI, '_request_with_params')
+    def test_set_auto_earn_with_all_params(self, mock_request):
+        """Test set_auto_earn with all parameters provided"""
+        # Arrange
+        mock_response = {'code': '0', 'msg': '', 'data': []}
+        mock_request.return_value = mock_response
+
+        # Act
+        result = self.account_api.set_auto_earn(
+            earnType='current',
+            ccy='USDT',
+            action='start',
+            apr='0.05'
+        )
+
+        # Assert
+        expected_params = {
+            'earnType': 'current',
+            'ccy': 'USDT',
+            'action': 'start',
+            'apr': '0.05'
+        }
+        mock_request.assert_called_once_with(c.POST, c.SET_AUTO_EARN, expected_params)
+        self.assertEqual(result, mock_response)
+
+    @patch.object(AccountAPI, '_request_with_params')
+    def test_set_auto_earn_start_action(self, mock_request):
+        """Test set_auto_earn with start action"""
+        # Arrange
+        mock_response = {'code': '0', 'msg': '', 'data': []}
+        mock_request.return_value = mock_response
+
+        # Act
+        result = self.account_api.set_auto_earn(
+            earnType='current',
+            ccy='BTC',
+            action='start'
+        )
+
+        # Assert
+        expected_params = {
+            'earnType': 'current',
+            'ccy': 'BTC',
+            'action': 'start',
+            'apr': ''
+        }
+        mock_request.assert_called_once_with(c.POST, c.SET_AUTO_EARN, expected_params)
+
+    @patch.object(AccountAPI, '_request_with_params')
+    def test_set_auto_earn_stop_action(self, mock_request):
+        """Test set_auto_earn with stop action"""
+        # Arrange
+        mock_response = {'code': '0', 'msg': '', 'data': []}
+        mock_request.return_value = mock_response
+
+        # Act
+        result = self.account_api.set_auto_earn(
+            earnType='current',
+            ccy='ETH',
+            action='stop'
+        )
+
+        # Assert
+        expected_params = {
+            'earnType': 'current',
+            'ccy': 'ETH',
+            'action': 'stop',
+            'apr': ''
+        }
+        mock_request.assert_called_once_with(c.POST, c.SET_AUTO_EARN, expected_params)
+
+    @patch.object(AccountAPI, '_request_with_params')
+    def test_set_auto_earn_with_empty_params(self, mock_request):
+        """Test set_auto_earn with empty parameters (default values)"""
+        # Arrange
+        mock_response = {'code': '0', 'msg': '', 'data': []}
+        mock_request.return_value = mock_response
+
+        # Act
+        result = self.account_api.set_auto_earn()
+
+        # Assert
+        expected_params = {
+            'earnType': '',
+            'ccy': '',
+            'action': '',
+            'apr': ''
+        }
+        mock_request.assert_called_once_with(c.POST, c.SET_AUTO_EARN, expected_params)
+
+    @patch.object(AccountAPI, '_request_with_params')
+    def test_set_auto_earn_different_currencies(self, mock_request):
+        """Test set_auto_earn with different currencies"""
+        mock_response = {'code': '0', 'msg': '', 'data': []}
+        mock_request.return_value = mock_response
+
+        currencies = ['USDT', 'BTC', 'ETH', 'USDC']
+
+        for ccy in currencies:
+            mock_request.reset_mock()
+            result = self.account_api.set_auto_earn(
+                earnType='current',
+                ccy=ccy,
+                action='start'
+            )
+
+            call_args = mock_request.call_args[0][2]
+            self.assertEqual(call_args['ccy'], ccy)
+
+
 if __name__ == '__main__':
     unittest.main()
 
