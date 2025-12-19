@@ -14,12 +14,12 @@ from . import consts as c, utils, exceptions
 class OkxClient(Client):
 
     def __init__(self, api_key='-1', api_secret_key='-1', passphrase='-1', use_server_time=None, flag='1',base_api=c.API_URL, debug=False, proxy=None):
-        # 兼容不同版本的 httpx
-        # 新版本(0.24.0+)使用 proxy，旧版本使用 proxies
+        # Compatible with different versions of httpx
+        # New versions (0.24.0+) use proxy, older versions use proxies
         try:
             super().__init__(base_url=base_api, http2=True, proxy=proxy)
         except TypeError:
-            # 旧版本 httpx 使用 proxies 参数
+            # Older versions of httpx use proxies parameter
             if proxy:
                 super().__init__(base_url=base_api, http2=True, proxies={'http://': proxy, 'https://': proxy})
             else:
