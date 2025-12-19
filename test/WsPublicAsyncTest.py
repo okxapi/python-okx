@@ -10,7 +10,7 @@ def publicCallback(message):
 async def main():
     # url = "wss://wspap.okex.com:8443/ws/v5/public?brokerId=9999"
     url = "wss://wspap.okx.com:8443/ws/v5/public?brokerId=9999"
-    ws = WsPublicAsync(url=url, debug=True)  # 开启debug日志
+    ws = WsPublicAsync(url=url, debug=True)  # Enable debug logging
     await ws.start()
     args = []
     arg1 = {"channel": "instruments", "instType": "FUTURES"}
@@ -36,8 +36,8 @@ async def main():
 
 async def test_business_channel_with_login():
     """
-    测试 business 频道的登录功能
-    business 频道需要登录后才能订阅某些私有数据
+    Test business channel login functionality
+    Business channel requires login to subscribe to certain private data
     """
     url = "wss://wspap.okx.com:8443/ws/v5/business?brokerId=9999"
     ws = WsPublicAsync(
@@ -49,11 +49,11 @@ async def test_business_channel_with_login():
     )
     await ws.start()
     
-    # 登录
+    # Login
     await ws.login()
     await asyncio.sleep(5)
     
-    # 订阅需要登录的频道
+    # Subscribe to channels that require login
     args = [{"channel": "candle1m", "instId": "BTC-USDT"}]
     await ws.subscribe(args, publicCallback)
     await asyncio.sleep(30)
@@ -61,12 +61,12 @@ async def test_business_channel_with_login():
 
 
 async def test_send_method():
-    """测试通用send方法"""
+    """Test generic send method"""
     url = "wss://wspap.okx.com:8443/ws/v5/public?brokerId=9999"
     ws = WsPublicAsync(url=url, debug=True)
     await ws.start()
     
-    # 使用通用send方法订阅 - 注意要传入callback才能收到响应
+    # Use generic send method to subscribe - callback must be provided to receive response
     args = [{"channel": "tickers", "instId": "BTC-USDT"}]
     await ws.send("subscribe", args, callback=publicCallback, id="send001")
     await asyncio.sleep(10)

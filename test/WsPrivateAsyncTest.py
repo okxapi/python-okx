@@ -8,7 +8,7 @@ def privateCallback(message):
 
 
 async def main():
-    """订阅测试"""
+    """Subscription test"""
     url = "wss://wspap.okx.com:8443/ws/v5/private?brokerId=9999"
     ws = WsPrivateAsync(
         apiKey="your apiKey",
@@ -40,8 +40,8 @@ async def main():
 
 async def test_place_order():
     """
-    测试下单功能
-    URL: /ws/v5/private (限速: 60次/秒)
+    Test place order functionality
+    URL: /ws/v5/private (Rate limit: 60 requests/second)
     """
     url = "wss://wspap.okx.com:8443/ws/v5/private?brokerId=9999"
     ws = WsPrivateAsync(
@@ -55,7 +55,7 @@ async def test_place_order():
     await ws.login()
     await asyncio.sleep(5)
     
-    # 下单参数
+    # Order parameters
     order_args = [{
         "instId": "BTC-USDT",
         "tdMode": "cash",
@@ -72,8 +72,8 @@ async def test_place_order():
 
 async def test_batch_orders():
     """
-    测试批量下单功能
-    URL: /ws/v5/private (限速: 60次/秒, 最多20个订单)
+    Test batch orders functionality
+    URL: /ws/v5/private (Rate limit: 60 requests/second, max 20 orders)
     """
     url = "wss://wspap.okx.com:8443/ws/v5/private?brokerId=9999"
     ws = WsPrivateAsync(
@@ -87,7 +87,7 @@ async def test_batch_orders():
     await ws.login()
     await asyncio.sleep(5)
     
-    # 批量下单参数 (最多20个)
+    # Batch order parameters (max 20)
     order_args = [
         {
             "instId": "BTC-USDT",
@@ -115,8 +115,8 @@ async def test_batch_orders():
 
 async def test_cancel_order():
     """
-    测试撤单功能
-    URL: /ws/v5/private (限速: 60次/秒)
+    Test cancel order functionality
+    URL: /ws/v5/private (Rate limit: 60 requests/second)
     """
     url = "wss://wspap.okx.com:8443/ws/v5/private?brokerId=9999"
     ws = WsPrivateAsync(
@@ -130,11 +130,11 @@ async def test_cancel_order():
     await ws.login()
     await asyncio.sleep(5)
     
-    # 撤单参数 (ordId 和 clOrdId 必须传一个)
+    # Cancel order parameters (either ordId or clOrdId must be provided)
     cancel_args = [{
         "instId": "BTC-USDT",
         "ordId": "your_order_id"
-        # 或者使用 "clOrdId": "client_order_001"
+        # Or use "clOrdId": "client_order_001"
     }]
     await ws.cancel_order(cancel_args, callback=privateCallback, id="cancel001")
     await asyncio.sleep(5)
@@ -143,8 +143,8 @@ async def test_cancel_order():
 
 async def test_batch_cancel_orders():
     """
-    测试批量撤单功能
-    URL: /ws/v5/private (限速: 60次/秒, 最多20个订单)
+    Test batch cancel orders functionality
+    URL: /ws/v5/private (Rate limit: 60 requests/second, max 20 orders)
     """
     url = "wss://wspap.okx.com:8443/ws/v5/private?brokerId=9999"
     ws = WsPrivateAsync(
@@ -169,8 +169,8 @@ async def test_batch_cancel_orders():
 
 async def test_amend_order():
     """
-    测试改单功能
-    URL: /ws/v5/private (限速: 60次/秒)
+    Test amend order functionality
+    URL: /ws/v5/private (Rate limit: 60 requests/second)
     """
     url = "wss://wspap.okx.com:8443/ws/v5/private?brokerId=9999"
     ws = WsPrivateAsync(
@@ -184,7 +184,7 @@ async def test_amend_order():
     await ws.login()
     await asyncio.sleep(5)
     
-    # 改单参数
+    # Amend order parameters
     amend_args = [{
         "instId": "BTC-USDT",
         "ordId": "your_order_id",
@@ -198,9 +198,9 @@ async def test_amend_order():
 
 async def test_mass_cancel():
     """
-    测试批量撤销功能
-    URL: /ws/v5/business (限速: 1次/秒)
-    注意: 此功能使用 business 频道
+    Test mass cancel functionality
+    URL: /ws/v5/business (Rate limit: 1 request/second)
+    Note: This function uses the business channel
     """
     url = "wss://wspap.okx.com:8443/ws/v5/business?brokerId=9999"
     ws = WsPrivateAsync(
@@ -214,7 +214,7 @@ async def test_mass_cancel():
     await ws.login()
     await asyncio.sleep(5)
     
-    # 批量撤销参数
+    # Mass cancel parameters
     mass_cancel_args = [{
         "instType": "SPOT",
         "instFamily": "BTC-USDT"
@@ -225,7 +225,7 @@ async def test_mass_cancel():
 
 
 async def test_send_method():
-    """测试通用send方法"""
+    """Test generic send method"""
     url = "wss://wspap.okx.com:8443/ws/v5/private?brokerId=9999"
     ws = WsPrivateAsync(
         apiKey="your apiKey",
@@ -238,7 +238,7 @@ async def test_send_method():
     await ws.login()
     await asyncio.sleep(5)
     
-    # 使用通用send方法下单 - 注意要传入callback才能收到响应
+    # Use generic send method to place order - callback must be provided to receive response
     order_args = [{
         "instId": "BTC-USDT",
         "tdMode": "cash",
@@ -259,5 +259,5 @@ if __name__ == '__main__':
     asyncio.run(test_cancel_order())
     asyncio.run(test_batch_cancel_orders())
     asyncio.run(test_amend_order())
-    asyncio.run(test_mass_cancel())  # 注意使用 business 频道
+    asyncio.run(test_mass_cancel())  # Note: uses business channel
     asyncio.run(test_send_method())
