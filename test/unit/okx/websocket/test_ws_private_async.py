@@ -64,6 +64,38 @@ class TestWsPrivateAsyncSubscribe(unittest.TestCase):
                 payload = json.loads(subscribe_call[0][0])
                 self.assertEqual(payload["op"], "subscribe")
                 self.assertEqual(payload["args"], params)
+                self.assertNotIn("id", payload)
+
+            asyncio.get_event_loop().run_until_complete(run_test())
+
+    def test_subscribe_with_id(self):
+        """Test subscribe with id parameter"""
+        with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'), \
+             patch('okx.websocket.WsPrivateAsync.WsUtils.initLoginParams') as mock_init_login, \
+             patch('okx.websocket.WsPrivateAsync.asyncio.sleep', new_callable=AsyncMock):
+
+            mock_init_login.return_value = '{"op":"login"}'
+
+            from okx.websocket.WsPrivateAsync import WsPrivateAsync
+            ws = WsPrivateAsync(
+                apiKey="test_api_key",
+                passphrase="test_passphrase",
+                secretKey="test_secret_key",
+                url="wss://test.example.com",
+                useServerTime=False
+            )
+            mock_websocket = AsyncMock()
+            ws.websocket = mock_websocket
+            callback = MagicMock()
+            params = [{"channel": "account", "ccy": "BTC"}]
+
+            async def run_test():
+                await ws.subscribe(params, callback, id="sub001")
+                # Second call should be the subscribe (first is login)
+                subscribe_call = mock_websocket.send.call_args_list[1]
+                payload = json.loads(subscribe_call[0][0])
+                self.assertEqual(payload["op"], "subscribe")
+                self.assertEqual(payload["id"], "sub001")
 
             asyncio.get_event_loop().run_until_complete(run_test())
 
@@ -93,6 +125,32 @@ class TestWsPrivateAsyncUnsubscribe(unittest.TestCase):
                 payload = json.loads(call_args)
                 self.assertEqual(payload["op"], "unsubscribe")
                 self.assertEqual(payload["args"], params)
+                self.assertNotIn("id", payload)
+
+            asyncio.get_event_loop().run_until_complete(run_test())
+
+    def test_unsubscribe_with_id(self):
+        """Test unsubscribe with id parameter"""
+        with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'):
+            from okx.websocket.WsPrivateAsync import WsPrivateAsync
+            ws = WsPrivateAsync(
+                apiKey="test_api_key",
+                passphrase="test_passphrase",
+                secretKey="test_secret_key",
+                url="wss://test.example.com",
+                useServerTime=False
+            )
+            mock_websocket = AsyncMock()
+            ws.websocket = mock_websocket
+            callback = MagicMock()
+            params = [{"channel": "account", "ccy": "BTC"}]
+
+            async def run_test():
+                await ws.unsubscribe(params, callback, id="unsub001")
+                call_args = mock_websocket.send.call_args[0][0]
+                payload = json.loads(call_args)
+                self.assertEqual(payload["op"], "unsubscribe")
+                self.assertEqual(payload["id"], "unsub001")
 
             asyncio.get_event_loop().run_until_complete(run_test())
 
