@@ -44,8 +44,7 @@ class TestFundingAPIWithdrawal(unittest.TestCase):
             'toAddr': '0x1234567890abcdef',
             'chain': '',
             'areaCode': '',
-            'clientId': '',
-            'toAddrType': ''
+            'clientId': ''
         }
         mock_request.assert_called_once_with(c.POST, c.WITHDRAWAL_COIN, expected_params)
         self.assertEqual(result, mock_response)
@@ -147,7 +146,7 @@ class TestFundingAPIGetWithdrawalHistory(unittest.TestCase):
 
         # Assert
         call_args = mock_request.call_args[0][2]
-        self.assertEqual(call_args['toAddrType'], '')
+        self.assertNotIn('toAddrType', call_args)
         self.assertEqual(result, mock_response)
 
     @patch.object(FundingAPI, '_request_with_params')

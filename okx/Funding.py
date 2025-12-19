@@ -48,12 +48,7 @@ class FundingAPI(OkxClient):
                   'depId': depId, 'fromWdId': fromWdId}
         return self._request_with_params(GET, DEPOSIT_HISTORY, params)
 
-    # Get Withdrawal History
-    def get_withdrawal_history(self, ccy='', wdId='', state='', after='', before='', limit='', txId='', toAddrType=None):
-        params = {'ccy': ccy, 'wdId': wdId, 'state': state, 'after': after, 'before': before, 'limit': limit, 'txId': txId}
-        if toAddrType is not None:
-            params['toAddrType'] = toAddrType
-        return self._request_with_params(GET, WITHDRAWAL_HISTORY, params)
+
 
     # Get Currencies
     def get_currencies(self, ccy=''):
