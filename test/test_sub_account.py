@@ -1,12 +1,12 @@
 import unittest
 from okx import SubAccount
+from test.config import get_api_credentials
+
 
 class SubAccountTest(unittest.TestCase):
     def setUp(self):
-        api_key = 'your_apiKey'
-        api_secret_key = 'your_secretKey'
-        passphrase = 'your_secretKey'
-        self.SubAccountApi = SubAccount.SubAccountAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag='1')
+        api_key, api_secret_key, passphrase, flag = get_api_credentials()
+        self.SubAccountApi = SubAccount.SubAccountAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag=flag)
     '''
     ENTRUST_SUBACCOUNT_LIST = '/api/v5/users/entrust-subaccount-list' #need to add
     SET_TRSNSFER_OUT = '/api/v5/users/subaccount/set-transfer-out' #need to add

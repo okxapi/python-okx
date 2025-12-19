@@ -3,14 +3,13 @@ import unittest
 from loguru import logger
 
 from okx import Account
+from test.config import get_api_credentials
 
 
 class AccountTest(unittest.TestCase):
     def setUp(self):
-        api_key = 'your_apiKey'
-        api_secret_key = 'your_secretKey'
-        passphrase = 'your_secretKey'
-        self.AccountAPI = Account.AccountAPI(api_key, api_secret_key, passphrase, flag='1')
+        api_key, api_secret_key, passphrase, flag = get_api_credentials()
+        self.AccountAPI = Account.AccountAPI(api_key, api_secret_key, passphrase, flag=flag)
 
     # '''
     # POSITIONS_HISTORY = '/api/v5/account/positions-history' #need add
