@@ -27,8 +27,8 @@ class TestWsPublicAsyncInit(unittest.TestCase):
 class TestWsPublicAsyncSubscribe(unittest.TestCase):
     """Unit tests for WsPublicAsync subscribe method"""
 
-    def test_subscribe_without_id(self):
-        """Test subscribe without id parameter"""
+    def test_subscribe_sets_callback(self):
+        """Test subscribe sets callback correctly"""
         with patch('okx.websocket.WsPublicAsync.WebSocketFactory'):
             from okx.websocket.WsPublicAsync import WsPublicAsync
             ws = WsPublicAsync(url="wss://test.example.com")
@@ -63,7 +63,7 @@ class TestWsPublicAsyncSubscribe(unittest.TestCase):
 
             async def run_test():
                 await ws.subscribe(params, callback, id="sub001")
-                
+
                 # Verify the payload includes id
                 call_args = mock_websocket.send.call_args[0][0]
                 payload = json.loads(call_args)
@@ -151,10 +151,12 @@ class TestWsPublicAsyncStartStop(unittest.TestCase):
 
             from okx.websocket.WsPublicAsync import WsPublicAsync
             ws = WsPublicAsync(url="wss://test.example.com")
+            ws.loop = MagicMock()
 
             async def run_test():
                 await ws.stop()
                 mock_factory_instance.close.assert_called_once()
+                ws.loop.stop.assert_called_once()
 
             asyncio.get_event_loop().run_until_complete(run_test())
 

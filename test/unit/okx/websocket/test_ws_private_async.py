@@ -35,8 +35,8 @@ class TestWsPrivateAsyncInit(unittest.TestCase):
 class TestWsPrivateAsyncSubscribe(unittest.TestCase):
     """Unit tests for WsPrivateAsync subscribe method"""
 
-    def test_subscribe_without_id(self):
-        """Test subscribe without id parameter"""
+    def test_subscribe_sends_correct_payload(self):
+        """Test subscribe sends correct payload after login"""
         with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'), \
              patch('okx.websocket.WsPrivateAsync.WsUtils.initLoginParams') as mock_init_login, \
              patch('okx.websocket.WsPrivateAsync.asyncio.sleep', new_callable=AsyncMock):
@@ -73,9 +73,9 @@ class TestWsPrivateAsyncSubscribe(unittest.TestCase):
         with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'), \
              patch('okx.websocket.WsPrivateAsync.WsUtils.initLoginParams') as mock_init_login, \
              patch('okx.websocket.WsPrivateAsync.asyncio.sleep', new_callable=AsyncMock):
-            
+
             mock_init_login.return_value = '{"op":"login"}'
-            
+
             from okx.websocket.WsPrivateAsync import WsPrivateAsync
             ws = WsPrivateAsync(
                 apiKey="test_api_key",
@@ -103,8 +103,8 @@ class TestWsPrivateAsyncSubscribe(unittest.TestCase):
 class TestWsPrivateAsyncUnsubscribe(unittest.TestCase):
     """Unit tests for WsPrivateAsync unsubscribe method"""
 
-    def test_unsubscribe_without_id(self):
-        """Test unsubscribe without id parameter"""
+    def test_unsubscribe_sends_correct_payload(self):
+        """Test unsubscribe sends correct payload"""
         with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'):
             from okx.websocket.WsPrivateAsync import WsPrivateAsync
             ws = WsPrivateAsync(
@@ -193,7 +193,7 @@ class TestWsPrivateAsyncStartStop(unittest.TestCase):
     """Unit tests for WsPrivateAsync start and stop methods"""
 
     def test_stop(self):
-        """Test stop method closes the factory"""
+        """Test stop method closes the factory and stops loop"""
         with patch('okx.websocket.WsPrivateAsync.WebSocketFactory') as mock_factory_class:
             mock_factory_instance = MagicMock()
             mock_factory_instance.close = AsyncMock()
@@ -207,10 +207,12 @@ class TestWsPrivateAsyncStartStop(unittest.TestCase):
                 url="wss://test.example.com",
                 useServerTime=False
             )
+            ws.loop = MagicMock()
 
             async def run_test():
                 await ws.stop()
                 mock_factory_instance.close.assert_called_once()
+                ws.loop.stop.assert_called_once()
 
             asyncio.get_event_loop().run_until_complete(run_test())
 
