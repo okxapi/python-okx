@@ -50,7 +50,7 @@ class TestWsPrivateAsyncInit(unittest.TestCase):
         """Test that using deprecated useServerTime parameter shows warning"""
         with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'):
             from okx.websocket.WsPrivateAsync import WsPrivateAsync
-            
+
             with warnings.catch_warnings(record=True) as w:
                 warnings.simplefilter("always")
                 ws = WsPrivateAsync(
@@ -69,7 +69,7 @@ class TestWsPrivateAsyncInit(unittest.TestCase):
         """Test that not using useServerTime parameter shows no warning"""
         with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'):
             from okx.websocket.WsPrivateAsync import WsPrivateAsync
-            
+
             with warnings.catch_warnings(record=True) as w:
                 warnings.simplefilter("always")
                 ws = WsPrivateAsync(
@@ -124,9 +124,9 @@ class TestWsPrivateAsyncSubscribe(unittest.TestCase):
         with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'), \
              patch('okx.websocket.WsPrivateAsync.WsUtils.initLoginParams') as mock_init_login, \
              patch('okx.websocket.WsPrivateAsync.asyncio.sleep', new_callable=AsyncMock):
-            
+
             mock_init_login.return_value = '{"op":"login"}'
-            
+
             from okx.websocket.WsPrivateAsync import WsPrivateAsync
             ws = WsPrivateAsync(
                 apiKey="test_api_key",
@@ -573,10 +573,12 @@ class TestWsPrivateAsyncStartStop(unittest.TestCase):
                 secretKey="test_secret_key",
                 url="wss://test.example.com"
             )
+            ws.loop = MagicMock()
 
             async def run_test():
                 await ws.stop()
                 mock_factory_instance.close.assert_called_once()
+                ws.loop.stop.assert_called_once()
 
             asyncio.get_event_loop().run_until_complete(run_test())
 

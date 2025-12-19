@@ -22,15 +22,22 @@ async def main():
     arg1 = {"channel": "account", "ccy": "BTC"}
     arg2 = {"channel": "orders", "instType": "ANY"}
     arg3 = {"channel": "balance_and_position"}
+    # Withdrawal info channel subscription example, supporting the toAddrType parameter
+    # toAddrType: Address type
+    # 1: Wallet address, email, phone number or login account name
+    # 2: UID (applicable only when dest=3)
+    arg4 = {"channel": "withdrawal-info", "ccy": "USDT", "toAddrType": "1"}
     args.append(arg1)
     args.append(arg2)
     args.append(arg3)
+    args.append(arg4)
     await ws.subscribe(args, callback=privateCallback)
     await asyncio.sleep(30)
     print("-----------------------------------------unsubscribe--------------------------------------------")
     args2 = [arg2]
-    await ws.unsubscribe(args2, callback=privateCallback)
-    await asyncio.sleep(30)
+    # Use id parameter to identify unsubscribe request
+    await ws.unsubscribe(args2, callback=privateCallback, id="privateUnsub001")
+    await asyncio.sleep(5)
     print("-----------------------------------------unsubscribe all--------------------------------------------")
     args3 = [arg1, arg3]
     await ws.unsubscribe(args3, callback=privateCallback)
@@ -54,7 +61,7 @@ async def test_place_order():
     await ws.start()
     await ws.login()
     await asyncio.sleep(5)
-    
+
     # Order parameters
     order_args = [{
         "instId": "BTC-USDT",
@@ -86,7 +93,7 @@ async def test_batch_orders():
     await ws.start()
     await ws.login()
     await asyncio.sleep(5)
-    
+
     # Batch order parameters (max 20)
     order_args = [
         {
@@ -129,7 +136,7 @@ async def test_cancel_order():
     await ws.start()
     await ws.login()
     await asyncio.sleep(5)
-    
+
     # Cancel order parameters (either ordId or clOrdId must be provided)
     cancel_args = [{
         "instId": "BTC-USDT",
@@ -157,7 +164,7 @@ async def test_batch_cancel_orders():
     await ws.start()
     await ws.login()
     await asyncio.sleep(5)
-    
+
     cancel_args = [
         {"instId": "BTC-USDT", "ordId": "order_id_1"},
         {"instId": "ETH-USDT", "ordId": "order_id_2"}
@@ -183,7 +190,7 @@ async def test_amend_order():
     await ws.start()
     await ws.login()
     await asyncio.sleep(5)
-    
+
     # Amend order parameters
     amend_args = [{
         "instId": "BTC-USDT",
@@ -213,7 +220,7 @@ async def test_mass_cancel():
     await ws.start()
     await ws.login()
     await asyncio.sleep(5)
-    
+
     # Mass cancel parameters
     mass_cancel_args = [{
         "instType": "SPOT",
@@ -237,7 +244,7 @@ async def test_send_method():
     await ws.start()
     await ws.login()
     await asyncio.sleep(5)
-    
+
     # Use generic send method to place order - callback must be provided to receive response
     order_args = [{
         "instId": "BTC-USDT",

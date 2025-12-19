@@ -77,9 +77,9 @@ class TestWsPublicAsyncLogin(unittest.TestCase):
         """Test successful login with valid credentials"""
         with patch('okx.websocket.WsPublicAsync.WebSocketFactory') as mock_factory, \
              patch('okx.websocket.WsPublicAsync.WsUtils.initLoginParams') as mock_init_login:
-            
+
             mock_init_login.return_value = '{"op":"login","args":[...]}'
-            
+
             from okx.websocket.WsPublicAsync import WsPublicAsync
             ws = WsPublicAsync(
                 url="wss://test.example.com",
@@ -144,7 +144,7 @@ class TestWsPublicAsyncSubscribe(unittest.TestCase):
 
             async def run_test():
                 await ws.subscribe(params, callback, id="sub001")
-                
+
                 # Verify the payload includes id
                 call_args = mock_websocket.send.call_args[0][0]
                 payload = json.loads(call_args)
@@ -168,10 +168,11 @@ class TestWsPublicAsyncSubscribe(unittest.TestCase):
             ]
 
             async def run_test():
-                await ws.subscribe(params, callback)
+                await ws.subscribe(params, callback, id="multi001")
                 call_args = mock_websocket.send.call_args[0][0]
                 payload = json.loads(call_args)
                 self.assertEqual(len(payload["args"]), 2)
+                self.assertEqual(payload["id"], "multi001")
 
             asyncio.get_event_loop().run_until_complete(run_test())
 
@@ -310,10 +311,12 @@ class TestWsPublicAsyncStartStop(unittest.TestCase):
 
             from okx.websocket.WsPublicAsync import WsPublicAsync
             ws = WsPublicAsync(url="wss://test.example.com")
+            ws.loop = MagicMock()
 
             async def run_test():
                 await ws.stop()
                 mock_factory_instance.close.assert_called_once()
+                ws.loop.stop.assert_called_once()
 
             asyncio.get_event_loop().run_until_complete(run_test())
 

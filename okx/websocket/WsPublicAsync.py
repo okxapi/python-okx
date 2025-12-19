@@ -37,13 +37,14 @@ class WsPublicAsync:
             if self.callback:
                 self.callback(message)
 
+    async def subscribe(self, params: list, callback, id: str = None):
     async def login(self):
         """
         登录方法，用于需要登录的 business 频道（如 /ws/v5/business）
         """
         if not self.apiKey or not self.secretKey or not self.passphrase:
             raise ValueError("apiKey, secretKey and passphrase are required for login")
-        
+
         loginPayload = WsUtils.initLoginParams(
             useServerTime=False,
             apiKey=self.apiKey,
@@ -65,6 +66,10 @@ class WsPublicAsync:
         if id is not None:
             payload_dict["id"] = id
         payload = json.dumps(payload_dict)
+        }
+        if id is not None:
+            payload_dict["id"] = id
+        payload = json.dumps(payload_dict)
         if self.debug:
             logger.debug(f"subscribe: {payload}")
         await self.websocket.send(payload)
@@ -75,6 +80,11 @@ class WsPublicAsync:
         payload_dict = {
             "op": "unsubscribe",
             "args": params
+        }
+        if id is not None:
+            payload_dict["id"] = id
+        payload = json.dumps(payload_dict)
+        logger.info(f"unsubscribe: {payload}")
         }
         if id is not None:
             payload_dict["id"] = id
@@ -118,4 +128,8 @@ class WsPublicAsync:
         self.loop.create_task(self.consume())
 
     def stop_sync(self):
-        self.loop.run_until_complete(self.stop())
+        if self.loop.is_running():
+            future = asyncio.run_coroutine_threadsafe(self.stop(), self.loop)
+            future.result(timeout=10)
+        else:
+            self.loop.run_until_complete(self.stop())

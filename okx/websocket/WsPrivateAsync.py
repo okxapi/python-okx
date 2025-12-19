@@ -26,7 +26,7 @@ class WsPrivateAsync:
         # 设置日志级别
         if debug:
             logger.setLevel(logging.DEBUG)
-        
+
         # 废弃 useServerTime 参数警告
         if useServerTime is not None:
             warnings.warn("useServerTime parameter is deprecated. Please remove it.", DeprecationWarning)
@@ -197,4 +197,8 @@ class WsPrivateAsync:
         self.loop.create_task(self.consume())
 
     def stop_sync(self):
-        self.loop.run_until_complete(self.stop())
+        if self.loop.is_running():
+            future = asyncio.run_coroutine_threadsafe(self.stop(), self.loop)
+            future.result(timeout=10)
+        else:
+            self.loop.run_until_complete(self.stop())

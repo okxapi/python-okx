@@ -21,11 +21,13 @@ async def main():
     args.append(arg2)
     args.append(arg3)
     args.append(arg4)
-    await ws.subscribe(args, publicCallback)
+    # Use id parameter to identify subscribe request, the same id will be returned in response
+    await ws.subscribe(args, publicCallback, id="sub001")
     await asyncio.sleep(5)
     print("-----------------------------------------unsubscribe--------------------------------------------")
     args2 = [arg4]
-    await ws.unsubscribe(args2, publicCallback)
+    # Use id parameter to identify unsubscribe request
+    await ws.unsubscribe(args2, publicCallback, id="unsub001")
     await asyncio.sleep(5)
     print("-----------------------------------------unsubscribe all--------------------------------------------")
     args3 = [arg1, arg2, arg3]
@@ -48,11 +50,11 @@ async def test_business_channel_with_login():
         debug=True
     )
     await ws.start()
-    
+
     # Login
     await ws.login()
     await asyncio.sleep(5)
-    
+
     # Subscribe to channels that require login
     args = [{"channel": "candle1m", "instId": "BTC-USDT"}]
     await ws.subscribe(args, publicCallback)
@@ -65,7 +67,7 @@ async def test_send_method():
     url = "wss://wspap.okx.com:8443/ws/v5/public?brokerId=9999"
     ws = WsPublicAsync(url=url, debug=True)
     await ws.start()
-    
+
     # Use generic send method to subscribe - callback must be provided to receive response
     args = [{"channel": "tickers", "instId": "BTC-USDT"}]
     await ws.send("subscribe", args, callback=publicCallback, id="send001")
