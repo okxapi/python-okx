@@ -58,4 +58,8 @@ class WsPublicAsync:
         self.loop.create_task(self.consume())
 
     def stop_sync(self):
-        self.loop.run_until_complete(self.stop())
+        if self.loop.is_running():
+            future = asyncio.run_coroutine_threadsafe(self.stop(), self.loop)
+            future.result(timeout=10)
+        else:
+            self.loop.run_until_complete(self.stop())
