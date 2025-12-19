@@ -37,7 +37,6 @@ class WsPublicAsync:
             if self.callback:
                 self.callback(message)
 
-    async def subscribe(self, params: list, callback, id: str = None):
     async def login(self):
         """
         登录方法，用于需要登录的 business 频道（如 /ws/v5/business）
@@ -66,10 +65,6 @@ class WsPublicAsync:
         if id is not None:
             payload_dict["id"] = id
         payload = json.dumps(payload_dict)
-        }
-        if id is not None:
-            payload_dict["id"] = id
-        payload = json.dumps(payload_dict)
         if self.debug:
             logger.debug(f"subscribe: {payload}")
         await self.websocket.send(payload)
@@ -80,11 +75,6 @@ class WsPublicAsync:
         payload_dict = {
             "op": "unsubscribe",
             "args": params
-        }
-        if id is not None:
-            payload_dict["id"] = id
-        payload = json.dumps(payload_dict)
-        logger.info(f"unsubscribe: {payload}")
         }
         if id is not None:
             payload_dict["id"] = id
