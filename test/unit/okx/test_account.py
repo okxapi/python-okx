@@ -457,17 +457,17 @@ class TestAccountAPISetAutoEarn(unittest.TestCase):
 
         # Act
         result = self.account_api.set_auto_earn(
-            earnType='current',
             ccy='USDT',
             action='start',
+            earnType='current',
             apr='0.05'
         )
 
         # Assert
         expected_params = {
-            'earnType': 'current',
             'ccy': 'USDT',
             'action': 'start',
+            'earnType': 'current',
             'apr': '0.05'
         }
         mock_request.assert_called_once_with(c.POST, c.SET_AUTO_EARN, expected_params)
@@ -482,17 +482,16 @@ class TestAccountAPISetAutoEarn(unittest.TestCase):
 
         # Act
         result = self.account_api.set_auto_earn(
-            earnType='current',
             ccy='BTC',
-            action='start'
+            action='start',
+            earnType='current'
         )
 
         # Assert
         expected_params = {
-            'earnType': 'current',
             'ccy': 'BTC',
             'action': 'start',
-            'apr': ''
+            'earnType': 'current'
         }
         mock_request.assert_called_once_with(c.POST, c.SET_AUTO_EARN, expected_params)
 
@@ -505,36 +504,33 @@ class TestAccountAPISetAutoEarn(unittest.TestCase):
 
         # Act
         result = self.account_api.set_auto_earn(
-            earnType='current',
             ccy='ETH',
-            action='stop'
+            action='stop',
+            earnType='current'
         )
 
         # Assert
         expected_params = {
-            'earnType': 'current',
             'ccy': 'ETH',
             'action': 'stop',
-            'apr': ''
+            'earnType': 'current'
         }
         mock_request.assert_called_once_with(c.POST, c.SET_AUTO_EARN, expected_params)
 
     @patch.object(AccountAPI, '_request_with_params')
-    def test_set_auto_earn_with_empty_params(self, mock_request):
-        """Test set_auto_earn with empty parameters (default values)"""
+    def test_set_auto_earn_with_required_params_only(self, mock_request):
+        """Test set_auto_earn with required parameters only (ccy, action)"""
         # Arrange
         mock_response = {'code': '0', 'msg': '', 'data': []}
         mock_request.return_value = mock_response
 
         # Act
-        result = self.account_api.set_auto_earn()
+        result = self.account_api.set_auto_earn(ccy='USDT', action='turn_on')
 
         # Assert
         expected_params = {
-            'earnType': '',
-            'ccy': '',
-            'action': '',
-            'apr': ''
+            'ccy': 'USDT',
+            'action': 'turn_on'
         }
         mock_request.assert_called_once_with(c.POST, c.SET_AUTO_EARN, expected_params)
 
@@ -549,9 +545,9 @@ class TestAccountAPISetAutoEarn(unittest.TestCase):
         for ccy in currencies:
             mock_request.reset_mock()
             result = self.account_api.set_auto_earn(
-                earnType='current',
                 ccy=ccy,
-                action='start'
+                action='turn_on',
+                earnType='0'
             )
 
             call_args = mock_request.call_args[0][2]
