@@ -78,14 +78,14 @@ class FundingTest(unittest.TestCase):
     #     print(self.FundingAPI.get_deposit_history())
 
     def test_withdrawal(self):
-        # toAddrType: 地址类型
-        # 1: 钱包地址、邮箱、手机号或登录账户名
-        # 2: UID（仅适用于 dest=3 的情况）
+        # toAddrType: Address type
+        # 1: Wallet address, email, phone number or login account
+        # 2: UID (only applicable when dest=3)
         print(self.FundingAPI.withdrawal(ccy='USDT', amt='1', dest='3', toAddr='18740405107', areaCode='86', toAddrType='1'))
 
     def test_get_withdrawal_history_with_toAddrType(self):
-        # toAddrType: 地址类型筛选
-        # 1: 钱包地址、邮箱、手机号或登录账户名
+        # toAddrType: Address type filter
+        # 1: Wallet address, email, phone number or login account
         # 2: UID
         print(self.FundingAPI.get_withdrawal_history(toAddrType='1'))
 
