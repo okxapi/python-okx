@@ -124,14 +124,16 @@ class PublicAPI(OkxClient):
         return self._request_with_params(GET, GET_OPTION_TRADES, params)
 
     # Get historical market data
-    def get_market_data_history(self, module, instType, dateAggrType, begin, end, instIdList='', instFamilyList=''):
+    def get_market_data_history(self, module, instType, dateAggrType, begin, end, instIdList=None, instFamilyList=None):
         params = {
             'module': module,
             'instType': instType,
             'dateAggrType': dateAggrType,
             'begin': begin,
-            'end': end,
-            'instIdList': instIdList,
-            'instFamilyList': instFamilyList
+            'end': end
         }
+        if instIdList is not None:
+            params['instIdList'] = instIdList
+        if instFamilyList is not None:
+            params['instFamilyList'] = instFamilyList
         return self._request_with_params(GET, MARKET_DATA_HISTORY, params)

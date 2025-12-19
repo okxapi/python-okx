@@ -42,9 +42,7 @@ class TestPublicAPIMarketDataHistory(unittest.TestCase):
             'instType': 'SPOT',
             'dateAggrType': '1D',
             'begin': '1609459200000',
-            'end': '1609545600000',
-            'instIdList': '',
-            'instFamilyList': ''
+            'end': '1609545600000'
         }
         mock_request.assert_called_once_with(c.GET, c.MARKET_DATA_HISTORY, expected_params)
         self.assertEqual(result, mock_response)
@@ -108,8 +106,7 @@ class TestPublicAPIMarketDataHistory(unittest.TestCase):
             'dateAggrType': '1D',
             'begin': '1609459200000',
             'end': '1609545600000',
-            'instIdList': 'BTC-USDT',
-            'instFamilyList': ''
+            'instIdList': 'BTC-USDT'
         }
         mock_request.assert_called_once_with(c.GET, c.MARKET_DATA_HISTORY, expected_params)
 
@@ -137,7 +134,6 @@ class TestPublicAPIMarketDataHistory(unittest.TestCase):
             'dateAggrType': '1M',
             'begin': '1609459200000',
             'end': '1612137600000',
-            'instIdList': '',
             'instFamilyList': 'BTC-USD'
         }
         mock_request.assert_called_once_with(c.GET, c.MARKET_DATA_HISTORY, expected_params)
