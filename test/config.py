@@ -12,7 +12,6 @@ from pathlib import Path
 # Try to load from .env file if python-dotenv is available
 try:
     from dotenv import load_dotenv
-    # Load .env from project root
     env_path = Path(__file__).parent.parent / '.env'
     load_dotenv(env_path)
 except ImportError:

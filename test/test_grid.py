@@ -79,7 +79,31 @@ class GridTest(unittest.TestCase):
     # def test_get_recurring_buy_sub_orders(self):
     #     print(self.GridAPI.get_recurring_buy_sub_orders(algoId="581191143417970688"))
 
-    #581191143417970688
+    #def test_grid_order_algo_with_trade_quote_ccy(self):
+    #     print(self.GridAPI.grid_order_algo(
+    #         instId="BTC-USDT",
+    #         algoOrdType="grid",
+    #         maxPx="45000",
+    #         minPx="20000",
+    #         gridNum="100",
+    #         runType="1",
+    #         quoteSz="50",
+    #         tradeQuoteCcy="USDT"
+    #     ))
+
+    #def test_place_recurring_buy_order_with_trade_quote_ccy(self):
+    #     print(self.GridAPI.place_recurring_buy_order(
+    #         stgyName="test_strategy",
+    #         recurringList=[{'ccy': 'ETH', 'ratio': '1'}],
+    #         period="daily",
+    #         recurringDay='1',
+    #         recurringTime='0',
+    #         timeZone='8',
+    #         amt='100',
+    #         investmentCcy='USDT',
+    #         tdMode='cash',
+    #         tradeQuoteCcy="USDT"
+    #     ))
 
 if __name__ == '__main__':
     unittest.main()

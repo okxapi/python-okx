@@ -145,8 +145,15 @@ class AccountTest(unittest.TestCase):
     #     logger.info(f'{self.AccountAPI.set_auto_repay(autoRepay=True)}')
     # def test_spot_borrow_repay_history(self):
     #     logger.debug(self.AccountAPI.spot_borrow_repay_history(ccy="USDT",type="auto_borrow",after="1597026383085"))
-    def test_set_auto_earn(self):
-        logger.debug(self.AccountAPI.set_auto_earn(ccy="USDT", action="turn_on", earnType='0'))
+    # def test_set_auto_earn(self):
+    #    logger.debug(self.AccountAPI.set_auto_earn(ccy="USDT", action="turn_on", earnType='0'))
+    #def test_get_max_loan_with_trade_quote_ccy(self):
+    #     logger.debug(self.AccountAPI.get_max_loan(
+    #         instId="BTC-USDT",
+    #         mgnMode="isolated",
+    #         mgnCcy="USDT",
+    #         tradeQuoteCcy="USDT"
+    #     ))
 
 if __name__ == '__main__':
     unittest.main()
