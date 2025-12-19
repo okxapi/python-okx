@@ -22,15 +22,20 @@ async def main():
     args.append(arg2)
     args.append(arg3)
     args.append(arg4)
-    await ws.subscribe(args, publicCallback)
+    # Use id parameter to identify subscribe request, the same id will be returned in response
+    await ws.subscribe(args, publicCallback, id="sub001")
     await asyncio.sleep(5)
     print("-----------------------------------------unsubscribe--------------------------------------------")
     args2 = [arg4]
-    await ws.unsubscribe(args2, publicCallback)
+    # Use id parameter to identify unsubscribe request
+    await ws.unsubscribe(args2, publicCallback, id="unsub001")
     await asyncio.sleep(5)
     print("-----------------------------------------unsubscribe all--------------------------------------------")
     args3 = [arg1, arg2, arg3]
     await ws.unsubscribe(args3, publicCallback)
+    await asyncio.sleep(1)
+    # Properly close websocket connection
+    await ws.stop()
 
 
 if __name__ == '__main__':

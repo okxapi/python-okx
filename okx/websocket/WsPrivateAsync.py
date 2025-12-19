@@ -30,16 +30,19 @@ class WsPrivateAsync:
             if self.callback:
                 self.callback(message)
 
-    async def subscribe(self, params: list, callback):
+    async def subscribe(self, params: list, callback, id: str = None):
         self.callback = callback
 
         logRes = await self.login()
         await asyncio.sleep(5)
         if logRes:
-            payload = json.dumps({
+            payload_dict = {
                 "op": "subscribe",
                 "args": params
-            })
+            }
+            if id is not None:
+                payload_dict["id"] = id
+            payload = json.dumps(payload_dict)
             await self.websocket.send(payload)
         # await self.consume()
 
@@ -53,12 +56,15 @@ class WsPrivateAsync:
         await self.websocket.send(loginPayload)
         return True
 
-    async def unsubscribe(self, params: list, callback):
+    async def unsubscribe(self, params: list, callback, id: str = None):
         self.callback = callback
-        payload = json.dumps({
+        payload_dict = {
             "op": "unsubscribe",
             "args": params
-        })
+        }
+        if id is not None:
+            payload_dict["id"] = id
+        payload = json.dumps(payload_dict)
         logger.info(f"unsubscribe: {payload}")
         await self.websocket.send(payload)
         # for param in params:
@@ -66,7 +72,6 @@ class WsPrivateAsync:
 
     async def stop(self):
         await self.factory.close()
-        self.loop.stop()
 
     async def start(self):
         logger.info("Connecting to WebSocket...")
@@ -74,4 +79,8 @@ class WsPrivateAsync:
         self.loop.create_task(self.consume())
 
     def stop_sync(self):
-        self.loop.run_until_complete(self.stop())
+        if self.loop.is_running():
+            future = asyncio.run_coroutine_threadsafe(self.stop(), self.loop)
+            future.result(timeout=10)
+        else:
+            self.loop.run_until_complete(self.stop())
