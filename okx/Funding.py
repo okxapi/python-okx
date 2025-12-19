@@ -35,9 +35,11 @@ class FundingAPI(OkxClient):
         return self._request_with_params(POST, FUNDS_TRANSFER, params)
 
     # Withdrawal
-    def withdrawal(self, ccy, amt, dest, toAddr, chain='', areaCode='', clientId='', toAddrType=''):
+    def withdrawal(self, ccy, amt, dest, toAddr, chain='', areaCode='', clientId='', toAddrType=None):
         params = {'ccy': ccy, 'amt': amt, 'dest': dest, 'toAddr': toAddr, 'chain': chain,
-                  'areaCode': areaCode, 'clientId': clientId, 'toAddrType': toAddrType}
+                  'areaCode': areaCode, 'clientId': clientId}
+        if toAddrType is not None:
+            params['toAddrType'] = toAddrType
         return self._request_with_params(POST, WITHDRAWAL_COIN, params)
 
     # Get Deposit History
@@ -47,8 +49,10 @@ class FundingAPI(OkxClient):
         return self._request_with_params(GET, DEPOSIT_HISTORY, params)
 
     # Get Withdrawal History
-    def get_withdrawal_history(self, ccy='', wdId='', state='', after='', before='', limit='', txId='', toAddrType=''):
-        params = {'ccy': ccy, 'wdId': wdId, 'state': state, 'after': after, 'before': before, 'limit': limit, 'txId': txId, 'toAddrType': toAddrType}
+    def get_withdrawal_history(self, ccy='', wdId='', state='', after='', before='', limit='', txId='', toAddrType=None):
+        params = {'ccy': ccy, 'wdId': wdId, 'state': state, 'after': after, 'before': before, 'limit': limit, 'txId': txId}
+        if toAddrType is not None:
+            params['toAddrType'] = toAddrType
         return self._request_with_params(GET, WITHDRAWAL_HISTORY, params)
 
     # Get Currencies
@@ -113,7 +117,9 @@ class FundingAPI(OkxClient):
         return self._request_with_params(GET, GET_DEPOSIT_WITHDrAW_STATUS, params)
 
     #Get withdrawal history
-    def get_withdrawal_history(self, ccy='', wdId='', clientId='', txId='', type='', state='', after='', before='', limit='', toAddrType=''):
-        params = {'ccy': ccy, 'wdId': wdId, 'clientId': clientId, 'txId': txId, 'type': type, 'state': state, 'after': after, 'before': before, 'limit': limit, 'toAddrType': toAddrType}
+    def get_withdrawal_history(self, ccy='', wdId='', clientId='', txId='', type='', state='', after='', before='', limit='', toAddrType=None):
+        params = {'ccy': ccy, 'wdId': wdId, 'clientId': clientId, 'txId': txId, 'type': type, 'state': state, 'after': after, 'before': before, 'limit': limit}
+        if toAddrType is not None:
+            params['toAddrType'] = toAddrType
         return self._request_with_params(GET, GET_WITHDRAWAL_HISTORY, params)
 
