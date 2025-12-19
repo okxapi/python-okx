@@ -1,0 +1,119 @@
+# GitLab CI/CD Configuration for python-okx
+# Documentation: https://docs.gitlab.com/ee/ci/
+
+# Define stages in order of execution
+stages:
+  - lint
+  - test
+  - build
+
+# Global variables
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+# Cache pip downloads between jobs
+cache:
+  paths:
+    - .cache/pip/
+    - venv/
+
+# ============================================
+# LINT STAGE
+# ============================================
+
+lint:
+  stage: lint
+  image: python:3.11-slim
+  before_script:
+    - pip install --upgrade pip
+    - pip install flake8 black isort
+  script:
+    - echo "Running flake8 linting..."
+    - flake8 okx/ --max-line-length=120 --ignore=E501,W503,E203 --count --show-source --statistics
+    # Optional: Check code formatting (uncomment if you want to enforce)
+    # - black --check okx/
+    # - isort --check-only okx/
+  allow_failure: true  # Set to false once codebase is cleaned up
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# ============================================
+# TEST STAGE
+# ============================================
+
+# Template for test jobs
+.test_template: &test_template
+  stage: test
+  before_script:
+    - pip install --upgrade pip
+    - pip install -e .
+    - pip install pytest pytest-cov pytest-asyncio
+  script:
+    - echo "Running unit tests..."
+    - python -m pytest test/unit/ -v --cov=okx --cov-report=term-missing --cov-report=xml:coverage.xml
+  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+    paths:
+      - coverage.xml
+    expire_in: 1 week
+
+# Test with Python 3.9
+test:python3.9:
+  <<: *test_template
+  image: python:3.9-slim
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# Test with Python 3.10
+test:python3.10:
+  <<: *test_template
+  image: python:3.10-slim
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# Test with Python 3.11
+test:python3.11:
+  <<: *test_template
+  image: python:3.11-slim
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# Test with Python 3.12
+test:python3.12:
+  <<: *test_template
+  image: python:3.12-slim
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# ============================================
+# BUILD STAGE
+# ============================================
+
+build:
+  stage: build
+  image: python:3.11-slim
+  before_script:
+    - pip install --upgrade pip
+    - pip install build twine
+  script:
+    - echo "Building package..."
+    - python -m build
+    - echo "Checking package with twine..."
+    - twine check dist/*
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_TAG
