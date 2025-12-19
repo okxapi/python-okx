@@ -326,10 +326,8 @@ class AccountAPI(OkxClient):
         params = {'ccy': ccy, 'type': type, 'after': after, 'before': before, 'limit': limit}
         return self._request_with_params(GET, GET_BORROW_REPAY_HISTORY, params)
 
-    def set_auto_earn(self, ccy, action, earnType=None, apr=None):
+    def set_auto_earn(self, ccy, action, earnType=None):
         params = {'ccy': ccy, 'action': action}
         if earnType is not None:
             params['earnType'] = earnType
-        if apr is not None:
-            params['apr'] = apr
         return self._request_with_params(POST, SET_AUTO_EARN, params)

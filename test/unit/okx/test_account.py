@@ -458,24 +458,22 @@ class TestAccountAPISetAutoEarn(unittest.TestCase):
         # Act
         result = self.account_api.set_auto_earn(
             ccy='USDT',
-            action='start',
-            earnType='current',
-            apr='0.05'
+            action='turn_on',
+            earnType='0'
         )
 
         # Assert
         expected_params = {
             'ccy': 'USDT',
-            'action': 'start',
-            'earnType': 'current',
-            'apr': '0.05'
+            'action': 'turn_on',
+            'earnType': '0'
         }
         mock_request.assert_called_once_with(c.POST, c.SET_AUTO_EARN, expected_params)
         self.assertEqual(result, mock_response)
 
     @patch.object(AccountAPI, '_request_with_params')
-    def test_set_auto_earn_start_action(self, mock_request):
-        """Test set_auto_earn with start action"""
+    def test_set_auto_earn_turn_on_action(self, mock_request):
+        """Test set_auto_earn with turn_on action"""
         # Arrange
         mock_response = {'code': '0', 'msg': '', 'data': []}
         mock_request.return_value = mock_response
@@ -483,21 +481,21 @@ class TestAccountAPISetAutoEarn(unittest.TestCase):
         # Act
         result = self.account_api.set_auto_earn(
             ccy='BTC',
-            action='start',
-            earnType='current'
+            action='turn_on',
+            earnType='0'
         )
 
         # Assert
         expected_params = {
             'ccy': 'BTC',
-            'action': 'start',
-            'earnType': 'current'
+            'action': 'turn_on',
+            'earnType': '0'
         }
         mock_request.assert_called_once_with(c.POST, c.SET_AUTO_EARN, expected_params)
 
     @patch.object(AccountAPI, '_request_with_params')
-    def test_set_auto_earn_stop_action(self, mock_request):
-        """Test set_auto_earn with stop action"""
+    def test_set_auto_earn_turn_off_action(self, mock_request):
+        """Test set_auto_earn with turn_off action"""
         # Arrange
         mock_response = {'code': '0', 'msg': '', 'data': []}
         mock_request.return_value = mock_response
@@ -505,15 +503,15 @@ class TestAccountAPISetAutoEarn(unittest.TestCase):
         # Act
         result = self.account_api.set_auto_earn(
             ccy='ETH',
-            action='stop',
-            earnType='current'
+            action='turn_off',
+            earnType='0'
         )
 
         # Assert
         expected_params = {
             'ccy': 'ETH',
-            'action': 'stop',
-            'earnType': 'current'
+            'action': 'turn_off',
+            'earnType': '0'
         }
         mock_request.assert_called_once_with(c.POST, c.SET_AUTO_EARN, expected_params)
 
