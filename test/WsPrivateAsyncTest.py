@@ -21,10 +21,10 @@ async def main():
     arg1 = {"channel": "account", "ccy": "BTC"}
     arg2 = {"channel": "orders", "instType": "ANY"}
     arg3 = {"channel": "balance_and_position"}
-    # Withdrawal info channel 订阅示例，支持 toAddrType 参数
-    # toAddrType: 地址类型
-    # 1: 钱包地址、邮箱、手机号或登录账户名
-    # 2: UID（仅适用于 dest=3 的情况）
+    # Withdrawal info channel subscription example, supporting the toAddrType parameter
+    # toAddrType: Address type
+    # 1: Wallet address, email, phone number or login account name
+    # 2: UID (applicable only when dest=3)
     arg4 = {"channel": "withdrawal-info", "ccy": "USDT", "toAddrType": "1"}
     args.append(arg1)
     args.append(arg2)
