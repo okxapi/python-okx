@@ -189,13 +189,11 @@ class TradeAPI(OkxClient):
     # Amend algo order
     def amend_algo_order(self, instId='', algoId='', algoClOrdId='', cxlOnFail='', reqId='', newSz='', newTriggerPx='', newOrdPx='',
                          newTpTriggerPx='', newTpOrdPx='', newSlTriggerPx='', newSlOrdPx='', newTpTriggerPxType='',
-                         newSlTriggerPxType='', pxAmendType=None):
+                         newSlTriggerPxType=''):
         params = {'instId': instId, 'algoId': algoId, 'algoClOrdId': algoClOrdId, 'cxlOnFail': cxlOnFail,
                   'reqId': reqId, 'newSz': newSz, 'newTriggerPx': newTriggerPx, 'newOrdPx': newOrdPx, 'newTpTriggerPx': newTpTriggerPx, 'newTpOrdPx': newTpOrdPx,
                   'newSlTriggerPx': newSlTriggerPx, 'newSlOrdPx': newSlOrdPx,
                   'newTpTriggerPxType': newTpTriggerPxType, 'newSlTriggerPxType': newSlTriggerPxType}
-        if pxAmendType is not None:
-            params['pxAmendType'] = pxAmendType
         return self._request_with_params(POST, AMEND_ALGO_ORDER, params)
 
     def get_oneclick_repay_list_v2(self):
