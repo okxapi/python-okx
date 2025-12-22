@@ -47,13 +47,13 @@ jobs:
           print(f'   okx version: {okx.__version__}')
           "
 
-      - name: Install dev dependencies and verify test imports
+      - name: Verify test imports
         run: |
-          pip install -r requirements-dev.txt
+          pip install pytest
           python -c "
           import pytest
           import unittest
-          print('✅ Dev imports successful')
+          print('✅ Test imports successful')
           "
 
   # ============================================
@@ -105,7 +105,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('requirements*.txt') }}
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-${{ matrix.python-version }}-
             ${{ runner.os }}-pip-
@@ -113,7 +113,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements-dev.txt
+          pip install -r requirements.txt
           pip install -e .
 
       - name: Run tests

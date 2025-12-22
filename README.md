@@ -20,18 +20,78 @@ Make sure you update often and check the [Changelog](https://www.okx.com/docs-v5
 ### Quick start
 #### Prerequisites
 
-`python version：>=3.9`
+`python version：>=3.7`
 
-`WebSocketAPI： websockets package advise version 6.0`
-
-#### Step 1: register an account on OKX and apply for an API key
+#### Step 1: Register an account on OKX and apply for an API key
 - Register for an account: https://www.okx.com/account/register
 - Apply for an API key: https://www.okx.com/account/users/myApi
 
-#### Step 2: install python-okx
+#### Step 2: Install python-okx
+
+```bash
+pip install python-okx
+```
+
+### API Credentials
+
+#### Option 1: Hardcoded credentials
 
 ```python
-pip install python-okx
+from okx import Account
+
+account = Account.AccountAPI(
+    api_key="your-api-key-here",
+    api_secret_key="your-api-secret-here",
+    passphrase="your-passphrase-here",
+    flag="1",  # 0 = live trading, 1 = demo trading
+    debug=False
+)
+```
+
+#### Option 2: Using `.env` file (recommended)
+
+Create a `.env` file in your project root:
+
+```bash
+OKX_API_KEY=your-api-key-here
+OKX_API_SECRET=your-api-secret-here
+OKX_PASSPHRASE=your-passphrase-here
+OKX_FLAG=1
+```
+
+Then load it in your code:
+
+```python
+import os
+from dotenv import load_dotenv
+from okx import Account
+
+load_dotenv()
+
+account = Account.AccountAPI(
+    api_key=os.getenv('OKX_API_KEY'),
+    api_secret_key=os.getenv('OKX_API_SECRET'),
+    passphrase=os.getenv('OKX_PASSPHRASE'),
+    flag=os.getenv('OKX_FLAG', '1'),
+    debug=False
+)
+```
+
+### Development Setup
+
+For contributors or local development:
+
+```bash
+# Clone the repository
+git clone https://github.com/okxapi/python-okx.git
+cd python-okx
+
+# Install dependencies
+pip install -r requirements.txt
+pip install -e .
+
+# Run tests
+pytest test/unit/ -v
 ```
 
 #### Step 3: Run examples

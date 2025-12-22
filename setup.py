@@ -54,7 +54,4 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     install_requires=parse_requirements("requirements.txt"),
-    extras_require={
-        "dev": parse_requirements("requirements-dev.txt"),
-    },
 )
