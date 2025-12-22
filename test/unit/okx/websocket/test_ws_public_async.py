@@ -111,9 +111,6 @@ class TestWsPublicAsyncLogin(unittest.TestCase):
 class TestWsPublicAsyncSubscribe(unittest.TestCase):
     """Unit tests for WsPublicAsync subscribe method"""
 
-    def test_subscribe_sets_callback(self):
-        """Test subscribe sets callback correctly"""
-        with patch.object(ws_public_module, 'WebSocketFactory'):
     def test_subscribe_without_id(self):
         """Test subscribe without id parameter"""
         with patch('okx.websocket.WsPublicAsync.WebSocketFactory'):
