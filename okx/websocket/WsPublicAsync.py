@@ -17,13 +17,13 @@ class WsPublicAsync:
         self.factory = WebSocketFactory(url)
         self.websocket = None
         self.debug = debug
-        # 用于 business 频道的登录凭证
+        # Credentials for business channel login
         self.apiKey = apiKey
         self.passphrase = passphrase
         self.secretKey = secretKey
         self.isLoggedIn = False
 
-        # 设置日志级别
+        # Set log level
         if debug:
             logger.setLevel(logging.DEBUG)
 
@@ -39,7 +39,7 @@ class WsPublicAsync:
 
     async def login(self):
         """
-        登录方法，用于需要登录的 business 频道（如 /ws/v5/business）
+        Login method for business channel that requires authentication (e.g. /ws/v5/business)
         """
         if not self.apiKey or not self.secretKey or not self.passphrase:
             raise ValueError("apiKey, secretKey and passphrase are required for login")
@@ -87,11 +87,11 @@ class WsPublicAsync:
 
     async def send(self, op: str, args: list, callback=None, id: str = None):
         """
-        通用发送方法
-        :param op: 操作类型
-        :param args: 参数列表
-        :param callback: 回调函数
-        :param id: 可选的请求ID
+        Generic send method
+        :param op: Operation type
+        :param args: Parameter list
+        :param callback: Callback function
+        :param id: Optional request ID
         """
         if callback:
             self.callback = callback

@@ -23,11 +23,11 @@ class WsPrivateAsync:
         self.websocket = None
         self.debug = debug
 
-        # 设置日志级别
+        # Set log level
         if debug:
             logger.setLevel(logging.DEBUG)
 
-        # 废弃 useServerTime 参数警告
+        # Deprecation warning for useServerTime parameter
         if useServerTime is not None:
             warnings.warn("useServerTime parameter is deprecated. Please remove it.", DeprecationWarning)
 
@@ -88,11 +88,11 @@ class WsPrivateAsync:
 
     async def send(self, op: str, args: list, callback=None, id: str = None):
         """
-        通用发送方法
-        :param op: 操作类型
-        :param args: 参数列表
-        :param callback: 回调函数
-        :param id: 可选的请求ID
+        Generic send method
+        :param op: Operation type
+        :param args: Parameter list
+        :param callback: Callback function
+        :param id: Optional request ID
         """
         if callback:
             self.callback = callback
@@ -109,10 +109,10 @@ class WsPrivateAsync:
 
     async def place_order(self, args: list, callback=None, id: str = None):
         """
-        下单
-        :param args: 下单参数列表
-        :param callback: 回调函数
-        :param id: 可选的请求ID
+        Place order
+        :param args: Order parameter list
+        :param callback: Callback function
+        :param id: Optional request ID
         """
         if callback:
             self.callback = callback
@@ -120,10 +120,10 @@ class WsPrivateAsync:
 
     async def batch_orders(self, args: list, callback=None, id: str = None):
         """
-        批量下单
-        :param args: 批量下单参数列表
-        :param callback: 回调函数
-        :param id: 可选的请求ID
+        Batch place orders
+        :param args: Batch order parameter list
+        :param callback: Callback function
+        :param id: Optional request ID
         """
         if callback:
             self.callback = callback
@@ -131,10 +131,10 @@ class WsPrivateAsync:
 
     async def cancel_order(self, args: list, callback=None, id: str = None):
         """
-        撤单
-        :param args: 撤单参数列表
-        :param callback: 回调函数
-        :param id: 可选的请求ID
+        Cancel order
+        :param args: Cancel order parameter list
+        :param callback: Callback function
+        :param id: Optional request ID
         """
         if callback:
             self.callback = callback
@@ -142,10 +142,10 @@ class WsPrivateAsync:
 
     async def batch_cancel_orders(self, args: list, callback=None, id: str = None):
         """
-        批量撤单
-        :param args: 批量撤单参数列表
-        :param callback: 回调函数
-        :param id: 可选的请求ID
+        Batch cancel orders
+        :param args: Batch cancel order parameter list
+        :param callback: Callback function
+        :param id: Optional request ID
         """
         if callback:
             self.callback = callback
@@ -153,10 +153,10 @@ class WsPrivateAsync:
 
     async def amend_order(self, args: list, callback=None, id: str = None):
         """
-        改单
-        :param args: 改单参数列表
-        :param callback: 回调函数
-        :param id: 可选的请求ID
+        Amend order
+        :param args: Amend order parameter list
+        :param callback: Callback function
+        :param id: Optional request ID
         """
         if callback:
             self.callback = callback
@@ -164,10 +164,10 @@ class WsPrivateAsync:
 
     async def batch_amend_orders(self, args: list, callback=None, id: str = None):
         """
-        批量改单
-        :param args: 批量改单参数列表
-        :param callback: 回调函数
-        :param id: 可选的请求ID
+        Batch amend orders
+        :param args: Batch amend order parameter list
+        :param callback: Callback function
+        :param id: Optional request ID
         """
         if callback:
             self.callback = callback
@@ -175,11 +175,11 @@ class WsPrivateAsync:
 
     async def mass_cancel(self, args: list, callback=None, id: str = None):
         """
-        Mass cancel (批量撤销)
-        注意：此方法用于 /ws/v5/business 频道，限速 1次/秒
-        :param args: 撤销参数列表，包含 instType 和 instFamily
-        :param callback: 回调函数
-        :param id: 可选的请求ID
+        Mass cancel orders
+        Note: This method is for /ws/v5/business channel, rate limit: 1 request/second
+        :param args: Cancel parameter list, contains instType and instFamily
+        :param callback: Callback function
+        :param id: Optional request ID
         """
         if callback:
             self.callback = callback
