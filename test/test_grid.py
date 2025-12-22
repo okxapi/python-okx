@@ -1,13 +1,13 @@
 
 import unittest
 from okx import Grid
+from test.config import get_api_credentials
+
 
 class GridTest(unittest.TestCase):
     def setUp(self):
-        api_key = 'your_apiKey'
-        api_secret_key = 'your_secretKey'
-        passphrase = 'your_secretKey'
-        self.GridAPI = Grid.GridAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag='1', debug=False)
+        api_key, api_secret_key, passphrase, flag = get_api_credentials()
+        self.GridAPI = Grid.GridAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag=flag, debug=False)
     """
     GRID_COMPUTE_MARIGIN_BALANCE = '/api/v5/tradingBot/grid/compute-margin-balance'
     GRID_MARGIN_BALANCE = '/api/v5/tradingBot/grid/margin-balance'
@@ -79,7 +79,31 @@ class GridTest(unittest.TestCase):
     # def test_get_recurring_buy_sub_orders(self):
     #     print(self.GridAPI.get_recurring_buy_sub_orders(algoId="581191143417970688"))
 
-    #581191143417970688
+    #def test_grid_order_algo_with_trade_quote_ccy(self):
+    #     print(self.GridAPI.grid_order_algo(
+    #         instId="BTC-USDT",
+    #         algoOrdType="grid",
+    #         maxPx="45000",
+    #         minPx="20000",
+    #         gridNum="100",
+    #         runType="1",
+    #         quoteSz="50",
+    #         tradeQuoteCcy="USDT"
+    #     ))
+
+    #def test_place_recurring_buy_order_with_trade_quote_ccy(self):
+    #     print(self.GridAPI.place_recurring_buy_order(
+    #         stgyName="test_strategy",
+    #         recurringList=[{'ccy': 'ETH', 'ratio': '1'}],
+    #         period="daily",
+    #         recurringDay='1',
+    #         recurringTime='0',
+    #         timeZone='8',
+    #         amt='100',
+    #         investmentCcy='USDT',
+    #         tdMode='cash',
+    #         tradeQuoteCcy="USDT"
+    #     ))
 
 if __name__ == '__main__':
     unittest.main()

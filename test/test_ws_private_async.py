@@ -1,6 +1,7 @@
 import asyncio
 
 from okx.websocket.WsPrivateAsync import WsPrivateAsync
+from test.config import get_api_credentials
 
 
 def privateCallback(message):
@@ -8,11 +9,12 @@ def privateCallback(message):
 
 
 async def main():
+    api_key, api_secret_key, passphrase, _ = get_api_credentials()
     url = "wss://wspap.okx.com:8443/ws/v5/private?brokerId=9999"
     ws = WsPrivateAsync(
-        apiKey="your apiKey",
-        passphrase="your passphrase",
-        secretKey="your secretKey",
+        apiKey=api_key,
+        passphrase=passphrase,
+        secretKey=api_secret_key,
         url=url,
         useServerTime=False
     )

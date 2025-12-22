@@ -33,3 +33,8 @@ build/
 ### VS Code ###
 .vscode/
 id_rsa*
+
+# Environment files
+.env
+.env.local
+.env.*.local

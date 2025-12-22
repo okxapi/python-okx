@@ -1,13 +1,13 @@
 
 import unittest
 from okx import Funding
+from test.config import get_api_credentials
+
 
 class FundingTest(unittest.TestCase):
     def setUp(self):
-        api_key = 'your_apiKey'
-        api_secret_key = 'your_secretKey'
-        passphrase = 'your_secretKey'
-        self.FundingAPI = Funding.FundingAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag='0')
+        api_key, api_secret_key, passphrase, flag = get_api_credentials()
+        self.FundingAPI = Funding.FundingAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag=flag)
     """
     CANCEL_WITHDRAWAL = '/api/v5/asset/cancel-withdrawal' #need add
     CONVERT_DUST_ASSETS = '/api/v5/asset/convert-dust-assets' #need add

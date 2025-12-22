@@ -12,12 +12,13 @@ BLOCK_TICKER = '/api/v5/market/block-ticker'#need to add
 BLOCK_TRADES = '/api/v5/market/block-trades'#need to add
 '''
 
+from test.config import get_api_credentials
+
+
 class MarketAPITest(unittest.TestCase):
     def setUp(self):
-        api_key = 'your_apiKey'
-        api_secret_key = 'your_secretKey'
-        passphrase = 'your_secretKey'
-        self.MarketApi = MarketData.MarketAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag='1')
+        api_key, api_secret_key, passphrase, flag = get_api_credentials()
+        self.MarketApi = MarketData.MarketAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag=flag)
     '''
     
     def test_index_component(self):
