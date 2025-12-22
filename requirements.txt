@@ -1,4 +1,4 @@
-# Core dependencies
+# Dependencies for python-okx
 httpx[http2]>=0.24.0
 requests>=2.25.0
 websockets>=10.0
