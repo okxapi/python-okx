@@ -1,1 +1,2 @@
-"""Unit tests for okx.websocket package"""
+# Unit tests for okx.websocket module
+
