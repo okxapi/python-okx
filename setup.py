@@ -25,6 +25,8 @@ setuptools.setup(
         "loguru",
         "requests",
         "Twisted",
-        "pyOpenSSL"
+        "pyOpenSSL",
+        "websockets",
+        "certifi"
     ]
 )

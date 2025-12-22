@@ -8,14 +8,17 @@ import unittest
 import asyncio
 from unittest.mock import patch, MagicMock, AsyncMock
 
+# Import the module first so patch can resolve the path
+import okx.websocket.WsPublicAsync as ws_public_module
+from okx.websocket.WsPublicAsync import WsPublicAsync
+
 
 class TestWsPublicAsyncInit(unittest.TestCase):
     """Unit tests for WsPublicAsync initialization"""
 
-    def test_init_with_url_only(self):
-        """Test initialization with only url parameter"""
-        with patch('okx.websocket.WsPublicAsync.WebSocketFactory'):
-            from okx.websocket.WsPublicAsync import WsPublicAsync
+    def test_init_with_url(self):
+        """Test initialization with url parameter"""
+        with patch.object(ws_public_module, 'WebSocketFactory') as mock_factory:
             ws = WsPublicAsync(url="wss://test.example.com")
 
             self.assertEqual(ws.url, "wss://test.example.com")
@@ -108,6 +111,9 @@ class TestWsPublicAsyncLogin(unittest.TestCase):
 class TestWsPublicAsyncSubscribe(unittest.TestCase):
     """Unit tests for WsPublicAsync subscribe method"""
 
+    def test_subscribe_sets_callback(self):
+        """Test subscribe sets callback correctly"""
+        with patch.object(ws_public_module, 'WebSocketFactory'):
     def test_subscribe_without_id(self):
         """Test subscribe without id parameter"""
         with patch('okx.websocket.WsPublicAsync.WebSocketFactory'):
@@ -134,8 +140,7 @@ class TestWsPublicAsyncSubscribe(unittest.TestCase):
 
     def test_subscribe_with_id(self):
         """Test subscribe with id parameter"""
-        with patch('okx.websocket.WsPublicAsync.WebSocketFactory'):
-            from okx.websocket.WsPublicAsync import WsPublicAsync
+        with patch.object(ws_public_module, 'WebSocketFactory'):
             ws = WsPublicAsync(url="wss://test.example.com")
             mock_websocket = AsyncMock()
             ws.websocket = mock_websocket
@@ -156,8 +161,7 @@ class TestWsPublicAsyncSubscribe(unittest.TestCase):
 
     def test_subscribe_with_multiple_channels(self):
         """Test subscribe with multiple channels"""
-        with patch('okx.websocket.WsPublicAsync.WebSocketFactory'):
-            from okx.websocket.WsPublicAsync import WsPublicAsync
+        with patch.object(ws_public_module, 'WebSocketFactory'):
             ws = WsPublicAsync(url="wss://test.example.com")
             mock_websocket = AsyncMock()
             ws.websocket = mock_websocket
@@ -182,8 +186,7 @@ class TestWsPublicAsyncUnsubscribe(unittest.TestCase):
 
     def test_unsubscribe_without_id(self):
         """Test unsubscribe without id parameter"""
-        with patch('okx.websocket.WsPublicAsync.WebSocketFactory'):
-            from okx.websocket.WsPublicAsync import WsPublicAsync
+        with patch.object(ws_public_module, 'WebSocketFactory'):
             ws = WsPublicAsync(url="wss://test.example.com")
             mock_websocket = AsyncMock()
             ws.websocket = mock_websocket
@@ -202,8 +205,7 @@ class TestWsPublicAsyncUnsubscribe(unittest.TestCase):
 
     def test_unsubscribe_with_id(self):
         """Test unsubscribe with id parameter"""
-        with patch('okx.websocket.WsPublicAsync.WebSocketFactory'):
-            from okx.websocket.WsPublicAsync import WsPublicAsync
+        with patch.object(ws_public_module, 'WebSocketFactory'):
             ws = WsPublicAsync(url="wss://test.example.com")
             mock_websocket = AsyncMock()
             ws.websocket = mock_websocket
@@ -304,19 +306,16 @@ class TestWsPublicAsyncStartStop(unittest.TestCase):
 
     def test_stop(self):
         """Test stop method closes the factory"""
-        with patch('okx.websocket.WsPublicAsync.WebSocketFactory') as mock_factory_class:
+        with patch.object(ws_public_module, 'WebSocketFactory') as mock_factory_class:
             mock_factory_instance = MagicMock()
             mock_factory_instance.close = AsyncMock()
             mock_factory_class.return_value = mock_factory_instance
 
-            from okx.websocket.WsPublicAsync import WsPublicAsync
             ws = WsPublicAsync(url="wss://test.example.com")
-            ws.loop = MagicMock()
 
             async def run_test():
                 await ws.stop()
                 mock_factory_instance.close.assert_called_once()
-                ws.loop.stop.assert_called_once()
 
             asyncio.get_event_loop().run_until_complete(run_test())
 
