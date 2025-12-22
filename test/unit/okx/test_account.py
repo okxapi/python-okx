@@ -552,6 +552,146 @@ class TestAccountAPISetAutoEarn(unittest.TestCase):
             self.assertEqual(call_args['ccy'], ccy)
 
 
+class TestAccountAPIGetMaxOrderSize(unittest.TestCase):
+    """Unit tests for the get_max_order_size method"""
+
+    def setUp(self):
+        """Set up test fixtures"""
+        self.account_api = AccountAPI(
+            api_key='test_key',
+            api_secret_key='test_secret',
+            passphrase='test_pass',
+            flag='0'
+        )
+
+    @patch.object(AccountAPI, '_request_with_params')
+    def test_get_max_order_size_with_required_params(self, mock_request):
+        """Test get_max_order_size with required parameters only"""
+        mock_response = {'code': '0', 'msg': '', 'data': []}
+        mock_request.return_value = mock_response
+
+        result = self.account_api.get_max_order_size(
+            instId='BTC-USDT',
+            tdMode='cash'
+        )
+
+        expected_params = {
+            'instId': 'BTC-USDT',
+            'tdMode': 'cash',
+            'ccy': '',
+            'px': ''
+        }
+        mock_request.assert_called_once_with(c.GET, c.MAX_TRADE_SIZE, expected_params)
+        self.assertEqual(result, mock_response)
+
+    @patch.object(AccountAPI, '_request_with_params')
+    def test_get_max_order_size_with_tradeQuoteCcy(self, mock_request):
+        """Test get_max_order_size with tradeQuoteCcy parameter for Unified USD Orderbook"""
+        mock_response = {'code': '0', 'msg': '', 'data': []}
+        mock_request.return_value = mock_response
+
+        result = self.account_api.get_max_order_size(
+            instId='BTC-USD',
+            tdMode='cash',
+            tradeQuoteCcy='USDC'
+        )
+
+        expected_params = {
+            'instId': 'BTC-USD',
+            'tdMode': 'cash',
+            'ccy': '',
+            'px': '',
+            'tradeQuoteCcy': 'USDC'
+        }
+        mock_request.assert_called_once_with(c.GET, c.MAX_TRADE_SIZE, expected_params)
+
+    @patch.object(AccountAPI, '_request_with_params')
+    def test_get_max_order_size_without_tradeQuoteCcy(self, mock_request):
+        """Test get_max_order_size without tradeQuoteCcy (should not include in params)"""
+        mock_response = {'code': '0', 'msg': '', 'data': []}
+        mock_request.return_value = mock_response
+
+        result = self.account_api.get_max_order_size(
+            instId='BTC-USDT',
+            tdMode='cash'
+        )
+
+        call_args = mock_request.call_args[0][2]
+        self.assertNotIn('tradeQuoteCcy', call_args)
+
+
+class TestAccountAPIGetMaxAvailSize(unittest.TestCase):
+    """Unit tests for the get_max_avail_size method"""
+
+    def setUp(self):
+        """Set up test fixtures"""
+        self.account_api = AccountAPI(
+            api_key='test_key',
+            api_secret_key='test_secret',
+            passphrase='test_pass',
+            flag='0'
+        )
+
+    @patch.object(AccountAPI, '_request_with_params')
+    def test_get_max_avail_size_with_required_params(self, mock_request):
+        """Test get_max_avail_size with required parameters only"""
+        mock_response = {'code': '0', 'msg': '', 'data': []}
+        mock_request.return_value = mock_response
+
+        result = self.account_api.get_max_avail_size(
+            instId='BTC-USDT',
+            tdMode='cash'
+        )
+
+        expected_params = {
+            'instId': 'BTC-USDT',
+            'tdMode': 'cash',
+            'ccy': '',
+            'reduceOnly': '',
+            'unSpotOffset': '',
+            'quickMgnType': ''
+        }
+        mock_request.assert_called_once_with(c.GET, c.MAX_AVAIL_SIZE, expected_params)
+        self.assertEqual(result, mock_response)
+
+    @patch.object(AccountAPI, '_request_with_params')
+    def test_get_max_avail_size_with_tradeQuoteCcy(self, mock_request):
+        """Test get_max_avail_size with tradeQuoteCcy parameter for Unified USD Orderbook"""
+        mock_response = {'code': '0', 'msg': '', 'data': []}
+        mock_request.return_value = mock_response
+
+        result = self.account_api.get_max_avail_size(
+            instId='BTC-USD',
+            tdMode='cash',
+            tradeQuoteCcy='USDC'
+        )
+
+        expected_params = {
+            'instId': 'BTC-USD',
+            'tdMode': 'cash',
+            'ccy': '',
+            'reduceOnly': '',
+            'unSpotOffset': '',
+            'quickMgnType': '',
+            'tradeQuoteCcy': 'USDC'
+        }
+        mock_request.assert_called_once_with(c.GET, c.MAX_AVAIL_SIZE, expected_params)
+
+    @patch.object(AccountAPI, '_request_with_params')
+    def test_get_max_avail_size_without_tradeQuoteCcy(self, mock_request):
+        """Test get_max_avail_size without tradeQuoteCcy (should not include in params)"""
+        mock_response = {'code': '0', 'msg': '', 'data': []}
+        mock_request.return_value = mock_response
+
+        result = self.account_api.get_max_avail_size(
+            instId='BTC-USDT',
+            tdMode='cash'
+        )
+
+        call_args = mock_request.call_args[0][2]
+        self.assertNotIn('tradeQuoteCcy', call_args)
+
+
 if __name__ == '__main__':
     unittest.main()
 
