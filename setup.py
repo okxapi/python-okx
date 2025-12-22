@@ -1,27 +1,30 @@
+import os
 import setuptools
-from pathlib import Path
+
+# Get the directory where setup.py is located
+HERE = os.path.dirname(os.path.abspath(__file__))
 
 # Read version from package
 import okx
 
 # Read README
-with open("README.md", "r", encoding="utf-8") as fh:
+with open(os.path.join(HERE, "README.md"), "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 
-def parse_requirements(filename):  # type: (str) -> list
-    """Parse requirements from a requirements file."""
-    requirements_path = Path(__file__).parent / filename
+def parse_requirements():
+    """Parse requirements from requirements.txt."""
     requirements = []
+    req_path = os.path.join(HERE, "requirements.txt")
     
-    if not requirements_path.exists():
+    if not os.path.exists(req_path):
         return requirements
     
-    with open(requirements_path, "r", encoding="utf-8") as f:
+    with open(req_path, "r", encoding="utf-8") as f:
         for line in f:
             line = line.strip()
-            # Skip empty lines, comments, and -r includes
-            if not line or line.startswith("#") or line.startswith("-r"):
+            # Skip empty lines and comments
+            if not line or line.startswith("#"):
                 continue
             # Handle inline comments
             if "#" in line:
@@ -53,5 +56,5 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    install_requires=parse_requirements("requirements.txt"),
+    install_requires=parse_requirements(),
 )
