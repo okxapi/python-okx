@@ -12,10 +12,14 @@ class TradeAPI(OkxClient):
 
     # Place Order
     def place_order(self, instId, tdMode, side, ordType, sz, ccy='', clOrdId='', tag='', posSide='', px='',
-                    reduceOnly='', tgtCcy='', stpMode='', attachAlgoOrds=None, pxUsd='', pxVol='', banAmend='', tradeQuoteCcy=''):
+                    reduceOnly='', tgtCcy='', stpMode='', attachAlgoOrds=None, pxUsd='', pxVol='', banAmend='', tradeQuoteCcy=None, pxAmendType=None):
         params = {'instId': instId, 'tdMode': tdMode, 'side': side, 'ordType': ordType, 'sz': sz, 'ccy': ccy,
                   'clOrdId': clOrdId, 'tag': tag, 'posSide': posSide, 'px': px, 'reduceOnly': reduceOnly,
-                  'tgtCcy': tgtCcy, 'stpMode': stpMode, 'pxUsd': pxUsd, 'pxVol': pxVol, 'banAmend': banAmend, 'tradeQuoteCcy': tradeQuoteCcy}
+                  'tgtCcy': tgtCcy, 'stpMode': stpMode, 'pxUsd': pxUsd, 'pxVol': pxVol, 'banAmend': banAmend}
+        if tradeQuoteCcy is not None:
+            params['tradeQuoteCcy'] = tradeQuoteCcy
+        if pxAmendType is not None:
+            params['pxAmendType'] = pxAmendType
         params['attachAlgoOrds'] = attachAlgoOrds
         return self._request_with_params(POST, PLACR_ORDER, params)
 
@@ -35,11 +39,13 @@ class TradeAPI(OkxClient):
     # Amend Order
     def amend_order(self, instId, cxlOnFail='', ordId='', clOrdId='', reqId='', newSz='', newPx='', newTpTriggerPx='',
                     newTpOrdPx='', newSlTriggerPx='', newSlOrdPx='', newTpTriggerPxType='', newSlTriggerPxType='',
-                    attachAlgoOrds='', newTriggerPx='', newOrdPx=''):
+                    attachAlgoOrds='', newTriggerPx='', newOrdPx='', pxAmendType=None):
         params = {'instId': instId, 'cxlOnFail': cxlOnFail, 'ordId': ordId, 'clOrdId': clOrdId, 'reqId': reqId,
                   'newSz': newSz, 'newPx': newPx, 'newTpTriggerPx': newTpTriggerPx, 'newTpOrdPx': newTpOrdPx,
                   'newSlTriggerPx': newSlTriggerPx, 'newSlOrdPx': newSlOrdPx, 'newTpTriggerPxType': newTpTriggerPxType,
                   'newSlTriggerPxType': newSlTriggerPxType, 'newTriggerPx': newTriggerPx, 'newOrdPx': newOrdPx}
+        if pxAmendType is not None:
+            params['pxAmendType'] = pxAmendType
         params['attachAlgoOrds'] = attachAlgoOrds
         return self._request_with_params(POST, AMEND_ORDER, params)
 
@@ -95,8 +101,8 @@ class TradeAPI(OkxClient):
                          pxSpread='',
                          szLimit='', pxLimit='', timeInterval='', tpTriggerPxType='', slTriggerPxType='',
                          callbackRatio='', callbackSpread='', activePx='', tag='', triggerPxType='', closeFraction=''
-                         , quickMgnType='', algoClOrdId='', tradeQuoteCcy='', tpOrdKind='', cxlOnClosePos=''
-                         , chaseType='', chaseVal='', maxChaseType='', maxChaseVal='', attachAlgoOrds=[]):
+                         , quickMgnType='', algoClOrdId='', tradeQuoteCcy=None, tpOrdKind='', cxlOnClosePos=''
+                         , chaseType='', chaseVal='', maxChaseType='', maxChaseVal='', attachAlgoOrds=[], pxAmendType=None):
         params = {'instId': instId, 'tdMode': tdMode, 'side': side, 'ordType': ordType, 'sz': sz, 'ccy': ccy,
                   'posSide': posSide, 'reduceOnly': reduceOnly, 'tpTriggerPx': tpTriggerPx, 'tpOrdPx': tpOrdPx,
                   'slTriggerPx': slTriggerPx, 'slOrdPx': slOrdPx, 'triggerPx': triggerPx, 'orderPx': orderPx,
@@ -105,9 +111,13 @@ class TradeAPI(OkxClient):
                   'pxSpread': pxSpread, 'tpTriggerPxType': tpTriggerPxType, 'slTriggerPxType': slTriggerPxType,
                   'callbackRatio': callbackRatio, 'callbackSpread': callbackSpread, 'activePx': activePx,
                   'tag': tag, 'triggerPxType': triggerPxType, 'closeFraction': closeFraction,
-                  'quickMgnType': quickMgnType, 'algoClOrdId': algoClOrdId, 'tradeQuoteCcy': tradeQuoteCcy,
+                  'quickMgnType': quickMgnType, 'algoClOrdId': algoClOrdId,
                   'tpOrdKind': tpOrdKind, 'cxlOnClosePos': cxlOnClosePos, 'chaseType': chaseType, 'chaseVal': chaseVal,
                   'maxChaseType': maxChaseType, 'maxChaseVal': maxChaseVal, 'attachAlgoOrds': attachAlgoOrds}
+        if tradeQuoteCcy is not None:
+            params['tradeQuoteCcy'] = tradeQuoteCcy
+        if pxAmendType is not None:
+            params['pxAmendType'] = pxAmendType
         return self._request_with_params(POST, PLACE_ALGO_ORDER, params)
 
     # Cancel Algo Order

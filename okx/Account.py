@@ -102,8 +102,10 @@ class AccountAPI(OkxClient):
         return self._request_with_params(GET, GET_INSTRUMENTS, params)
 
     # Get the maximum loan of isolated MARGIN
-    def get_max_loan(self, instId, mgnMode, mgnCcy=''):
+    def get_max_loan(self, instId, mgnMode, mgnCcy='', tradeQuoteCcy=None):
         params = {'instId': instId, 'mgnMode': mgnMode, 'mgnCcy': mgnCcy}
+        if tradeQuoteCcy is not None:
+            params['tradeQuoteCcy'] = tradeQuoteCcy
         return self._request_with_params(GET, MAX_LOAN, params)
 
     # Get Fee Rates

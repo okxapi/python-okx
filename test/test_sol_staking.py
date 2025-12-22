@@ -1,12 +1,12 @@
 import unittest
 from okx.Finance import SolStaking
+from test.config import get_api_credentials
+
 
 class SolStakingTest(unittest.TestCase):
     def setUp(self):
-        api_key = 'your_apiKey'
-        api_secret_key = 'your_secretKey'
-        passphrase = 'your_secretKey'
-        self.StackingAPI = SolStaking.SolStakingAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag='1')
+        api_key, api_secret_key, passphrase, flag = get_api_credentials()
+        self.StackingAPI = SolStaking.SolStakingAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag=flag)
 
     def test_sol_purchase(self):
         print(self.StackingAPI.sol_purchase(amt="1"))

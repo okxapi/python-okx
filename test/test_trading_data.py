@@ -1,14 +1,13 @@
 import unittest
-from ..okx import TradingData
+from okx import TradingData
+from test.config import get_api_credentials
 
 
 class TradingDataTest(unittest.TestCase):
     def setUp(self):
-        api_key = 'your_apiKey'
-        api_secret_key = 'your_secretKey'
-        passphrase = 'your_secretKey'
+        api_key, api_secret_key, passphrase, flag = get_api_credentials()
         self.TradingDataAPI = TradingData.TradingDataAPI(api_key, api_secret_key, passphrase, use_server_time=False,
-                                                         flag='1')
+                                                         flag=flag)
     """
       def test_get_support_coins(self):
         print(self.TradingDataAPI.get_support_coin())
