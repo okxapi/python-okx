@@ -545,7 +545,7 @@ class TestWsPrivateAsyncLogin(unittest.TestCase):
                 result = await ws.login()
                 self.assertTrue(result)
                 mock_ws_utils.initLoginParams.assert_called_once_with(
-                    useServerTime=True,
+                    useServerTime=False,
                     apiKey="test_api_key",
                     passphrase="test_passphrase",
                     secretKey="test_secret_key"
