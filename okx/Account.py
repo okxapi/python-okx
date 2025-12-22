@@ -76,14 +76,18 @@ class AccountAPI(OkxClient):
         return self._request_with_params(POST, SET_LEVERAGE, params)
 
     # Get Maximum Tradable Size For Instrument
-    def get_max_order_size(self, instId, tdMode, ccy='', px=''):
+    def get_max_order_size(self, instId, tdMode, ccy='', px='', tradeQuoteCcy=None):
         params = {'instId': instId, 'tdMode': tdMode, 'ccy': ccy, 'px': px}
+        if tradeQuoteCcy is not None:
+            params['tradeQuoteCcy'] = tradeQuoteCcy
         return self._request_with_params(GET, MAX_TRADE_SIZE, params)
 
     # Get Maximum Available Tradable Amount
-    def get_max_avail_size(self, instId, tdMode, ccy='', reduceOnly='', unSpotOffset='', quickMgnType=''):
+    def get_max_avail_size(self, instId, tdMode, ccy='', reduceOnly='', unSpotOffset='', quickMgnType='', tradeQuoteCcy=None):
         params = {'instId': instId, 'tdMode': tdMode, 'ccy': ccy, 'reduceOnly': reduceOnly,
                   'unSpotOffset': unSpotOffset, 'quickMgnType': quickMgnType}
+        if tradeQuoteCcy is not None:
+            params['tradeQuoteCcy'] = tradeQuoteCcy
         return self._request_with_params(GET, MAX_AVAIL_SIZE, params)
 
     # Increase / Decrease margin
