@@ -7,15 +7,39 @@ Usage:
     api_key, api_secret, passphrase, flag = get_api_credentials()
 """
 import os
+import logging
 from pathlib import Path
 
-# Try to load from .env file if python-dotenv is available
-try:
-    from dotenv import load_dotenv
+logger = logging.getLogger(__name__)
+
+# Flag to ensure .env is loaded only once
+_env_loaded = False
+
+
+def _load_env_once():
+    """Load .env file only once, log any exceptions."""
+    global _env_loaded
+    if _env_loaded:
+        return
+    
+    _env_loaded = True
     env_path = Path(__file__).parent.parent / '.env'
-    load_dotenv(env_path)
-except ImportError:
-    pass  # python-dotenv not installed, rely on system environment variables
+    
+    try:
+        from dotenv import load_dotenv
+        if env_path.exists():
+            load_dotenv(env_path)
+            logger.debug(f"Loaded .env file from: {env_path}")
+        else:
+            logger.warning(f".env file not found at: {env_path}")
+    except ImportError:
+        logger.warning("python-dotenv not installed, relying on system environment variables")
+    except Exception as e:
+        logger.error(f"Failed to load .env file: {e}")
+
+
+# Load .env when module is imported
+_load_env_once()
 
 
 def get_api_credentials():
