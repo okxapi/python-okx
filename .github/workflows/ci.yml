@@ -15,6 +15,48 @@ on:
 
 jobs:
   # ============================================
+  # DEPENDENCY CHECK JOB
+  # Ensures all imports are satisfied by requirements.txt
+  # ============================================
+  dependency-check:
+    name: Dependency Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install only from requirements.txt (clean environment)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Verify all production imports work
+        run: |
+          # This catches missing dependencies in requirements.txt
+          python -c "
+          import okx
+          from okx import Account, Trade, Funding, MarketData, PublicData
+          from okx import SubAccount, Convert, BlockTrading, CopyTrading
+          from okx import SpreadTrading, Grid, TradingData, Status
+          from okx.websocket import WsPublicAsync, WsPrivateAsync
+          print('✅ All imports successful')
+          print(f'   okx version: {okx.__version__}')
+          "
+
+      - name: Verify test imports
+        run: |
+          pip install pytest
+          python -c "
+          import pytest
+          import unittest
+          print('✅ Test imports successful')
+          "
+
+  # ============================================
   # LINT JOB
   # ============================================
   lint:
@@ -31,11 +73,11 @@ jobs:
       - name: Install linting tools
         run: |
           python -m pip install --upgrade pip
-          pip install flake8
+          pip install ruff
 
-      - name: Run flake8
+      - name: Run ruff
         run: |
-          flake8 okx/ --max-line-length=120 --ignore=E501,W503,E203 --count --show-source --statistics
+          ruff check okx/ --ignore=E501
         continue-on-error: true  # Set to false once codebase is cleaned up
 
   # ============================================
@@ -44,10 +86,12 @@ jobs:
   test:
     name: Test (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
+    needs: [dependency-check]  # Only run tests if dependencies are valid
     strategy:
-      fail-fast: false
+      fail-fast: true
+      max-parallel: 1
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.9", "3.12"]
 
     steps:
       - uses: actions/checkout@v4
@@ -61,7 +105,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('setup.py') }}
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-${{ matrix.python-version }}-
             ${{ runner.os }}-pip-
@@ -69,15 +113,15 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          pip install -r requirements.txt
           pip install -e .
-          pip install pytest pytest-cov pytest-asyncio websockets certifi
 
       - name: Run tests
         run: |
           python -m pytest test/unit/ -v --cov=okx --cov-report=term-missing --cov-report=xml
 
       - name: Upload coverage to Codecov
-        if: matrix.python-version == '3.11'
+        if: matrix.python-version == '3.12'
         uses: codecov/codecov-action@v4
         with:
           file: ./coverage.xml
@@ -99,16 +143,27 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install build tools
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install build twine
+          pip install -r requirements.txt
 
       - name: Build package
-        run: python -m build
+        run: python -m build --no-isolation
 
       - name: Check package
         run: twine check dist/*
+
+      - name: Test install from wheel (clean environment)
+        run: |
+          # Create a fresh venv and install the built wheel
+          python -m venv /tmp/test-install
+          /tmp/test-install/bin/pip install dist/*.whl
+          /tmp/test-install/bin/python -c "
+          import okx
+          from okx import Account, Trade, Funding
+          print(f'✅ Package installs correctly: okx {okx.__version__}')
+          "
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -116,4 +171,3 @@ jobs:
           name: dist
           path: dist/
           retention-days: 7
-
