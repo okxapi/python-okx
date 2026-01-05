@@ -29,8 +29,16 @@ class TradingDataTest(unittest.TestCase):
         print(self.TradingDataAPI.get_interest_volume_strike(ccy="BTC",expTime="20220901"))
     
     """
-    def test_taker_block_vol(self):
-        print(self.TradingDataAPI.get_taker_flow(ccy='BTC'))
+
+    def test_get_contracts_open_interest_history(self):
+        print(self.TradingDataAPI.get_contracts_open_interest_history(instId='BTC-USDT-SWAP'))
+
+    def test_get_contracts_open_interest_history_with_params(self):
+        print(self.TradingDataAPI.get_contracts_open_interest_history(
+            instId='BTC-USDT-SWAP',
+            period='1H',
+            limit='50'
+        ))
 
 if __name__ == "__main__":
     unittest.main()
