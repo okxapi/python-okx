@@ -143,6 +143,7 @@ PUT_CALL_RATIO = '/api/v5/rubik/stat/option/open-interest-volume-ratio'
 OPEN_INTEREST_VOLUME_EXPIRY = '/api/v5/rubik/stat/option/open-interest-volume-expiry'
 INTEREST_VOLUME_STRIKE = '/api/v5/rubik/stat/option/open-interest-volume-strike'
 TAKER_FLOW = '/api/v5/rubik/stat/option/taker-block-volume'
+CONTRACTS_OPEN_INTEREST_HISTORY = '/api/v5/rubik/stat/contracts/open-interest-history'
 
 # Trade
 PLACR_ORDER = '/api/v5/trade/order'
