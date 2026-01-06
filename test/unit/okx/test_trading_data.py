@@ -30,7 +30,7 @@ class TestTradingDataAPIContractsOpenInterestHistory(unittest.TestCase):
         mock_request.return_value = mock_response
 
         # Act
-        result = self.trading_data_api.get_contracts_open_interest_history(
+        result = self.trading_data_api.get_open_interest_history(
             instId='BTC-USDT-SWAP'
         )
 
@@ -55,7 +55,7 @@ class TestTradingDataAPIContractsOpenInterestHistory(unittest.TestCase):
         mock_request.return_value = mock_response
 
         # Act
-        result = self.trading_data_api.get_contracts_open_interest_history(
+        result = self.trading_data_api.get_open_interest_history(
             instId='BTC-USDT-SWAP',
             period='1H',
             begin='1609459200000',
@@ -82,7 +82,7 @@ class TestTradingDataAPIContractsOpenInterestHistory(unittest.TestCase):
         mock_request.return_value = mock_response
 
         # Act
-        result = self.trading_data_api.get_contracts_open_interest_history(
+        result = self.trading_data_api.get_open_interest_history(
             instId='ETH-USDT-SWAP',
             period='5m'
         )
@@ -104,7 +104,7 @@ class TestTradingDataAPIContractsOpenInterestHistory(unittest.TestCase):
         
         for period in periods:
             mock_request.reset_mock()
-            result = self.trading_data_api.get_contracts_open_interest_history(
+            result = self.trading_data_api.get_open_interest_history(
                 instId='BTC-USDT-SWAP',
                 period=period
             )
@@ -122,7 +122,7 @@ class TestTradingDataAPIContractsOpenInterestHistory(unittest.TestCase):
         
         for inst_id in inst_ids:
             mock_request.reset_mock()
-            result = self.trading_data_api.get_contracts_open_interest_history(
+            result = self.trading_data_api.get_open_interest_history(
                 instId=inst_id
             )
             
@@ -137,7 +137,7 @@ class TestTradingDataAPIContractsOpenInterestHistory(unittest.TestCase):
         mock_request.return_value = mock_response
 
         # Act
-        result = self.trading_data_api.get_contracts_open_interest_history(
+        result = self.trading_data_api.get_open_interest_history(
             instId='BTC-USDT-SWAP',
             begin='1609459200000',
             end='1609545600000',
@@ -163,7 +163,7 @@ class TestTradingDataAPIContractsOpenInterestHistory(unittest.TestCase):
         
         for period in utc_periods:
             mock_request.reset_mock()
-            result = self.trading_data_api.get_contracts_open_interest_history(
+            result = self.trading_data_api.get_open_interest_history(
                 instId='BTC-USDT-SWAP',
                 period=period
             )
