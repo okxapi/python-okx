@@ -10,15 +10,15 @@ from okx import consts as c
 
 
 class TestTradingDataAPIContractsOpenInterestHistory(unittest.TestCase):
-    """Unit tests for the get_contracts_open_interest_history method"""
+    """Unit tests for the get_open_interest_history method"""
 
     def setUp(self):
         """Set up test fixtures"""
         self.trading_data_api = TradingDataAPI(flag='0')
 
     @patch.object(TradingDataAPI, '_request_with_params')
-    def test_get_contracts_open_interest_history_with_required_params(self, mock_request):
-        """Test get_contracts_open_interest_history with required parameters only"""
+    def test_get_open_interest_history_with_required_params(self, mock_request):
+        """Test ge_open_interest_history with required parameters only"""
         # Arrange
         mock_response = {
             'code': '0',
@@ -42,8 +42,8 @@ class TestTradingDataAPIContractsOpenInterestHistory(unittest.TestCase):
         self.assertEqual(result, mock_response)
 
     @patch.object(TradingDataAPI, '_request_with_params')
-    def test_get_contracts_open_interest_history_with_all_params(self, mock_request):
-        """Test get_contracts_open_interest_history with all parameters provided"""
+    def test_get_open_interest_history_with_all_params(self, mock_request):
+        """Test get_open_interest_history with all parameters provided"""
         # Arrange
         mock_response = {
             'code': '0',
@@ -75,8 +75,8 @@ class TestTradingDataAPIContractsOpenInterestHistory(unittest.TestCase):
         self.assertEqual(result, mock_response)
 
     @patch.object(TradingDataAPI, '_request_with_params')
-    def test_get_contracts_open_interest_history_with_period(self, mock_request):
-        """Test get_contracts_open_interest_history with period parameter"""
+    def test_get_open_interest_history_with_period(self, mock_request):
+        """Test get_open_interest_history with period parameter"""
         # Arrange
         mock_response = {'code': '0', 'msg': '', 'data': []}
         mock_request.return_value = mock_response
@@ -95,8 +95,8 @@ class TestTradingDataAPIContractsOpenInterestHistory(unittest.TestCase):
         mock_request.assert_called_once_with(c.GET, c.CONTRACTS_OPEN_INTEREST_HISTORY, expected_params)
 
     @patch.object(TradingDataAPI, '_request_with_params')
-    def test_get_contracts_open_interest_history_different_periods(self, mock_request):
-        """Test get_contracts_open_interest_history with different period values"""
+    def test_get_open_interest_history_different_periods(self, mock_request):
+        """Test get_open_interest_history with different period values"""
         mock_response = {'code': '0', 'msg': '', 'data': []}
         mock_request.return_value = mock_response
 
@@ -113,8 +113,8 @@ class TestTradingDataAPIContractsOpenInterestHistory(unittest.TestCase):
             self.assertEqual(call_args['period'], period)
 
     @patch.object(TradingDataAPI, '_request_with_params')
-    def test_get_contracts_open_interest_history_different_inst_ids(self, mock_request):
-        """Test get_contracts_open_interest_history with different instrument IDs"""
+    def test_get_open_interest_history_different_inst_ids(self, mock_request):
+        """Test get_open_interest_history with different instrument IDs"""
         mock_response = {'code': '0', 'msg': '', 'data': []}
         mock_request.return_value = mock_response
 
@@ -130,8 +130,8 @@ class TestTradingDataAPIContractsOpenInterestHistory(unittest.TestCase):
             self.assertEqual(call_args['instId'], inst_id)
 
     @patch.object(TradingDataAPI, '_request_with_params')
-    def test_get_contracts_open_interest_history_with_pagination(self, mock_request):
-        """Test get_contracts_open_interest_history with pagination parameters"""
+    def test_get_open_interest_history_with_pagination(self, mock_request):
+        """Test get_open_interest_history with pagination parameters"""
         # Arrange
         mock_response = {'code': '0', 'msg': '', 'data': []}
         mock_request.return_value = mock_response
@@ -154,8 +154,8 @@ class TestTradingDataAPIContractsOpenInterestHistory(unittest.TestCase):
         mock_request.assert_called_once_with(c.GET, c.CONTRACTS_OPEN_INTEREST_HISTORY, expected_params)
 
     @patch.object(TradingDataAPI, '_request_with_params')
-    def test_get_contracts_open_interest_history_utc_periods(self, mock_request):
-        """Test get_contracts_open_interest_history with UTC+0 period values"""
+    def test_get_open_interest_history_utc_periods(self, mock_request):
+        """Test get_open_interest_history with UTC+0 period values"""
         mock_response = {'code': '0', 'msg': '', 'data': []}
         mock_request.return_value = mock_response
 
