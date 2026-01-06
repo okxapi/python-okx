@@ -47,7 +47,7 @@ class TradingDataAPI(OkxClient):
         params = {'ccy': ccy, 'period': period}
         return self._request_with_params(GET, TAKER_FLOW, params)
 
-    def get_contracts_open_interest_history(self, instId, period=None, begin=None, end=None, limit=None):
+    def get_open_interest_history(self, instId, period=None, begin=None, end=None, limit=None):
         """
         Get contract open interest history
         Retrieve the contract open interest statistics of futures and perp.
