@@ -30,10 +30,10 @@ class TradingDataTest(unittest.TestCase):
     
     """
 
-    def test_get_contracts_open_interest_history(self):
+    def test_get_open_interest_history(self):
         print(self.TradingDataAPI.get_open_interest_history(instId='BTC-USDT-SWAP'))
 
-    def test_get_contracts_open_interest_history_with_params(self):
+    def test_get_open_interest_history_with_params(self):
         print(self.TradingDataAPI.get_open_interest_history(
             instId='BTC-USDT-SWAP',
             period='1H',
