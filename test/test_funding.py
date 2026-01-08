@@ -1,13 +1,13 @@
 
 import unittest
 from okx import Funding
+from test.config import get_api_credentials
+
 
 class FundingTest(unittest.TestCase):
     def setUp(self):
-        api_key = 'your_apiKey'
-        api_secret_key = 'your_secretKey'
-        passphrase = 'your_secretKey'
-        self.FundingAPI = Funding.FundingAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag='0')
+        api_key, api_secret_key, passphrase, flag = get_api_credentials()
+        self.FundingAPI = Funding.FundingAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag=flag)
     """
     CANCEL_WITHDRAWAL = '/api/v5/asset/cancel-withdrawal' #need add
     CONVERT_DUST_ASSETS = '/api/v5/asset/convert-dust-assets' #need add
@@ -78,7 +78,16 @@ class FundingTest(unittest.TestCase):
     #     print(self.FundingAPI.get_deposit_history())
 
     def test_withdrawal(self):
-        print(self.FundingAPI.withdrawal(ccy='USDT',amt='1',dest='3',toAddr='18740405107',areaCode='86'))
+        # toAddrType: Address type
+        # 1: Wallet address, email, phone number or login account
+        # 2: UID (only applicable when dest=3)
+        print(self.FundingAPI.withdrawal(ccy='USDT', amt='1', dest='3', toAddr='18740405107', areaCode='86', toAddrType='1'))
+
+    def test_get_withdrawal_history_with_toAddrType(self):
+        # toAddrType: Address type filter
+        # 1: Wallet address, email, phone number or login account
+        # 2: UID
+        print(self.FundingAPI.get_withdrawal_history(toAddrType='1'))
 
 if __name__ == '__main__':
     unittest.main()

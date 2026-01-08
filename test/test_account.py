@@ -3,14 +3,13 @@ import unittest
 from loguru import logger
 
 from okx import Account
+from test.config import get_api_credentials
 
 
 class AccountTest(unittest.TestCase):
     def setUp(self):
-        api_key = 'your_apiKey'
-        api_secret_key = 'your_secretKey'
-        passphrase = 'your_secretKey'
-        self.AccountAPI = Account.AccountAPI(api_key, api_secret_key, passphrase, flag='1')
+        api_key, api_secret_key, passphrase, flag = get_api_credentials()
+        self.AccountAPI = Account.AccountAPI(api_key, api_secret_key, passphrase, flag=flag)
 
     # '''
     # POSITIONS_HISTORY = '/api/v5/account/positions-history' #need add
@@ -146,6 +145,15 @@ class AccountTest(unittest.TestCase):
     #     logger.info(f'{self.AccountAPI.set_auto_repay(autoRepay=True)}')
     # def test_spot_borrow_repay_history(self):
     #     logger.debug(self.AccountAPI.spot_borrow_repay_history(ccy="USDT",type="auto_borrow",after="1597026383085"))
+    # def test_set_auto_earn(self):
+    #    logger.debug(self.AccountAPI.set_auto_earn(ccy="USDT", action="turn_on", earnType='0'))
+    #def test_get_max_loan_with_trade_quote_ccy(self):
+    #     logger.debug(self.AccountAPI.get_max_loan(
+    #         instId="BTC-USDT",
+    #         mgnMode="isolated",
+    #         mgnCcy="USDT",
+    #         tradeQuoteCcy="USDT"
+    #     ))
 
 if __name__ == '__main__':
     unittest.main()

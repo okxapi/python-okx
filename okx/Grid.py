@@ -7,11 +7,13 @@ class GridAPI(OkxClient):
         OkxClient.__init__(self, api_key, api_secret_key, passphrase, use_server_time, flag, domain, debug, proxy)
 
     def grid_order_algo(self, instId='', algoOrdType='', maxPx='', minPx='', gridNum='', runType='', tpTriggerPx='',
-                        slTriggerPx='', tag='', quoteSz='', baseSz='', sz='', direction='', lever='', basePos=''):
+                        slTriggerPx='', tag='', quoteSz='', baseSz='', sz='', direction='', lever='', basePos='', tradeQuoteCcy=None):
         params = {'instId': instId, 'algoOrdType': algoOrdType, 'maxPx': maxPx, 'minPx': minPx, 'gridNum': gridNum,
                   'runType': runType, 'tpTriggerPx': tpTriggerPx, 'slTriggerPx': slTriggerPx, 'tag': tag,
                   'quoteSz': quoteSz, 'baseSz': baseSz, 'sz': sz, 'direction': direction, 'lever': lever,
                   'basePos': basePos}
+        if tradeQuoteCcy is not None:
+            params['tradeQuoteCcy'] = tradeQuoteCcy
         return self._request_with_params(POST, GRID_ORDER_ALGO, params)
 
     def grid_amend_order_algo(self, algoId='', instId='', slTriggerPx='', tpTriggerPx=''):
@@ -79,11 +81,13 @@ class GridAPI(OkxClient):
 
     # - Place recurring buy order
     def place_recurring_buy_order(self, stgyName='', recurringList=[], period='', recurringDay='', recurringTime='',
-                                  timeZone='', amt='', investmentCcy='', tdMode='', algoClOrdId='', tag=''):
+                                  timeZone='', amt='', investmentCcy='', tdMode='', algoClOrdId='', tag='', tradeQuoteCcy=None):
         params = {'stgyName': stgyName, 'recurringList': recurringList, 'period': period, 'recurringDay': recurringDay,
                   'recurringTime': recurringTime,
                   'timeZone': timeZone, 'amt': amt, 'investmentCcy': investmentCcy, 'tdMode': tdMode,
                   'algoClOrdId': algoClOrdId, 'tag': tag}
+        if tradeQuoteCcy is not None:
+            params['tradeQuoteCcy'] = tradeQuoteCcy
         return self._request_with_params(POST, PLACE_RECURRING_BUY_ORDER, params)
 
     # - Amend recurring buy order

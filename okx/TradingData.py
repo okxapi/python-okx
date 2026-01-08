@@ -47,6 +47,31 @@ class TradingDataAPI(OkxClient):
         params = {'ccy': ccy, 'period': period}
         return self._request_with_params(GET, TAKER_FLOW, params)
 
+    def get_open_interest_history(self, instId, period=None, begin=None, end=None, limit=None):
+        """
+        Get contract open interest history
+        Retrieve the contract open interest statistics of futures and perp.
+        Rate limit: 10 requests per 2 seconds
+        Rate limit rule: IP + Instrument ID
+        
+        :param instId: Instrument ID, e.g. BTC-USDT-SWAP. Only applicable to FUTURES, SWAP
+        :param period: Bar size, the default is 5m, e.g. [5m/15m/30m/1H/2H/4H]
+        :param begin: Return records newer than the requested ts
+        :param end: Pagination of data to return records earlier than the requested ts
+        :param limit: Number of results per request. The maximum is 100. The default is 100
+        :return: API response
+        """
+        params = {'instId': instId}
+        if period is not None:
+            params['period'] = period
+        if begin is not None:
+            params['begin'] = begin
+        if end is not None:
+            params['end'] = end
+        if limit is not None:
+            params['limit'] = limit
+        return self._request_with_params(GET, CONTRACTS_OPEN_INTEREST_HISTORY, params)
+
 
 
 

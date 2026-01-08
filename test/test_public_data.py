@@ -1,11 +1,12 @@
 import unittest
 from okx import PublicData
+from test.config import get_api_credentials
+
+
 class publicDataTest(unittest.TestCase):
     def setUp(self):
-        api_key = 'your_apiKey'
-        api_secret_key = 'your_secretKey'
-        passphrase = 'your_secretKey'
-        self.publicDataApi = PublicData.PublicAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag='1')
+        api_key, api_secret_key, passphrase, flag = get_api_credentials()
+        self.publicDataApi = PublicData.PublicAPI(api_key, api_secret_key, passphrase, use_server_time=False, flag=flag)
     '''
     TestCase For:
     INTEREST_LOAN = '/api/v5/public/interest-rate-loan-quota' #need to add
@@ -56,8 +57,23 @@ class publicDataTest(unittest.TestCase):
     # def test_get_option_tickBands(self):
     #     print(self.publicDataApi.get_option_tick_bands(instType='OPTION'))
 
-    def test_get_option_trades(self):
-        print(self.publicDataApi.get_option_trades(instFamily='BTC-USD'))
+    # def test_get_option_trades(self):
+    #     print(self.publicDataApi.get_option_trades(instFamily='BTC-USD'))
+
+    def test_get_market_data_history(self):
+        # module: 数据模块类型
+        # 1: Trade history, 2: 1-minute candlestick, 3: Funding rate
+        # 5: 5000-level orderbook (from Nov 1, 2025), 6: 50-level orderbook
+        # instType: SPOT, FUTURES, SWAP, OPTION
+        # dateAggrType: daily, monthly
+        print(self.publicDataApi.get_market_data_history(
+            module='6',
+            instType='SPOT',
+            dateAggrType='daily',
+            begin='1761274032000',
+            end='1761883371133',
+            instIdList='BTC-USDT'
+        ))
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,14 +1,13 @@
 import unittest
 
 from okx import Trade
+from test.config import get_api_credentials
 
 
 class TradeTest(unittest.TestCase):
     def setUp(self):
-        api_key = 'your_apiKey'
-        api_secret_key = 'your_secretKey'
-        passphrase = 'your_secretKey'
-        self.tradeApi = Trade.TradeAPI(api_key, api_secret_key, passphrase, False, '1')
+        api_key, api_secret_key, passphrase, flag = get_api_credentials()
+        self.tradeApi = Trade.TradeAPI(api_key, api_secret_key, passphrase, False, flag)
 
     # # """
     # def test_place_order(self):
@@ -234,12 +233,66 @@ class TradeTest(unittest.TestCase):
     # def test_close_all_positions(self):
     #     print(self.tradeApi.close_positions(instId="BTC-USDT-SWAP", mgnMode="cross",clOrdId='1213124'))
 
-    def test_get_oneclick_repay_list_v2(self):
-        print(self.tradeApi.get_oneclick_repay_list_v2())
-    def test_oneclick_repay_v2(self):
-        print(self.tradeApi.oneclick_repay_v2('BTC',['USDT']))
-    def test_oneclick_repay_history_v2(self):
-        print(self.tradeApi.oneclick_repay_history_v2())
+    #def test_get_oneclick_repay_list_v2(self):
+    #    print(self.tradeApi.get_oneclick_repay_list_v2())
+    #def test_oneclick_repay_v2(self):
+    #    print(self.tradeApi.oneclick_repay_v2('BTC',['USDT']))
+    #def test_oneclick_repay_history_v2(self):
+    #    print(self.tradeApi.oneclick_repay_history_v2())
+
+    #def test_place_order_with_trade_quote_ccy(self):
+    #     print(self.tradeApi.place_order(
+    #         instId="BTC-USDT",
+    #         tdMode="cash",
+    #         side="buy",
+    #         ordType="limit",
+    #         sz="0.01",
+    #         px="30000",
+    #         tradeQuoteCcy="USDT"
+    #     ))
+
+    #def test_place_order_with_px_amend_type(self):
+    #     print(self.tradeApi.place_order(
+    #         instId="BTC-USDT-SWAP",
+    #         tdMode="cash",
+    #         side="buy",
+    #         ordType="limit",
+    #         sz="1",
+    #         px="30000",
+    #         pxAmendType="1"
+    #     ))
+
+    #def test_amend_order_with_px_amend_type(self):
+    #     print(self.tradeApi.amend_order(
+    #         instId="BTC-USDT-SWAP",
+    #         ordId="123",
+    #         newPx="30500",
+    #         pxAmendType="1"
+    #     ))
+
+    #def test_place_algo_order_with_trade_quote_ccy(self):
+    #     print(self.tradeApi.place_algo_order(
+    #         instId="BTC-USDT-SWAP",
+    #         tdMode="cash",
+    #         side="buy",
+    #         ordType="trigger",
+    #         sz="1",
+    #         triggerPx="30000",
+    #         orderPx="-1",
+    #         tradeQuoteCcy="USDT"
+    #     ))
+
+    #def test_place_algo_order_with_px_amend_type(self):
+    #     print(self.tradeApi.place_algo_order(
+    #         instId="BTC-USDT-SWAP",
+    #         tdMode="cash",
+    #         side="buy",
+    #         ordType="trigger",
+    #         sz="1",
+    #         triggerPx="30000",
+    #         orderPx="-1",
+    #         pxAmendType="1"
+    #     ))
 
 if __name__ == '__main__':
     unittest.main()

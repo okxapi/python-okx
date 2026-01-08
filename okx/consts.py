@@ -66,6 +66,7 @@ BORROWING_ORDERS_LIST='/api/v5/account/fixed-loan/borrowing-orders-list'
 MANUAL_REBORROW_REPAY = '/api/v5/account/spot-manual-borrow-repay'
 SET_AUTO_REPAY='/api/v5/account/set-auto-repay'
 GET_BORROW_REPAY_HISTORY='/api/v5/account/spot-borrow-repay-history'
+SET_AUTO_EARN='/api/v5/account/set-auto-earn'
 
 # Funding
 NON_TRADABLE_ASSETS = '/api/v5/asset/non-tradable-assets'
@@ -81,7 +82,6 @@ BILLS_INFO = '/api/v5/asset/bills'
 DEPOSIT_LIGHTNING = '/api/v5/asset/deposit-lightning'
 WITHDRAWAL_LIGHTNING = '/api/v5/asset/withdrawal-lightning'
 CANCEL_WITHDRAWAL = '/api/v5/asset/cancel-withdrawal'
-WITHDRAWAL_HISTORY = '/api/v5/asset/withdrawal-history'
 CONVERT_DUST_ASSETS = '/api/v5/asset/convert-dust-assets'
 ASSET_VALUATION = '/api/v5/asset/asset-valuation'
 GET_WITHDRAWAL_HISTORY = '/api/v5/asset/withdrawal-history'
@@ -130,6 +130,7 @@ INSURANCE_FUND = '/api/v5/public/insurance-fund'
 CONVERT_CONTRACT_COIN = '/api/v5/public/convert-contract-coin'
 GET_OPTION_TICKBANDS = '/api/v5/public/instrument-tick-bands'
 GET_OPTION_TRADES = '/api/v5/public/option-trades'
+MARKET_DATA_HISTORY = '/api/v5/public/market-data-history'
 
 # Trading data
 SUPPORT_COIN = '/api/v5/rubik/stat/trading-data/support-coin'
@@ -142,6 +143,7 @@ PUT_CALL_RATIO = '/api/v5/rubik/stat/option/open-interest-volume-ratio'
 OPEN_INTEREST_VOLUME_EXPIRY = '/api/v5/rubik/stat/option/open-interest-volume-expiry'
 INTEREST_VOLUME_STRIKE = '/api/v5/rubik/stat/option/open-interest-volume-strike'
 TAKER_FLOW = '/api/v5/rubik/stat/option/taker-block-volume'
+CONTRACTS_OPEN_INTEREST_HISTORY = '/api/v5/rubik/stat/contracts/open-interest-history'
 
 # Trade
 PLACR_ORDER = '/api/v5/trade/order'
