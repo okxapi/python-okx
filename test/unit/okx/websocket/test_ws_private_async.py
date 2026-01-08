@@ -13,6 +13,10 @@ from unittest.mock import patch, MagicMock, AsyncMock
 import okx.websocket.WsPrivateAsync as ws_private_module
 from okx.websocket.WsPrivateAsync import WsPrivateAsync
 
+# Test constants
+TEST_WS_URL = 'wss://test.example.com'
+MOCK_WS_FACTORY = 'okx.websocket.WsPrivateAsync.WebSocketFactory'
+
 
 class TestWsPrivateAsyncInit(unittest.TestCase):
     """Unit tests for WsPrivateAsync initialization"""
@@ -24,26 +28,26 @@ class TestWsPrivateAsyncInit(unittest.TestCase):
                 apiKey="test_api_key",
                 passphrase="test_passphrase",
                 secretKey="test_secret_key",
-                url="wss://test.example.com"
+                url=TEST_WS_URL
             )
 
             self.assertEqual(ws.apiKey, "test_api_key")
             self.assertEqual(ws.passphrase, "test_passphrase")
             self.assertEqual(ws.secretKey, "test_secret_key")
-            self.assertEqual(ws.url, "wss://test.example.com")
+            self.assertEqual(ws.url, TEST_WS_URL)
             self.assertFalse(ws.useServerTime)
             self.assertFalse(ws.debug)
-            mock_factory.assert_called_once_with("wss://test.example.com")
+            mock_factory.assert_called_once_with(TEST_WS_URL)
 
     def test_init_with_debug_enabled(self):
         """Test initialization with debug mode enabled"""
-        with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             from okx.websocket.WsPrivateAsync import WsPrivateAsync
             ws = WsPrivateAsync(
                 apiKey="test_api_key",
                 passphrase="test_passphrase",
                 secretKey="test_secret_key",
-                url="wss://test.example.com",
+                url=TEST_WS_URL,
                 debug=True
             )
 
@@ -51,7 +55,7 @@ class TestWsPrivateAsyncInit(unittest.TestCase):
 
     def test_init_with_deprecated_useServerTime_shows_warning(self):
         """Test that using deprecated useServerTime parameter shows warning"""
-        with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             from okx.websocket.WsPrivateAsync import WsPrivateAsync
 
             with warnings.catch_warnings(record=True) as w:
@@ -60,7 +64,7 @@ class TestWsPrivateAsyncInit(unittest.TestCase):
                     apiKey="test_api_key",
                     passphrase="test_passphrase",
                     secretKey="test_secret_key",
-                    url="wss://test.example.com",
+                    url=TEST_WS_URL,
                     useServerTime=True
                 )
 
@@ -70,7 +74,7 @@ class TestWsPrivateAsyncInit(unittest.TestCase):
 
     def test_init_without_useServerTime_no_warning(self):
         """Test that not using useServerTime parameter shows no warning"""
-        with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             from okx.websocket.WsPrivateAsync import WsPrivateAsync
 
             with warnings.catch_warnings(record=True) as w:
@@ -79,7 +83,7 @@ class TestWsPrivateAsyncInit(unittest.TestCase):
                     apiKey="test_api_key",
                     passphrase="test_passphrase",
                     secretKey="test_secret_key",
-                    url="wss://test.example.com"
+                    url=TEST_WS_URL
                 )
 
                 # No deprecation warning expected
@@ -102,7 +106,7 @@ class TestWsPrivateAsyncSubscribe(unittest.TestCase):
                 apiKey="test_api_key",
                 passphrase="test_passphrase",
                 secretKey="test_secret_key",
-                url="wss://test.example.com"
+                url=TEST_WS_URL
             )
             mock_websocket = AsyncMock()
             ws.websocket = mock_websocket
@@ -133,7 +137,7 @@ class TestWsPrivateAsyncSubscribe(unittest.TestCase):
                 apiKey="test_api_key",
                 passphrase="test_passphrase",
                 secretKey="test_secret_key",
-                url="wss://test.example.com"
+                url=TEST_WS_URL
             )
             mock_websocket = AsyncMock()
             ws.websocket = mock_websocket
@@ -161,7 +165,7 @@ class TestWsPrivateAsyncUnsubscribe(unittest.TestCase):
                 apiKey="test_api_key",
                 passphrase="test_passphrase",
                 secretKey="test_secret_key",
-                url="wss://test.example.com"
+                url=TEST_WS_URL
             )
             mock_websocket = AsyncMock()
             ws.websocket = mock_websocket
@@ -185,7 +189,7 @@ class TestWsPrivateAsyncUnsubscribe(unittest.TestCase):
                 apiKey="test_api_key",
                 passphrase="test_passphrase",
                 secretKey="test_secret_key",
-                url="wss://test.example.com"
+                url=TEST_WS_URL
             )
             mock_websocket = AsyncMock()
             ws.websocket = mock_websocket
@@ -207,13 +211,13 @@ class TestWsPrivateAsyncSend(unittest.TestCase):
 
     def test_send_without_id(self):
         """Test generic send method without id"""
-        with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             from okx.websocket.WsPrivateAsync import WsPrivateAsync
             ws = WsPrivateAsync(
                 apiKey="test_api_key",
                 passphrase="test_passphrase",
                 secretKey="test_secret_key",
-                url="wss://test.example.com"
+                url=TEST_WS_URL
             )
             mock_websocket = AsyncMock()
             ws.websocket = mock_websocket
@@ -233,13 +237,13 @@ class TestWsPrivateAsyncSend(unittest.TestCase):
 
     def test_send_with_id(self):
         """Test generic send method with id"""
-        with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             from okx.websocket.WsPrivateAsync import WsPrivateAsync
             ws = WsPrivateAsync(
                 apiKey="test_api_key",
                 passphrase="test_passphrase",
                 secretKey="test_secret_key",
-                url="wss://test.example.com"
+                url=TEST_WS_URL
             )
             mock_websocket = AsyncMock()
             ws.websocket = mock_websocket
@@ -260,13 +264,13 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
 
     def _create_ws_instance(self):
         """Helper to create WsPrivateAsync instance with mocked websocket"""
-        with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             from okx.websocket.WsPrivateAsync import WsPrivateAsync
             ws = WsPrivateAsync(
                 apiKey="test_api_key",
                 passphrase="test_passphrase",
                 secretKey="test_secret_key",
-                url="wss://test.example.com"
+                url=TEST_WS_URL
             )
             mock_websocket = AsyncMock()
             ws.websocket = mock_websocket
@@ -274,7 +278,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
 
     def test_place_order_sends_correct_payload(self):
         """Test place_order sends correct operation"""
-        with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             ws, mock_websocket = self._create_ws_instance()
             callback = MagicMock()
             order_args = [{
@@ -299,7 +303,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
 
     def test_place_order_without_id(self):
         """Test place_order without id parameter"""
-        with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             ws, mock_websocket = self._create_ws_instance()
             order_args = [{"instId": "BTC-USDT"}]
 
@@ -314,7 +318,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
 
     def test_batch_orders_sends_correct_payload(self):
         """Test batch_orders sends correct operation"""
-        with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             ws, mock_websocket = self._create_ws_instance()
             callback = MagicMock()
             order_args = [
@@ -334,7 +338,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
 
     def test_batch_orders_without_id(self):
         """Test batch_orders without id parameter"""
-        with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             ws, mock_websocket = self._create_ws_instance()
             order_args = [{"instId": "BTC-USDT"}, {"instId": "ETH-USDT"}]
 
@@ -349,7 +353,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
 
     def test_cancel_order_sends_correct_payload(self):
         """Test cancel_order sends correct operation"""
-        with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             ws, mock_websocket = self._create_ws_instance()
             callback = MagicMock()
             cancel_args = [{"instId": "BTC-USDT", "ordId": "12345"}]
@@ -366,7 +370,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
 
     def test_cancel_order_without_id(self):
         """Test cancel_order without id parameter"""
-        with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             ws, mock_websocket = self._create_ws_instance()
             cancel_args = [{"instId": "BTC-USDT", "ordId": "12345"}]
 
@@ -381,7 +385,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
 
     def test_batch_cancel_orders_sends_correct_payload(self):
         """Test batch_cancel_orders sends correct operation"""
-        with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             ws, mock_websocket = self._create_ws_instance()
             callback = MagicMock()
             cancel_args = [
@@ -401,7 +405,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
 
     def test_batch_cancel_orders_without_id(self):
         """Test batch_cancel_orders without id parameter"""
-        with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             ws, mock_websocket = self._create_ws_instance()
             cancel_args = [{"instId": "BTC-USDT", "ordId": "12345"}]
 
@@ -416,7 +420,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
 
     def test_amend_order_sends_correct_payload(self):
         """Test amend_order sends correct operation"""
-        with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             ws, mock_websocket = self._create_ws_instance()
             callback = MagicMock()
             amend_args = [{
@@ -438,7 +442,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
 
     def test_amend_order_without_id(self):
         """Test amend_order without id parameter"""
-        with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             ws, mock_websocket = self._create_ws_instance()
             amend_args = [{"instId": "BTC-USDT", "ordId": "12345", "newSz": "0.002"}]
 
@@ -453,7 +457,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
 
     def test_batch_amend_orders_sends_correct_payload(self):
         """Test batch_amend_orders sends correct operation"""
-        with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             ws, mock_websocket = self._create_ws_instance()
             callback = MagicMock()
             amend_args = [
@@ -473,7 +477,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
 
     def test_batch_amend_orders_without_id(self):
         """Test batch_amend_orders without id parameter"""
-        with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             ws, mock_websocket = self._create_ws_instance()
             amend_args = [{"instId": "BTC-USDT", "ordId": "12345", "newSz": "0.002"}]
 
@@ -488,7 +492,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
 
     def test_mass_cancel_sends_correct_payload(self):
         """Test mass_cancel sends correct operation"""
-        with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             ws, mock_websocket = self._create_ws_instance()
             callback = MagicMock()
             mass_cancel_args = [{
@@ -508,7 +512,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
 
     def test_mass_cancel_without_id(self):
         """Test mass_cancel without id parameter"""
-        with patch('okx.websocket.WsPrivateAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             ws, mock_websocket = self._create_ws_instance()
             mass_cancel_args = [{"instType": "SPOT", "instFamily": "BTC-USDT"}]
 
@@ -536,7 +540,7 @@ class TestWsPrivateAsyncLogin(unittest.TestCase):
                 apiKey="test_api_key",
                 passphrase="test_passphrase",
                 secretKey="test_secret_key",
-                url="wss://test.example.com"
+                url=TEST_WS_URL
             )
             mock_websocket = AsyncMock()
             ws.websocket = mock_websocket
@@ -568,7 +572,7 @@ class TestWsPrivateAsyncStartStop(unittest.TestCase):
                 apiKey="test_api_key",
                 passphrase="test_passphrase",
                 secretKey="test_secret_key",
-                url="wss://test.example.com"
+                url=TEST_WS_URL
             )
 
             async def run_test():

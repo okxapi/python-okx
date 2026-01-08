@@ -7,13 +7,18 @@ import unittest
 import warnings
 from unittest.mock import patch, MagicMock
 
+# Test constants
+MOCK_CLIENT_INIT = 'okx.okxclient.Client.__init__'
+TEST_PROXY_URL = 'http://proxy.example.com:8080'
+TEST_API_ENDPOINT = '/api/v5/test'
+
 
 class TestOkxClientInit(unittest.TestCase):
     """Unit tests for OkxClient initialization"""
 
     def test_init_with_default_parameters(self):
         """Test initialization with default parameters"""
-        with patch('okx.okxclient.Client.__init__') as mock_init:
+        with patch(MOCK_CLIENT_INIT) as mock_init:
             mock_init.return_value = None
             
             from okx.okxclient import OkxClient
@@ -27,7 +32,7 @@ class TestOkxClientInit(unittest.TestCase):
 
     def test_init_with_custom_parameters(self):
         """Test initialization with custom parameters"""
-        with patch('okx.okxclient.Client.__init__') as mock_init:
+        with patch(MOCK_CLIENT_INIT) as mock_init:
             mock_init.return_value = None
             
             from okx.okxclient import OkxClient
@@ -47,7 +52,7 @@ class TestOkxClientInit(unittest.TestCase):
 
     def test_init_with_deprecated_use_server_time_shows_warning(self):
         """Test that using deprecated use_server_time parameter shows warning"""
-        with patch('okx.okxclient.Client.__init__') as mock_init:
+        with patch(MOCK_CLIENT_INIT) as mock_init:
             mock_init.return_value = None
             
             from okx.okxclient import OkxClient
@@ -66,18 +71,18 @@ class TestOkxClientHttpxCompatibility(unittest.TestCase):
 
     def test_init_with_new_httpx_proxy_parameter(self):
         """Test initialization with new httpx version using proxy parameter"""
-        with patch('okx.okxclient.Client.__init__') as mock_init:
+        with patch(MOCK_CLIENT_INIT) as mock_init:
             # Simulate new httpx version (accepts proxy parameter)
             mock_init.return_value = None
             
             from okx.okxclient import OkxClient
-            client = OkxClient(proxy='http://proxy.example.com:8080')
+            client = OkxClient(proxy=TEST_PROXY_URL)
 
             # Should call super().__init__ with proxy parameter
             mock_init.assert_called_once()
             call_kwargs = mock_init.call_args
             self.assertIn('proxy', call_kwargs.kwargs)
-            self.assertEqual(call_kwargs.kwargs['proxy'], 'http://proxy.example.com:8080')
+            self.assertEqual(call_kwargs.kwargs['proxy'], TEST_PROXY_URL)
 
     def test_init_with_old_httpx_falls_back_to_proxies(self):
         """Test initialization falls back to proxies for old httpx version"""
@@ -91,11 +96,11 @@ class TestOkxClientHttpxCompatibility(unittest.TestCase):
             # Second call should work (with proxies or without)
             return None
 
-        with patch('okx.okxclient.Client.__init__') as mock_init:
+        with patch(MOCK_CLIENT_INIT) as mock_init:
             mock_init.side_effect = mock_init_side_effect
             
             from okx.okxclient import OkxClient
-            client = OkxClient(proxy='http://proxy.example.com:8080')
+            client = OkxClient(proxy=TEST_PROXY_URL)
 
             # Should have been called twice
             self.assertEqual(mock_init.call_count, 2)
@@ -104,8 +109,8 @@ class TestOkxClientHttpxCompatibility(unittest.TestCase):
             second_call = mock_init.call_args_list[1]
             self.assertIn('proxies', second_call.kwargs)
             expected_proxies = {
-                'http://': 'http://proxy.example.com:8080',
-                'https://': 'http://proxy.example.com:8080'
+                'http://': TEST_PROXY_URL,
+                'https://': TEST_PROXY_URL
             }
             self.assertEqual(second_call.kwargs['proxies'], expected_proxies)
 
@@ -120,7 +125,7 @@ class TestOkxClientHttpxCompatibility(unittest.TestCase):
                 raise TypeError("__init__() got an unexpected keyword argument 'proxy'")
             return None
 
-        with patch('okx.okxclient.Client.__init__') as mock_init:
+        with patch(MOCK_CLIENT_INIT) as mock_init:
             mock_init.side_effect = mock_init_side_effect
             
             from okx.okxclient import OkxClient
@@ -135,7 +140,7 @@ class TestOkxClientHttpxCompatibility(unittest.TestCase):
 
     def test_init_without_proxy(self):
         """Test initialization without proxy parameter"""
-        with patch('okx.okxclient.Client.__init__') as mock_init:
+        with patch(MOCK_CLIENT_INIT) as mock_init:
             mock_init.return_value = None
             
             from okx.okxclient import OkxClient
@@ -151,7 +156,7 @@ class TestOkxClientRequest(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures"""
-        with patch('okx.okxclient.Client.__init__') as mock_init:
+        with patch(MOCK_CLIENT_INIT) as mock_init:
             mock_init.return_value = None
             from okx.okxclient import OkxClient
             self.client = OkxClient(
@@ -166,9 +171,9 @@ class TestOkxClientRequest(unittest.TestCase):
         with patch.object(self.client, '_request') as mock_request:
             mock_request.return_value = {'code': '0'}
             
-            result = self.client._request_without_params('GET', '/api/v5/test')
+            result = self.client._request_without_params('GET', TEST_API_ENDPOINT)
             
-            mock_request.assert_called_once_with('GET', '/api/v5/test', {})
+            mock_request.assert_called_once_with('GET', TEST_API_ENDPOINT, {})
 
     def test_request_with_params(self):
         """Test _request_with_params passes params correctly"""
@@ -176,9 +181,9 @@ class TestOkxClientRequest(unittest.TestCase):
             mock_request.return_value = {'code': '0'}
             params = {'instId': 'BTC-USDT'}
             
-            result = self.client._request_with_params('GET', '/api/v5/test', params)
+            result = self.client._request_with_params('GET', TEST_API_ENDPOINT, params)
             
-            mock_request.assert_called_once_with('GET', '/api/v5/test', params)
+            mock_request.assert_called_once_with('GET', TEST_API_ENDPOINT, params)
 
 
 if __name__ == '__main__':
