@@ -1,0 +1,5 @@
+include:
+  - component: gitlab.okg.com/devops-public/components/security/cis-vulnerability-scanner@okone-default
+  
+stages:
+  - Code Check
