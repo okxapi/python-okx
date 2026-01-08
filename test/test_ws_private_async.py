@@ -3,6 +3,10 @@ import asyncio
 from okx.websocket.WsPrivateAsync import WsPrivateAsync
 from test.config import get_api_credentials
 
+# Test constants
+WS_PRIVATE_URL = "wss://wspap.okx.com:8443/ws/v5/private?brokerId=9999"
+WS_BUSINESS_URL = "wss://wspap.okx.com:8443/ws/v5/business?brokerId=9999"
+
 
 def privateCallback(message):
     print("privateCallback", message)
@@ -10,12 +14,11 @@ def privateCallback(message):
 
 async def main():
     api_key, api_secret_key, passphrase, _ = get_api_credentials()
-    url = "wss://wspap.okx.com:8443/ws/v5/private?brokerId=9999"
     ws = WsPrivateAsync(
         apiKey=api_key,
         passphrase=passphrase,
         secretKey=api_secret_key,
-        url=url,
+        url=WS_PRIVATE_URL,
         debug=True
     )
     await ws.start()
@@ -52,12 +55,11 @@ async def test_place_order():
     URL: /ws/v5/private (Rate limit: 60 requests/second)
     """
     api_key, api_secret_key, passphrase, _ = get_api_credentials()
-    url = "wss://wspap.okx.com:8443/ws/v5/private?brokerId=9999"
     ws = WsPrivateAsync(
         apiKey=api_key,
         passphrase=passphrase,
         secretKey=api_secret_key,
-        url=url,
+        url=WS_PRIVATE_URL,
         debug=True
     )
     await ws.start()
@@ -85,12 +87,11 @@ async def test_batch_orders():
     URL: /ws/v5/private (Rate limit: 60 requests/second, max 20 orders)
     """
     api_key, api_secret_key, passphrase, _ = get_api_credentials()
-    url = "wss://wspap.okx.com:8443/ws/v5/private?brokerId=9999"
     ws = WsPrivateAsync(
         apiKey=api_key,
         passphrase=passphrase,
         secretKey=api_secret_key,
-        url=url,
+        url=WS_PRIVATE_URL,
         debug=True
     )
     await ws.start()
@@ -129,12 +130,11 @@ async def test_cancel_order():
     URL: /ws/v5/private (Rate limit: 60 requests/second)
     """
     api_key, api_secret_key, passphrase, _ = get_api_credentials()
-    url = "wss://wspap.okx.com:8443/ws/v5/private?brokerId=9999"
     ws = WsPrivateAsync(
         apiKey=api_key,
         passphrase=passphrase,
         secretKey=api_secret_key,
-        url=url,
+        url=WS_PRIVATE_URL,
         debug=True
     )
     await ws.start()
@@ -158,12 +158,11 @@ async def test_batch_cancel_orders():
     URL: /ws/v5/private (Rate limit: 60 requests/second, max 20 orders)
     """
     api_key, api_secret_key, passphrase, _ = get_api_credentials()
-    url = "wss://wspap.okx.com:8443/ws/v5/private?brokerId=9999"
     ws = WsPrivateAsync(
         apiKey=api_key,
         passphrase=passphrase,
         secretKey=api_secret_key,
-        url=url,
+        url=WS_PRIVATE_URL,
         debug=True
     )
     await ws.start()
@@ -185,12 +184,11 @@ async def test_amend_order():
     URL: /ws/v5/private (Rate limit: 60 requests/second)
     """
     api_key, api_secret_key, passphrase, _ = get_api_credentials()
-    url = "wss://wspap.okx.com:8443/ws/v5/private?brokerId=9999"
     ws = WsPrivateAsync(
         apiKey=api_key,
         passphrase=passphrase,
         secretKey=api_secret_key,
-        url=url,
+        url=WS_PRIVATE_URL,
         debug=True
     )
     await ws.start()
@@ -216,12 +214,11 @@ async def test_mass_cancel():
     Note: This function uses the business channel
     """
     api_key, api_secret_key, passphrase, _ = get_api_credentials()
-    url = "wss://wspap.okx.com:8443/ws/v5/business?brokerId=9999"
     ws = WsPrivateAsync(
         apiKey=api_key,
         passphrase=passphrase,
         secretKey=api_secret_key,
-        url=url,
+        url=WS_BUSINESS_URL,
         debug=True
     )
     await ws.start()
@@ -241,12 +238,11 @@ async def test_mass_cancel():
 async def test_send_method():
     """Test generic send method"""
     api_key, api_secret_key, passphrase, _ = get_api_credentials()
-    url = "wss://wspap.okx.com:8443/ws/v5/private?brokerId=9999"
     ws = WsPrivateAsync(
         apiKey=api_key,
         passphrase=passphrase,
         secretKey=api_secret_key,
-        url=url,
+        url=WS_PRIVATE_URL,
         debug=True
     )
     await ws.start()

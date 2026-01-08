@@ -12,6 +12,10 @@ from unittest.mock import patch, MagicMock, AsyncMock
 import okx.websocket.WsPublicAsync as ws_public_module
 from okx.websocket.WsPublicAsync import WsPublicAsync
 
+# Test constants
+TEST_WS_URL = 'wss://test.example.com'
+MOCK_WS_FACTORY = 'okx.websocket.WsPublicAsync.WebSocketFactory'
+
 
 class TestWsPublicAsyncInit(unittest.TestCase):
     """Unit tests for WsPublicAsync initialization"""
@@ -19,9 +23,9 @@ class TestWsPublicAsyncInit(unittest.TestCase):
     def test_init_with_url(self):
         """Test initialization with url parameter"""
         with patch.object(ws_public_module, 'WebSocketFactory') as mock_factory:
-            ws = WsPublicAsync(url="wss://test.example.com")
+            ws = WsPublicAsync(url=TEST_WS_URL)
 
-            self.assertEqual(ws.url, "wss://test.example.com")
+            self.assertEqual(ws.url, TEST_WS_URL)
             self.assertEqual(ws.apiKey, '')
             self.assertEqual(ws.passphrase, '')
             self.assertEqual(ws.secretKey, '')
@@ -30,10 +34,10 @@ class TestWsPublicAsyncInit(unittest.TestCase):
 
     def test_init_with_credentials(self):
         """Test initialization with all credentials for business channel"""
-        with patch('okx.websocket.WsPublicAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             from okx.websocket.WsPublicAsync import WsPublicAsync
             ws = WsPublicAsync(
-                url="wss://test.example.com",
+                url=TEST_WS_URL,
                 apiKey="test_api_key",
                 passphrase="test_passphrase",
                 secretKey="test_secret_key"
@@ -45,17 +49,17 @@ class TestWsPublicAsyncInit(unittest.TestCase):
 
     def test_init_with_debug_enabled(self):
         """Test initialization with debug mode enabled"""
-        with patch('okx.websocket.WsPublicAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             from okx.websocket.WsPublicAsync import WsPublicAsync
-            ws = WsPublicAsync(url="wss://test.example.com", debug=True)
+            ws = WsPublicAsync(url=TEST_WS_URL, debug=True)
 
             self.assertTrue(ws.debug)
 
     def test_init_with_debug_disabled(self):
         """Test initialization with debug mode disabled (default)"""
-        with patch('okx.websocket.WsPublicAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             from okx.websocket.WsPublicAsync import WsPublicAsync
-            ws = WsPublicAsync(url="wss://test.example.com", debug=False)
+            ws = WsPublicAsync(url=TEST_WS_URL, debug=False)
 
             self.assertFalse(ws.debug)
 
@@ -65,9 +69,9 @@ class TestWsPublicAsyncLogin(unittest.TestCase):
 
     def test_login_without_credentials_raises_error(self):
         """Test that login raises ValueError when credentials are missing"""
-        with patch('okx.websocket.WsPublicAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             from okx.websocket.WsPublicAsync import WsPublicAsync
-            ws = WsPublicAsync(url="wss://test.example.com")
+            ws = WsPublicAsync(url=TEST_WS_URL)
 
             async def run_test():
                 with self.assertRaises(ValueError) as context:
@@ -78,14 +82,14 @@ class TestWsPublicAsyncLogin(unittest.TestCase):
 
     def test_login_with_credentials_success(self):
         """Test successful login with valid credentials"""
-        with patch('okx.websocket.WsPublicAsync.WebSocketFactory') as mock_factory, \
+        with patch(MOCK_WS_FACTORY) as mock_factory, \
              patch('okx.websocket.WsPublicAsync.WsUtils.initLoginParams') as mock_init_login:
 
             mock_init_login.return_value = '{"op":"login","args":[...]}'
 
             from okx.websocket.WsPublicAsync import WsPublicAsync
             ws = WsPublicAsync(
-                url="wss://test.example.com",
+                url=TEST_WS_URL,
                 apiKey="test_api_key",
                 passphrase="test_passphrase",
                 secretKey="test_secret_key"
@@ -113,9 +117,9 @@ class TestWsPublicAsyncSubscribe(unittest.TestCase):
 
     def test_subscribe_without_id(self):
         """Test subscribe without id parameter"""
-        with patch('okx.websocket.WsPublicAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             from okx.websocket.WsPublicAsync import WsPublicAsync
-            ws = WsPublicAsync(url="wss://test.example.com")
+            ws = WsPublicAsync(url=TEST_WS_URL)
             mock_websocket = AsyncMock()
             ws.websocket = mock_websocket
             callback = MagicMock()
@@ -138,7 +142,7 @@ class TestWsPublicAsyncSubscribe(unittest.TestCase):
     def test_subscribe_with_id(self):
         """Test subscribe with id parameter"""
         with patch.object(ws_public_module, 'WebSocketFactory'):
-            ws = WsPublicAsync(url="wss://test.example.com")
+            ws = WsPublicAsync(url=TEST_WS_URL)
             mock_websocket = AsyncMock()
             ws.websocket = mock_websocket
             callback = MagicMock()
@@ -159,7 +163,7 @@ class TestWsPublicAsyncSubscribe(unittest.TestCase):
     def test_subscribe_with_multiple_channels(self):
         """Test subscribe with multiple channels"""
         with patch.object(ws_public_module, 'WebSocketFactory'):
-            ws = WsPublicAsync(url="wss://test.example.com")
+            ws = WsPublicAsync(url=TEST_WS_URL)
             mock_websocket = AsyncMock()
             ws.websocket = mock_websocket
             callback = MagicMock()
@@ -184,7 +188,7 @@ class TestWsPublicAsyncUnsubscribe(unittest.TestCase):
     def test_unsubscribe_without_id(self):
         """Test unsubscribe without id parameter"""
         with patch.object(ws_public_module, 'WebSocketFactory'):
-            ws = WsPublicAsync(url="wss://test.example.com")
+            ws = WsPublicAsync(url=TEST_WS_URL)
             mock_websocket = AsyncMock()
             ws.websocket = mock_websocket
             callback = MagicMock()
@@ -203,7 +207,7 @@ class TestWsPublicAsyncUnsubscribe(unittest.TestCase):
     def test_unsubscribe_with_id(self):
         """Test unsubscribe with id parameter"""
         with patch.object(ws_public_module, 'WebSocketFactory'):
-            ws = WsPublicAsync(url="wss://test.example.com")
+            ws = WsPublicAsync(url=TEST_WS_URL)
             mock_websocket = AsyncMock()
             ws.websocket = mock_websocket
             callback = MagicMock()
@@ -224,9 +228,9 @@ class TestWsPublicAsyncSend(unittest.TestCase):
 
     def test_send_without_id(self):
         """Test generic send method without id"""
-        with patch('okx.websocket.WsPublicAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             from okx.websocket.WsPublicAsync import WsPublicAsync
-            ws = WsPublicAsync(url="wss://test.example.com")
+            ws = WsPublicAsync(url=TEST_WS_URL)
             mock_websocket = AsyncMock()
             ws.websocket = mock_websocket
             callback = MagicMock()
@@ -245,9 +249,9 @@ class TestWsPublicAsyncSend(unittest.TestCase):
 
     def test_send_with_id(self):
         """Test generic send method with id"""
-        with patch('okx.websocket.WsPublicAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             from okx.websocket.WsPublicAsync import WsPublicAsync
-            ws = WsPublicAsync(url="wss://test.example.com")
+            ws = WsPublicAsync(url=TEST_WS_URL)
             mock_websocket = AsyncMock()
             ws.websocket = mock_websocket
             args = [{"instId": "BTC-USDT"}]
@@ -263,9 +267,9 @@ class TestWsPublicAsyncSend(unittest.TestCase):
 
     def test_send_without_callback(self):
         """Test send method without callback (preserves existing callback)"""
-        with patch('okx.websocket.WsPublicAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             from okx.websocket.WsPublicAsync import WsPublicAsync
-            ws = WsPublicAsync(url="wss://test.example.com")
+            ws = WsPublicAsync(url=TEST_WS_URL)
             mock_websocket = AsyncMock()
             ws.websocket = mock_websocket
             existing_callback = MagicMock()
@@ -281,9 +285,9 @@ class TestWsPublicAsyncSend(unittest.TestCase):
 
     def test_send_with_new_callback_replaces_existing(self):
         """Test send method with new callback replaces existing callback"""
-        with patch('okx.websocket.WsPublicAsync.WebSocketFactory'):
+        with patch(MOCK_WS_FACTORY):
             from okx.websocket.WsPublicAsync import WsPublicAsync
-            ws = WsPublicAsync(url="wss://test.example.com")
+            ws = WsPublicAsync(url=TEST_WS_URL)
             mock_websocket = AsyncMock()
             ws.websocket = mock_websocket
             old_callback = MagicMock()
@@ -308,7 +312,7 @@ class TestWsPublicAsyncStartStop(unittest.TestCase):
             mock_factory_instance.close = AsyncMock()
             mock_factory_class.return_value = mock_factory_instance
 
-            ws = WsPublicAsync(url="wss://test.example.com")
+            ws = WsPublicAsync(url=TEST_WS_URL)
 
             async def run_test():
                 await ws.stop()

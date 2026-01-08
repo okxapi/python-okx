@@ -8,6 +8,9 @@ from unittest.mock import patch
 from okx.Account import AccountAPI
 from okx import consts as c
 
+# Test constants
+IDX_VOL_NEGATIVE_5_PERCENT = '-0.05'
+
 
 class TestAccountAPIPositionBuilder(unittest.TestCase):
     """Unit tests for the position_builder method"""
@@ -100,11 +103,11 @@ class TestAccountAPIPositionBuilder(unittest.TestCase):
         mock_request.return_value = mock_response
 
         # Act
-        result = self.account_api.position_builder(idxVol='-0.05')
+        result = self.account_api.position_builder(idxVol=IDX_VOL_NEGATIVE_5_PERCENT)
 
         # Assert
         expected_params = {
-            'idxVol': '-0.05'
+            'idxVol': IDX_VOL_NEGATIVE_5_PERCENT
         }
         mock_request.assert_called_once_with(c.POST, c.POSITION_BUILDER, expected_params)
         self.assertEqual(result, mock_response)
@@ -326,7 +329,7 @@ class TestAccountAPIPositionBuilder(unittest.TestCase):
             greeksType='PA',
             simPos=sim_pos,
             simAsset=sim_asset,
-            idxVol='-0.05'
+            idxVol=IDX_VOL_NEGATIVE_5_PERCENT
         )
 
         # Assert
@@ -337,7 +340,7 @@ class TestAccountAPIPositionBuilder(unittest.TestCase):
             'greeksType': 'PA',
             'simPos': sim_pos,
             'simAsset': sim_asset,
-            'idxVol': '-0.05'
+            'idxVol': IDX_VOL_NEGATIVE_5_PERCENT
         }
         mock_request.assert_called_once_with(c.POST, c.POSITION_BUILDER, expected_params)
         self.assertEqual(result['code'], '0')
