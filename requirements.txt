@@ -5,6 +5,7 @@ websockets>=10.0
 certifi>=2021.0.0
 loguru>=0.7.0
 python-dotenv>=1.0.0
+pandas>=1.5.0
 
 # Development & Testing
 pytest>=7.0.0
