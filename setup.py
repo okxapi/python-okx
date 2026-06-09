@@ -13,16 +13,25 @@ with open(os.path.join(HERE, "README.md"), "r", encoding="utf-8") as fh:
 
 
 def parse_requirements():
-    """Parse requirements from requirements.txt."""
+    """Parse runtime requirements from requirements.txt.
+
+    Lines from the "# dev" marker onward are skipped, so `pip install
+    python-okx` only pulls runtime dependencies. `pip install -r
+    requirements.txt` still installs everything (pip treats the marker as a
+    plain comment), keeping the dev/test setup unchanged.
+    """
     requirements = []
     req_path = os.path.join(HERE, "requirements.txt")
-    
+
     if not os.path.exists(req_path):
         return requirements
-    
+
     with open(req_path, "r", encoding="utf-8") as f:
         for line in f:
             line = line.strip()
+            # Stop at the dev-dependency section marker
+            if line.lower().startswith("# dev"):
+                break
             # Skip empty lines and comments
             if not line or line.startswith("#"):
                 continue
@@ -30,7 +39,7 @@ def parse_requirements():
             if "#" in line:
                 line = line.split("#")[0].strip()
             requirements.append(line)
-    
+
     return requirements
 
 
