@@ -1,5 +1,5 @@
 from okx.okxclient import OkxClient
-from okx.consts import *
+from okx.consts import GET, POST, STAKING_CANCEL_REDEEM, STAKING_PRODUCTS
 
 
 class EarnAPI(OkxClient):

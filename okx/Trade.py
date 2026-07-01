@@ -11,7 +11,7 @@ class TradeAPI(OkxClient):
         OkxClient.__init__(self, api_key, api_secret_key, passphrase, use_server_time, flag, domain, debug, proxy)
 
     # Place Order
-    def place_order(self, instId, tdMode, side, ordType, sz, ccy='', clOrdId='', tag='', posSide='', px='',
+    def place_order(self, instId, tdMode, side, ordType, sz, ccy='', clOrdId='', tag='', posSide='', px='',  # NOSONAR - public OKX v5 place-order API surface; the parameter list mirrors the REST endpoint 1:1 and cannot be reduced without breaking backward compatibility
                     reduceOnly='', tgtCcy='', stpMode='', attachAlgoOrds=None, pxUsd='', pxVol='', banAmend='', tradeQuoteCcy=None, pxAmendType=None,
                     isElpTakerAccess=None, instIdCode=None):
         params = {'instId': instId, 'tdMode': tdMode, 'side': side, 'ordType': ordType, 'sz': sz, 'ccy': ccy,
@@ -42,7 +42,7 @@ class TradeAPI(OkxClient):
         return self._request_with_params(POST, CANCEL_BATCH_ORDERS, orders_data)
 
     # Amend Order
-    def amend_order(self, instId, cxlOnFail='', ordId='', clOrdId='', reqId='', newSz='', newPx='', newTpTriggerPx='',
+    def amend_order(self, instId, cxlOnFail='', ordId='', clOrdId='', reqId='', newSz='', newPx='', newTpTriggerPx='',  # NOSONAR - public OKX v5 amend-order API surface; the parameter list mirrors the REST endpoint 1:1 and cannot be reduced without breaking backward compatibility
                     newTpOrdPx='', newSlTriggerPx='', newSlOrdPx='', newTpTriggerPxType='', newSlTriggerPxType='',
                     attachAlgoOrds='', newTriggerPx='', newOrdPx='', pxAmendType=None,
                     newTpTriggerRatio=None, newSlTriggerRatio=None):
@@ -104,7 +104,7 @@ class TradeAPI(OkxClient):
         return self._request_with_params(GET, ORDER_FILLS, params)
 
     # Place Algo Order
-    def place_algo_order(self, instId='', tdMode='', side='', ordType='', sz='', ccy='',
+    def place_algo_order(self, instId='', tdMode='', side='', ordType='', sz='', ccy='',  # NOSONAR - public OKX v5 place-algo-order API surface; the parameter list mirrors the REST endpoint 1:1 and cannot be reduced without breaking backward compatibility
                          posSide='', reduceOnly='', tpTriggerPx='',
                          tpOrdPx='', slTriggerPx='', slOrdPx='',
                          triggerPx='', orderPx='', tgtCcy='', pxVar='',

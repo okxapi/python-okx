@@ -1,5 +1,16 @@
 from .okxclient import OkxClient
-from .consts import *
+from .consts import (
+    GET,
+    POST,
+    DUAL_INVEST_CURRENCY_PAIRS,
+    DUAL_INVEST_PRODUCT_INFO,
+    DUAL_INVEST_REQUEST_QUOTE,
+    DUAL_INVEST_TRADE,
+    DUAL_INVEST_REQUEST_REDEEM_QUOTE,
+    DUAL_INVEST_REDEEM,
+    DUAL_INVEST_ORDER_STATE,
+    DUAL_INVEST_ORDER_HISTORY,
+)
 
 
 class DualInvestAPI(OkxClient):
