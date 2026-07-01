@@ -113,8 +113,10 @@ class AccountAPI(OkxClient):
         return self._request_with_params(GET, MAX_LOAN, params)
 
     # Get Fee Rates
-    def get_fee_rates(self, instType, instId='', uly='', category='', instFamily=''):
+    def get_fee_rates(self, instType, instId='', uly='', category='', instFamily='', groupId=None):
         params = {'instType': instType, 'instId': instId, 'uly': uly, 'category': category, 'instFamily': instFamily}
+        if groupId is not None:
+            params['groupId'] = groupId
         return self._request_with_params(GET, FEE_RATES, params)
 
     # Get interest-accrued
@@ -337,3 +339,23 @@ class AccountAPI(OkxClient):
         if earnType is not None:
             params['earnType'] = earnType
         return self._request_with_params(POST, SET_AUTO_EARN, params)
+
+    # Set delta-neutral trading config (BROK-1724)
+    def set_trading_config(self, deltaNeutral='', ccy=''):
+        params = {'deltaNeutral': deltaNeutral, 'ccy': ccy}
+        return self._request_with_params(POST, SET_TRADING_CONFIG, params)
+
+    # Pre-check whether the delta-neutral switch is allowed (BROK-1724)
+    def precheck_set_delta_neutral(self, deltaNeutral='', ccy=''):
+        params = {'deltaNeutral': deltaNeutral, 'ccy': ccy}
+        return self._request_with_params(POST, PRECHECK_SET_DELTA_NEUTRAL, params)
+
+    # Get the list of supported bill types (BROK-1728)
+    def get_bill_type(self):
+        return self._request_without_params(GET, BILL_TYPE)
+
+    # Apply for an asynchronous bill export (BROK-1728)
+    def apply_bills(self, type='', begin='', end='', ccy='', mgnMode='', ctType=''):
+        params = {'type': type, 'begin': begin, 'end': end,
+                  'ccy': ccy, 'mgnMode': mgnMode, 'ctType': ctType}
+        return self._request_with_params(POST, BILLS_APPLY, params)
