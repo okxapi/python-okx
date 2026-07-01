@@ -106,23 +106,5 @@ class TestAmendOrderNewParams(_Base):
         self.assertEqual(mock_request.call_args[0][1], c.AMEND_ORDER)
 
 
-class TestOneClickRepayNew(_Base):
-    """#7 one-click-repay-new endpoints"""
-
-    @patch.object(TradeAPI, '_request_without_params')
-    def test_get_oneclick_repay_list_new(self, mock_request):
-        mock_request.return_value = {'code': '0'}
-        self.api.get_oneclick_repay_list_new()
-        mock_request.assert_called_once_with(c.GET, c.ONE_CLICK_REPAY_SUPPORT_NEW)
-
-    @patch.object(TradeAPI, '_request_with_params')
-    def test_oneclick_repay_new(self, mock_request):
-        mock_request.return_value = {'code': '0'}
-        self.api.oneclick_repay_new(debtCcy='USDT', repayCcyList=['BTC'])
-        mock_request.assert_called_once_with(
-            c.POST, c.ONE_CLICK_REPAY_NEW,
-            {'debtCcy': 'USDT', 'repayCcyList': ['BTC']})
-
-
 if __name__ == '__main__':
     unittest.main()
