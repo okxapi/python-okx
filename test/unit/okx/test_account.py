@@ -695,6 +695,83 @@ class TestAccountAPIGetMaxAvailSize(unittest.TestCase):
         self.assertNotIn('tradeQuoteCcy', call_args)
 
 
+class TestAccountAPIGetAccountBills(unittest.TestCase):
+    """Unit tests for get_account_bills begin/end params (GH#141)"""
+
+    def setUp(self):
+        """Set up test fixtures"""
+        self.account_api = AccountAPI(
+            api_key='test_key',
+            api_secret_key='test_secret',
+            passphrase='test_pass',
+            flag='0'
+        )
+
+    @patch.object(AccountAPI, '_request_with_params')
+    def test_get_account_bills_default_no_args_backward_compatible(self, mock_request):
+        """Existing callers with no args still produce empty begin/end (no-op change)"""
+        mock_response = {'code': '0', 'msg': '', 'data': []}
+        mock_request.return_value = mock_response
+
+        result = self.account_api.get_account_bills()
+
+        expected_params = {
+            'instType': '', 'ccy': '', 'mgnMode': '', 'ctType': '', 'type': '',
+            'subType': '', 'after': '', 'before': '', 'limit': '',
+            'begin': '', 'end': ''
+        }
+        mock_request.assert_called_once_with(c.GET, c.BILLS_DETAIL, expected_params)
+        self.assertEqual(result, mock_response)
+
+    @patch.object(AccountAPI, '_request_with_params')
+    def test_get_account_bills_with_begin_end(self, mock_request):
+        """begin/end land in the params dict when provided"""
+        mock_response = {'code': '0', 'msg': '', 'data': []}
+        mock_request.return_value = mock_response
+
+        self.account_api.get_account_bills(
+            instType='SWAP', begin='1597026383085', end='1597026683085'
+        )
+
+        expected_params = {
+            'instType': 'SWAP', 'ccy': '', 'mgnMode': '', 'ctType': '', 'type': '',
+            'subType': '', 'after': '', 'before': '', 'limit': '',
+            'begin': '1597026383085', 'end': '1597026683085'
+        }
+        mock_request.assert_called_once_with(c.GET, c.BILLS_DETAIL, expected_params)
+
+    @patch.object(AccountAPI, '_request_with_params')
+    def test_get_account_bills_positional_backward_compatible(self, mock_request):
+        """Legacy positional callers (up to limit) still bind correctly"""
+        mock_response = {'code': '0', 'msg': '', 'data': []}
+        mock_request.return_value = mock_response
+
+        # instType, ccy, mgnMode, ctType, type, subType, after, before, limit
+        self.account_api.get_account_bills('SPOT', 'BTC', 'cross', '', '1', '', '', '', '10')
+
+        call_args = mock_request.call_args[0][2]
+        self.assertEqual(call_args['instType'], 'SPOT')
+        self.assertEqual(call_args['ccy'], 'BTC')
+        self.assertEqual(call_args['limit'], '10')
+        # New params default to empty -> identical request to today
+        self.assertEqual(call_args['begin'], '')
+        self.assertEqual(call_args['end'], '')
+
+    @patch.object(AccountAPI, '_request_with_params')
+    def test_get_account_bills_mirrors_archive_param_keys(self, mock_request):
+        """get_account_bills param keys match get_account_bills_archive (GH#141 symmetry)"""
+        mock_request.return_value = {'code': '0', 'msg': '', 'data': []}
+
+        self.account_api.get_account_bills(begin='1', end='2')
+        bills_keys = set(mock_request.call_args[0][2].keys())
+
+        mock_request.reset_mock()
+        self.account_api.get_account_bills_archive(begin='1', end='2')
+        archive_keys = set(mock_request.call_args[0][2].keys())
+
+        self.assertEqual(bills_keys, archive_keys)
+
+
 if __name__ == '__main__':
     unittest.main()
 

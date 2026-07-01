@@ -121,8 +121,18 @@ class TradeAPI(OkxClient):
         return self._request_with_params(POST, PLACE_ALGO_ORDER, params)
 
     # Cancel Algo Order
-    def cancel_algo_order(self, params):
-        return self._request_with_params(POST, CANCEL_ALGOS, params)
+    def cancel_algo_order(self, orders_data=None, params=None):
+        """
+        Cancel algo orders — POST /api/v5/trade/cancel-algos.
+
+        :param orders_data: list of {'instId': str, 'algoId': str},
+                            e.g. [{'instId': 'BTC-USDT', 'algoId': '590xxxx'}]
+        :param params: DEPRECATED alias for orders_data (kept for backward compatibility).
+        """
+        data = orders_data if orders_data is not None else params
+        if data is None:
+            raise ValueError("orders_data is required: list of {'instId', 'algoId'}")
+        return self._request_with_params(POST, CANCEL_ALGOS, data)
 
     # Get Algo Order List
     def order_algos_list(self, ordType='', algoId='', instType='', instId='', after='', before='', limit=''):
