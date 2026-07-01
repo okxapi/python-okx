@@ -67,6 +67,10 @@ MANUAL_REBORROW_REPAY = '/api/v5/account/spot-manual-borrow-repay'
 SET_AUTO_REPAY='/api/v5/account/set-auto-repay'
 GET_BORROW_REPAY_HISTORY='/api/v5/account/spot-borrow-repay-history'
 SET_AUTO_EARN='/api/v5/account/set-auto-earn'
+SET_TRADING_CONFIG = '/api/v5/account/set-trading-config'
+PRECHECK_SET_DELTA_NEUTRAL = '/api/v5/account/precheck-set-delta-neutral'
+BILL_TYPE = '/api/v5/account/bill-type'
+BILLS_APPLY = '/api/v5/account/bills/apply'
 
 # Funding
 NON_TRADABLE_ASSETS = '/api/v5/asset/non-tradable-assets'
@@ -144,6 +148,7 @@ OPEN_INTEREST_VOLUME_EXPIRY = '/api/v5/rubik/stat/option/open-interest-volume-ex
 INTEREST_VOLUME_STRIKE = '/api/v5/rubik/stat/option/open-interest-volume-strike'
 TAKER_FLOW = '/api/v5/rubik/stat/option/taker-block-volume'
 CONTRACTS_OPEN_INTEREST_HISTORY = '/api/v5/rubik/stat/contracts/open-interest-history'
+ANNOUNCEMENTS = '/api/v5/announcement/announcements'
 
 # Trade
 PLACR_ORDER = '/api/v5/trade/order'
@@ -174,6 +179,8 @@ ONE_CLICK_REPAY_HISTORY = '/api/v5/trade/one-click-repay-history'
 ONE_CLICK_REPAY_SUPPORT_V2 = '/api/v5/trade/one-click-repay-currency-list-v2'
 ONE_CLICK_REPAY_V2 = '/api/v5/trade/one-click-repay-v2'
 ONE_CLICK_REPAY_HISTORY_V2 = '/api/v5/trade/one-click-repay-history-v2'
+ONE_CLICK_REPAY_SUPPORT_NEW = '/api/v5/trade/one-click-repay-currency-list-new'
+ONE_CLICK_REPAY_NEW = '/api/v5/trade/one-click-repay-new'
 
 
 # SubAccount
@@ -265,6 +272,10 @@ STACK_SOL_PURCHASE_REDEEM_HISTORY = '/api/v5/finance/staking-defi/sol/purchase-r
 STACK_SOL_APY_HISTORY = '/api/v5/finance/staking-defi/sol/apy-history'
 STACK_SOL_PRODUCT_INFO = '/api/v5/finance/staking-defi/sol/product-info'
 
+# Earn (on-chain / ETH staking under /api/v5/earn/)
+STAKING_CANCEL_REDEEM = '/api/v5/earn/staking-cancel-redeem'
+STAKING_PRODUCTS = '/api/v5/earn/staking-products'
+
 # Status
 STATUS = '/api/v5/system/status'
 
@@ -301,5 +312,16 @@ FINANCE_ADJUST_COLLATERAL = '/api/v5/finance/flexible-loan/adjust-collateral'
 FINANCE_LOAN_INFO = '/api/v5/finance/flexible-loan/loan-info'
 FINANCE_LOAN_HISTORY = '/api/v5/finance/flexible-loan/loan-history'
 FINANCE_INTEREST_ACCRUED = '/api/v5/finance/flexible-loan/interest-accrued'
+
+# Dual Investment
+DUAL_INVEST_CURRENCY_PAIRS       = '/api/v5/dualinvest/currency-pairs'
+DUAL_INVEST_PRODUCT_INFO         = '/api/v5/dualinvest/product-info'
+DUAL_INVEST_REQUEST_QUOTE        = '/api/v5/dualinvest/request-quote'
+DUAL_INVEST_TRADE                = '/api/v5/dualinvest/trade'
+DUAL_INVEST_REQUEST_REDEEM_QUOTE = '/api/v5/dualinvest/request-redeem-quote'
+DUAL_INVEST_REDEEM               = '/api/v5/dualinvest/redeem'
+DUAL_INVEST_ORDER_STATE          = '/api/v5/dualinvest/order-state'
+DUAL_INVEST_ORDER_HISTORY        = '/api/v5/dualinvest/order-history'
+
 
 

@@ -12,7 +12,8 @@ class TradeAPI(OkxClient):
 
     # Place Order
     def place_order(self, instId, tdMode, side, ordType, sz, ccy='', clOrdId='', tag='', posSide='', px='',
-                    reduceOnly='', tgtCcy='', stpMode='', attachAlgoOrds=None, pxUsd='', pxVol='', banAmend='', tradeQuoteCcy=None, pxAmendType=None):
+                    reduceOnly='', tgtCcy='', stpMode='', attachAlgoOrds=None, pxUsd='', pxVol='', banAmend='', tradeQuoteCcy=None, pxAmendType=None,
+                    isElpTakerAccess=None, instIdCode=None):
         params = {'instId': instId, 'tdMode': tdMode, 'side': side, 'ordType': ordType, 'sz': sz, 'ccy': ccy,
                   'clOrdId': clOrdId, 'tag': tag, 'posSide': posSide, 'px': px, 'reduceOnly': reduceOnly,
                   'tgtCcy': tgtCcy, 'stpMode': stpMode, 'pxUsd': pxUsd, 'pxVol': pxVol, 'banAmend': banAmend}
@@ -20,6 +21,10 @@ class TradeAPI(OkxClient):
             params['tradeQuoteCcy'] = tradeQuoteCcy
         if pxAmendType is not None:
             params['pxAmendType'] = pxAmendType
+        if isElpTakerAccess is not None:
+            params['isElpTakerAccess'] = isElpTakerAccess
+        if instIdCode is not None:
+            params['instIdCode'] = instIdCode
         params['attachAlgoOrds'] = attachAlgoOrds
         return self._request_with_params(POST, PLACR_ORDER, params)
 
@@ -39,13 +44,18 @@ class TradeAPI(OkxClient):
     # Amend Order
     def amend_order(self, instId, cxlOnFail='', ordId='', clOrdId='', reqId='', newSz='', newPx='', newTpTriggerPx='',
                     newTpOrdPx='', newSlTriggerPx='', newSlOrdPx='', newTpTriggerPxType='', newSlTriggerPxType='',
-                    attachAlgoOrds='', newTriggerPx='', newOrdPx='', pxAmendType=None):
+                    attachAlgoOrds='', newTriggerPx='', newOrdPx='', pxAmendType=None,
+                    newTpTriggerRatio=None, newSlTriggerRatio=None):
         params = {'instId': instId, 'cxlOnFail': cxlOnFail, 'ordId': ordId, 'clOrdId': clOrdId, 'reqId': reqId,
                   'newSz': newSz, 'newPx': newPx, 'newTpTriggerPx': newTpTriggerPx, 'newTpOrdPx': newTpOrdPx,
                   'newSlTriggerPx': newSlTriggerPx, 'newSlOrdPx': newSlOrdPx, 'newTpTriggerPxType': newTpTriggerPxType,
                   'newSlTriggerPxType': newSlTriggerPxType, 'newTriggerPx': newTriggerPx, 'newOrdPx': newOrdPx}
         if pxAmendType is not None:
             params['pxAmendType'] = pxAmendType
+        if newTpTriggerRatio is not None:
+            params['newTpTriggerRatio'] = newTpTriggerRatio
+        if newSlTriggerRatio is not None:
+            params['newSlTriggerRatio'] = newSlTriggerRatio
         params['attachAlgoOrds'] = attachAlgoOrds
         return self._request_with_params(POST, AMEND_ORDER, params)
 
@@ -102,7 +112,8 @@ class TradeAPI(OkxClient):
                          szLimit='', pxLimit='', timeInterval='', tpTriggerPxType='', slTriggerPxType='',
                          callbackRatio='', callbackSpread='', activePx='', tag='', triggerPxType='', closeFraction=''
                          , quickMgnType='', algoClOrdId='', tradeQuoteCcy=None, tpOrdKind='', cxlOnClosePos=''
-                         , chaseType='', chaseVal='', maxChaseType='', maxChaseVal='', attachAlgoOrds=[], pxAmendType=None):
+                         , chaseType='', chaseVal='', maxChaseType='', maxChaseVal='', attachAlgoOrds=[], pxAmendType=None
+                         , advanceOrdType=None, tpTriggerRatio=None, slTriggerRatio=None):
         params = {'instId': instId, 'tdMode': tdMode, 'side': side, 'ordType': ordType, 'sz': sz, 'ccy': ccy,
                   'posSide': posSide, 'reduceOnly': reduceOnly, 'tpTriggerPx': tpTriggerPx, 'tpOrdPx': tpOrdPx,
                   'slTriggerPx': slTriggerPx, 'slOrdPx': slOrdPx, 'triggerPx': triggerPx, 'orderPx': orderPx,
@@ -118,6 +129,12 @@ class TradeAPI(OkxClient):
             params['tradeQuoteCcy'] = tradeQuoteCcy
         if pxAmendType is not None:
             params['pxAmendType'] = pxAmendType
+        if advanceOrdType is not None:
+            params['advanceOrdType'] = advanceOrdType
+        if tpTriggerRatio is not None:
+            params['tpTriggerRatio'] = tpTriggerRatio
+        if slTriggerRatio is not None:
+            params['slTriggerRatio'] = slTriggerRatio
         return self._request_with_params(POST, PLACE_ALGO_ORDER, params)
 
     # Cancel Algo Order
@@ -223,3 +240,13 @@ class TradeAPI(OkxClient):
             'limit': limit
         }
         return self._request_with_params(GET, ONE_CLICK_REPAY_HISTORY_V2, params)
+
+    def get_oneclick_repay_list_new(self):
+        return self._request_without_params(GET, ONE_CLICK_REPAY_SUPPORT_NEW)
+
+    def oneclick_repay_new(self, debtCcy='', repayCcyList=[]):
+        params = {
+            'debtCcy': debtCcy,
+            'repayCcyList': repayCcyList
+        }
+        return self._request_with_params(POST, ONE_CLICK_REPAY_NEW, params)

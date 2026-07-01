@@ -137,3 +137,8 @@ class PublicAPI(OkxClient):
         if instFamilyList is not None:
             params['instFamilyList'] = instFamilyList
         return self._request_with_params(GET, MARKET_DATA_HISTORY, params)
+
+    # Get announcements (BROK-1730)
+    def get_announcements(self, annType='', page=''):
+        params = {'annType': annType, 'page': page}
+        return self._request_with_params(GET, ANNOUNCEMENTS, params)
