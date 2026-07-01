@@ -48,9 +48,9 @@ class AccountAPI(OkxClient):
 
     # Get Bills Details (recent 7 days)
     def get_account_bills(self, instType='', ccy='', mgnMode='', ctType='', type='', subType='', after='', before='',
-                          limit=''):
+                          limit='', begin='', end=''):
         params = {'instType': instType, 'ccy': ccy, 'mgnMode': mgnMode, 'ctType': ctType, 'type': type,
-                  'subType': subType, 'after': after, 'before': before, 'limit': limit}
+                  'subType': subType, 'after': after, 'before': before, 'limit': limit, 'begin': begin, 'end': end}
         return self._request_with_params(GET, BILLS_DETAIL, params)
 
     # Get Bills Details (recent 3 months)

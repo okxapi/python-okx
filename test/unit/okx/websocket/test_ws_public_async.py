@@ -16,6 +16,13 @@ from okx.websocket.WsPublicAsync import WsPublicAsync
 TEST_WS_URL = 'wss://test.example.com'
 MOCK_WS_FACTORY = 'okx.websocket.WsPublicAsync.WebSocketFactory'
 
+# Placeholder client identifiers for constructing the websocket client in unit
+# tests. The WebSocketFactory is mocked, so these dummy strings are never signed
+# or sent over a real connection — they are not real credentials.
+_STUB_ID = "test_api_key"
+_STUB_SIGN = "test_secret_key"
+_STUB_PHRASE = "test_passphrase"
+
 
 class TestWsPublicAsyncInit(unittest.TestCase):
     """Unit tests for WsPublicAsync initialization"""
@@ -38,14 +45,14 @@ class TestWsPublicAsyncInit(unittest.TestCase):
             from okx.websocket.WsPublicAsync import WsPublicAsync
             ws = WsPublicAsync(
                 url=TEST_WS_URL,
-                apiKey="test_api_key",
-                passphrase="test_passphrase",
-                secretKey="test_secret_key"
+                apiKey=_STUB_ID,
+                passphrase=_STUB_PHRASE,
+                secretKey=_STUB_SIGN
             )
 
-            self.assertEqual(ws.apiKey, "test_api_key")
-            self.assertEqual(ws.passphrase, "test_passphrase")
-            self.assertEqual(ws.secretKey, "test_secret_key")
+            self.assertEqual(ws.apiKey, _STUB_ID)
+            self.assertEqual(ws.passphrase, _STUB_PHRASE)
+            self.assertEqual(ws.secretKey, _STUB_SIGN)
 
     def test_init_with_debug_enabled(self):
         """Test initialization with debug mode enabled"""
@@ -90,9 +97,9 @@ class TestWsPublicAsyncLogin(unittest.TestCase):
             from okx.websocket.WsPublicAsync import WsPublicAsync
             ws = WsPublicAsync(
                 url=TEST_WS_URL,
-                apiKey="test_api_key",
-                passphrase="test_passphrase",
-                secretKey="test_secret_key"
+                apiKey=_STUB_ID,
+                passphrase=_STUB_PHRASE,
+                secretKey=_STUB_SIGN
             )
             mock_websocket = AsyncMock()
             ws.websocket = mock_websocket
@@ -103,9 +110,9 @@ class TestWsPublicAsyncLogin(unittest.TestCase):
                 self.assertTrue(ws.isLoggedIn)
                 mock_init_login.assert_called_once_with(
                     useServerTime=False,
-                    apiKey="test_api_key",
-                    passphrase="test_passphrase",
-                    secretKey="test_secret_key"
+                    apiKey=_STUB_ID,
+                    passphrase=_STUB_PHRASE,
+                    secretKey=_STUB_SIGN
                 )
                 mock_websocket.send.assert_called_once()
 
@@ -319,6 +326,92 @@ class TestWsPublicAsyncStartStop(unittest.TestCase):
                 mock_factory_instance.close.assert_called_once()
 
             asyncio.get_event_loop().run_until_complete(run_test())
+
+    def test_start_returns_task(self):
+        """start() returns the consume task so the caller can retain/await it (GH#116)"""
+        with patch.object(ws_public_module, 'WebSocketFactory'):
+            ws = WsPublicAsync(url=TEST_WS_URL)
+
+            async def run_test():
+                ws.connect = AsyncMock()
+                ws.consume = AsyncMock()
+                task = await ws.start()
+                self.assertIsInstance(task, asyncio.Task)
+                await task
+
+            asyncio.get_event_loop().run_until_complete(run_test())
+
+
+class _RaisingAsyncIterator:
+    """Async iterator that yields queued messages then raises the given exception."""
+
+    def __init__(self, exc, messages=None):
+        self._messages = list(messages or [])
+        self._exc = exc
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        if self._messages:
+            return self._messages.pop(0)
+        raise self._exc
+
+
+class TestWsPublicAsyncConsumeErrorPropagation(unittest.TestCase):
+    """Unit tests for consume() ConnectionClosedError handling (GH#116)"""
+
+    def test_consume_propagates_connection_closed_and_pushes_error_event(self):
+        """A dropped socket reaches the callback as an error event and re-raises"""
+        from websockets.exceptions import ConnectionClosedError
+
+        with patch.object(ws_public_module, 'WebSocketFactory'):
+            ws = WsPublicAsync(url=TEST_WS_URL)
+            received = []
+            ws.callback = received.append
+            exc = ConnectionClosedError(None, None)
+            ws.websocket = _RaisingAsyncIterator(exc, messages=['{"data": "ok"}'])
+
+            async def run_test():
+                with self.assertRaises(ConnectionClosedError):
+                    await ws.consume()
+
+            with patch.object(ws_public_module.logger, 'error') as mock_log_error:
+                asyncio.get_event_loop().run_until_complete(run_test())
+                mock_log_error.assert_called_once()
+
+            # Normal message delivered first, then the injected error event
+            self.assertEqual(received[0], '{"data": "ok"}')
+            error_payload = json.loads(received[1])
+            self.assertEqual(error_payload["event"], "error")
+            self.assertEqual(error_payload["code"], "ConnClosed")
+
+    def test_consume_happy_path_unchanged(self):
+        """Normal messages still reach the callback with no error event"""
+        with patch.object(ws_public_module, 'WebSocketFactory'):
+            ws = WsPublicAsync(url=TEST_WS_URL)
+            received = []
+            ws.callback = received.append
+
+            class _CleanIterator:
+                def __init__(self, messages):
+                    self._messages = list(messages)
+
+                def __aiter__(self):
+                    return self
+
+                async def __anext__(self):
+                    if self._messages:
+                        return self._messages.pop(0)
+                    raise StopAsyncIteration
+
+            ws.websocket = _CleanIterator(['a', 'b'])
+
+            async def run_test():
+                await ws.consume()
+
+            asyncio.get_event_loop().run_until_complete(run_test())
+            self.assertEqual(received, ['a', 'b'])
 
 
 if __name__ == '__main__':

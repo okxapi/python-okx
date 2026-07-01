@@ -3,6 +3,8 @@ import json
 import logging
 import warnings
 
+from websockets.exceptions import ConnectionClosedError
+
 from okx.websocket import WsUtils
 from okx.websocket.WebSocketFactory import WebSocketFactory
 
@@ -35,11 +37,17 @@ class WsPrivateAsync:
         self.websocket = await self.factory.connect()
 
     async def consume(self):
-        async for message in self.websocket:
-            if self.debug:
-                logger.debug("Received message: {%s}", message)
+        try:
+            async for message in self.websocket:
+                if self.debug:
+                    logger.debug("Received message: {%s}", message)
+                if self.callback:
+                    self.callback(message)
+        except ConnectionClosedError as e:
+            logger.error(f"WebSocket connection closed: {e}")
             if self.callback:
-                self.callback(message)
+                self.callback(json.dumps({"event": "error", "code": "ConnClosed", "msg": str(e)}))
+            raise
 
     async def subscribe(self, params: list, callback, id: str = None):
         self.callback = callback
@@ -194,7 +202,7 @@ class WsPrivateAsync:
         else:
             logger.info("Connecting to WebSocket...")
         await self.connect()
-        self.loop.create_task(self.consume())
+        return self.loop.create_task(self.consume())
 
     def stop_sync(self):
         if self.loop.is_running():
