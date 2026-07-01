@@ -240,13 +240,3 @@ class TradeAPI(OkxClient):
             'limit': limit
         }
         return self._request_with_params(GET, ONE_CLICK_REPAY_HISTORY_V2, params)
-
-    def get_oneclick_repay_list_new(self):
-        return self._request_without_params(GET, ONE_CLICK_REPAY_SUPPORT_NEW)
-
-    def oneclick_repay_new(self, debtCcy='', repayCcyList=[]):
-        params = {
-            'debtCcy': debtCcy,
-            'repayCcyList': repayCcyList
-        }
-        return self._request_with_params(POST, ONE_CLICK_REPAY_NEW, params)

@@ -11,8 +11,7 @@ Community issue batch (GH#141 / GH#116 / GH#115) plus the v5 API sync batch. All
 - `okx/websocket/WsPublicAsync.py` and `okx/websocket/WsPrivateAsync.py` `start()`: now return the created `consume()` task so callers can retain/await it (GH#116).
 - `okx/Account.py` `set_trading_config` / `precheck_set_delta_neutral`: new methods for `POST /api/v5/account/set-trading-config` and `POST /api/v5/account/precheck-set-delta-neutral` (delta-neutral trading config, BROK-1724).
 - `okx/Account.py` `get_bill_type` / `apply_bills`: new methods for `GET /api/v5/account/bill-type` and `POST /api/v5/account/bills/apply` (bill types + async bill export, BROK-1728).
-- `okx/Trade.py` `get_oneclick_repay_list_new` / `oneclick_repay_new`: new methods for `GET /api/v5/trade/one-click-repay-currency-list-new` and `POST /api/v5/trade/one-click-repay-new`, mirroring the `*_v2` methods (BROK-1727).
-- `okx/Finance/Earn.py` (new module) `EarnAPI`: `staking_cancel_redeem` (`POST /api/v5/earn/staking-cancel-redeem`) and `get_staking_products` (`GET /api/v5/earn/staking-products`) (BROK-1726).
+- `okx/Finance/Earn.py` (new module) `EarnAPI`: `staking_cancel_redeem` (`POST /api/v5/finance/staking-defi/cancel`) and `get_staking_products` (`GET /api/v5/finance/staking-defi/offers`) (BROK-1726).
 - `okx/DualInvest.py` (new module) `DualInvestAPI`: 8 methods for the `/api/v5/dualinvest/*` product surface — `get_currency_pairs`, `get_product_info`, `request_quote`, `trade`, `request_redeem_quote`, `redeem`, `get_order_state`, `get_order_history` (BROK-1729).
 - `okx/PublicData.py` `get_announcements`: new method for `GET /api/v5/announcement/announcements` (BROK-1730).
 - `okx/consts.py`: new path constants for all endpoints above, plus 8 `DUAL_INVEST_*` constants.

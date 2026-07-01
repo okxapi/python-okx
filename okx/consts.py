@@ -179,8 +179,6 @@ ONE_CLICK_REPAY_HISTORY = '/api/v5/trade/one-click-repay-history'
 ONE_CLICK_REPAY_SUPPORT_V2 = '/api/v5/trade/one-click-repay-currency-list-v2'
 ONE_CLICK_REPAY_V2 = '/api/v5/trade/one-click-repay-v2'
 ONE_CLICK_REPAY_HISTORY_V2 = '/api/v5/trade/one-click-repay-history-v2'
-ONE_CLICK_REPAY_SUPPORT_NEW = '/api/v5/trade/one-click-repay-currency-list-new'
-ONE_CLICK_REPAY_NEW = '/api/v5/trade/one-click-repay-new'
 
 
 # SubAccount
