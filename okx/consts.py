@@ -148,7 +148,7 @@ OPEN_INTEREST_VOLUME_EXPIRY = '/api/v5/rubik/stat/option/open-interest-volume-ex
 INTEREST_VOLUME_STRIKE = '/api/v5/rubik/stat/option/open-interest-volume-strike'
 TAKER_FLOW = '/api/v5/rubik/stat/option/taker-block-volume'
 CONTRACTS_OPEN_INTEREST_HISTORY = '/api/v5/rubik/stat/contracts/open-interest-history'
-ANNOUNCEMENTS = '/api/v5/announcement/announcements'
+ANNOUNCEMENTS = '/api/v5/support/announcements'
 
 # Trade
 PLACR_ORDER = '/api/v5/trade/order'
@@ -272,9 +272,9 @@ STACK_SOL_PURCHASE_REDEEM_HISTORY = '/api/v5/finance/staking-defi/sol/purchase-r
 STACK_SOL_APY_HISTORY = '/api/v5/finance/staking-defi/sol/apy-history'
 STACK_SOL_PRODUCT_INFO = '/api/v5/finance/staking-defi/sol/product-info'
 
-# Earn (on-chain / ETH staking under /api/v5/earn/)
-STAKING_CANCEL_REDEEM = '/api/v5/earn/staking-cancel-redeem'
-STAKING_PRODUCTS = '/api/v5/earn/staking-products'
+# Earn (on-chain earn) — under /api/v5/finance/staking-defi/ (no /api/v5/earn/ namespace exists)
+STAKING_CANCEL_REDEEM = '/api/v5/finance/staking-defi/cancel'
+STAKING_PRODUCTS = '/api/v5/finance/staking-defi/offers'
 
 # Status
 STATUS = '/api/v5/system/status'
