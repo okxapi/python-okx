@@ -16,6 +16,13 @@ from okx.websocket.WsPublicAsync import WsPublicAsync
 TEST_WS_URL = 'wss://test.example.com'
 MOCK_WS_FACTORY = 'okx.websocket.WsPublicAsync.WebSocketFactory'
 
+# Placeholder client identifiers for constructing the websocket client in unit
+# tests. The WebSocketFactory is mocked, so these dummy strings are never signed
+# or sent over a real connection — they are not real credentials.
+_STUB_ID = "test_api_key"
+_STUB_SIGN = "test_secret_key"
+_STUB_PHRASE = "test_passphrase"
+
 
 class TestWsPublicAsyncInit(unittest.TestCase):
     """Unit tests for WsPublicAsync initialization"""
@@ -38,14 +45,14 @@ class TestWsPublicAsyncInit(unittest.TestCase):
             from okx.websocket.WsPublicAsync import WsPublicAsync
             ws = WsPublicAsync(
                 url=TEST_WS_URL,
-                apiKey="test_api_key",
-                passphrase="test_passphrase",
-                secretKey="test_secret_key"
+                apiKey=_STUB_ID,
+                passphrase=_STUB_PHRASE,
+                secretKey=_STUB_SIGN
             )
 
-            self.assertEqual(ws.apiKey, "test_api_key")
-            self.assertEqual(ws.passphrase, "test_passphrase")
-            self.assertEqual(ws.secretKey, "test_secret_key")
+            self.assertEqual(ws.apiKey, _STUB_ID)
+            self.assertEqual(ws.passphrase, _STUB_PHRASE)
+            self.assertEqual(ws.secretKey, _STUB_SIGN)
 
     def test_init_with_debug_enabled(self):
         """Test initialization with debug mode enabled"""
@@ -90,9 +97,9 @@ class TestWsPublicAsyncLogin(unittest.TestCase):
             from okx.websocket.WsPublicAsync import WsPublicAsync
             ws = WsPublicAsync(
                 url=TEST_WS_URL,
-                apiKey="test_api_key",
-                passphrase="test_passphrase",
-                secretKey="test_secret_key"
+                apiKey=_STUB_ID,
+                passphrase=_STUB_PHRASE,
+                secretKey=_STUB_SIGN
             )
             mock_websocket = AsyncMock()
             ws.websocket = mock_websocket
@@ -103,9 +110,9 @@ class TestWsPublicAsyncLogin(unittest.TestCase):
                 self.assertTrue(ws.isLoggedIn)
                 mock_init_login.assert_called_once_with(
                     useServerTime=False,
-                    apiKey="test_api_key",
-                    passphrase="test_passphrase",
-                    secretKey="test_secret_key"
+                    apiKey=_STUB_ID,
+                    passphrase=_STUB_PHRASE,
+                    secretKey=_STUB_SIGN
                 )
                 mock_websocket.send.assert_called_once()
 

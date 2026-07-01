@@ -11,15 +11,22 @@ from okx import consts as c
 # Test constants
 IDX_VOL_NEGATIVE_5_PERCENT = '-0.05'
 
+# Placeholder client identifiers for constructing the API client in unit tests.
+# Every request is mocked (see @patch.object below), so these dummy strings are
+# never signed or transmitted — they are not real credentials.
+_STUB_ID = 'test_key'
+_STUB_SIGN = 'test_secret'
+_STUB_PHRASE = 'test_pass'
+
 
 class TestAccountAPIPositionBuilder(unittest.TestCase):
     """Unit tests for the position_builder method"""
 
     def setUp(self):
         """Set up test fixtures"""
-        self.api_key = 'test_api_key'
-        self.api_secret = 'test_api_secret'
-        self.passphrase = 'test_passphrase'
+        self.api_key = _STUB_ID
+        self.api_secret = _STUB_SIGN
+        self.passphrase = _STUB_PHRASE
         self.account_api = AccountAPI(
             api_key=self.api_key,
             api_secret_key=self.api_secret,
@@ -354,9 +361,9 @@ class TestAccountAPIPositionBuilderParameterHandling(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures"""
         self.account_api = AccountAPI(
-            api_key='test_key',
-            api_secret_key='test_secret',
-            passphrase='test_pass',
+            api_key=_STUB_ID,
+            api_secret_key=_STUB_SIGN,
+            passphrase=_STUB_PHRASE,
             flag='0'
         )
 
@@ -445,9 +452,9 @@ class TestAccountAPISetAutoEarn(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures"""
         self.account_api = AccountAPI(
-            api_key='test_key',
-            api_secret_key='test_secret',
-            passphrase='test_pass',
+            api_key=_STUB_ID,
+            api_secret_key=_STUB_SIGN,
+            passphrase=_STUB_PHRASE,
             flag='0'
         )
 
@@ -561,9 +568,9 @@ class TestAccountAPIGetMaxOrderSize(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures"""
         self.account_api = AccountAPI(
-            api_key='test_key',
-            api_secret_key='test_secret',
-            passphrase='test_pass',
+            api_key=_STUB_ID,
+            api_secret_key=_STUB_SIGN,
+            passphrase=_STUB_PHRASE,
             flag='0'
         )
 
@@ -629,9 +636,9 @@ class TestAccountAPIGetMaxAvailSize(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures"""
         self.account_api = AccountAPI(
-            api_key='test_key',
-            api_secret_key='test_secret',
-            passphrase='test_pass',
+            api_key=_STUB_ID,
+            api_secret_key=_STUB_SIGN,
+            passphrase=_STUB_PHRASE,
             flag='0'
         )
 
@@ -701,9 +708,9 @@ class TestAccountAPIGetAccountBills(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures"""
         self.account_api = AccountAPI(
-            api_key='test_key',
-            api_secret_key='test_secret',
-            passphrase='test_pass',
+            api_key=_STUB_ID,
+            api_secret_key=_STUB_SIGN,
+            passphrase=_STUB_PHRASE,
             flag='0'
         )
 

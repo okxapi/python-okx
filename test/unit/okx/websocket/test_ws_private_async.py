@@ -17,6 +17,13 @@ from okx.websocket.WsPrivateAsync import WsPrivateAsync
 TEST_WS_URL = 'wss://test.example.com'
 MOCK_WS_FACTORY = 'okx.websocket.WsPrivateAsync.WebSocketFactory'
 
+# Placeholder client identifiers for constructing the websocket client in unit
+# tests. The WebSocketFactory is mocked, so these dummy strings are never signed
+# or sent over a real connection — they are not real credentials.
+_STUB_ID = "test_api_key"
+_STUB_SIGN = "test_secret_key"
+_STUB_PHRASE = "test_passphrase"
+
 
 class TestWsPrivateAsyncInit(unittest.TestCase):
     """Unit tests for WsPrivateAsync initialization"""
@@ -25,15 +32,15 @@ class TestWsPrivateAsyncInit(unittest.TestCase):
         """Test initialization with required parameters"""
         with patch.object(ws_private_module, 'WebSocketFactory') as mock_factory:
             ws = WsPrivateAsync(
-                apiKey="test_api_key",
-                passphrase="test_passphrase",
-                secretKey="test_secret_key",
+                apiKey=_STUB_ID,
+                passphrase=_STUB_PHRASE,
+                secretKey=_STUB_SIGN,
                 url=TEST_WS_URL
             )
 
-            self.assertEqual(ws.apiKey, "test_api_key")
-            self.assertEqual(ws.passphrase, "test_passphrase")
-            self.assertEqual(ws.secretKey, "test_secret_key")
+            self.assertEqual(ws.apiKey, _STUB_ID)
+            self.assertEqual(ws.passphrase, _STUB_PHRASE)
+            self.assertEqual(ws.secretKey, _STUB_SIGN)
             self.assertEqual(ws.url, TEST_WS_URL)
             self.assertFalse(ws.useServerTime)
             self.assertFalse(ws.debug)
@@ -44,9 +51,9 @@ class TestWsPrivateAsyncInit(unittest.TestCase):
         with patch(MOCK_WS_FACTORY):
             from okx.websocket.WsPrivateAsync import WsPrivateAsync
             ws = WsPrivateAsync(
-                apiKey="test_api_key",
-                passphrase="test_passphrase",
-                secretKey="test_secret_key",
+                apiKey=_STUB_ID,
+                passphrase=_STUB_PHRASE,
+                secretKey=_STUB_SIGN,
                 url=TEST_WS_URL,
                 debug=True
             )
@@ -61,9 +68,9 @@ class TestWsPrivateAsyncInit(unittest.TestCase):
             with warnings.catch_warnings(record=True) as w:
                 warnings.simplefilter("always")
                 ws = WsPrivateAsync(
-                    apiKey="test_api_key",
-                    passphrase="test_passphrase",
-                    secretKey="test_secret_key",
+                    apiKey=_STUB_ID,
+                    passphrase=_STUB_PHRASE,
+                    secretKey=_STUB_SIGN,
                     url=TEST_WS_URL,
                     useServerTime=True
                 )
@@ -80,9 +87,9 @@ class TestWsPrivateAsyncInit(unittest.TestCase):
             with warnings.catch_warnings(record=True) as w:
                 warnings.simplefilter("always")
                 ws = WsPrivateAsync(
-                    apiKey="test_api_key",
-                    passphrase="test_passphrase",
-                    secretKey="test_secret_key",
+                    apiKey=_STUB_ID,
+                    passphrase=_STUB_PHRASE,
+                    secretKey=_STUB_SIGN,
                     url=TEST_WS_URL
                 )
 
@@ -103,9 +110,9 @@ class TestWsPrivateAsyncSubscribe(unittest.TestCase):
             mock_ws_utils.initLoginParams.return_value = '{"op":"login"}'
 
             ws = WsPrivateAsync(
-                apiKey="test_api_key",
-                passphrase="test_passphrase",
-                secretKey="test_secret_key",
+                apiKey=_STUB_ID,
+                passphrase=_STUB_PHRASE,
+                secretKey=_STUB_SIGN,
                 url=TEST_WS_URL
             )
             mock_websocket = AsyncMock()
@@ -134,9 +141,9 @@ class TestWsPrivateAsyncSubscribe(unittest.TestCase):
             mock_ws_utils.initLoginParams.return_value = '{"op":"login"}'
 
             ws = WsPrivateAsync(
-                apiKey="test_api_key",
-                passphrase="test_passphrase",
-                secretKey="test_secret_key",
+                apiKey=_STUB_ID,
+                passphrase=_STUB_PHRASE,
+                secretKey=_STUB_SIGN,
                 url=TEST_WS_URL
             )
             mock_websocket = AsyncMock()
@@ -162,9 +169,9 @@ class TestWsPrivateAsyncUnsubscribe(unittest.TestCase):
         """Test unsubscribe sends correct payload"""
         with patch.object(ws_private_module, 'WebSocketFactory'):
             ws = WsPrivateAsync(
-                apiKey="test_api_key",
-                passphrase="test_passphrase",
-                secretKey="test_secret_key",
+                apiKey=_STUB_ID,
+                passphrase=_STUB_PHRASE,
+                secretKey=_STUB_SIGN,
                 url=TEST_WS_URL
             )
             mock_websocket = AsyncMock()
@@ -186,9 +193,9 @@ class TestWsPrivateAsyncUnsubscribe(unittest.TestCase):
         """Test unsubscribe with id parameter"""
         with patch.object(ws_private_module, 'WebSocketFactory'):
             ws = WsPrivateAsync(
-                apiKey="test_api_key",
-                passphrase="test_passphrase",
-                secretKey="test_secret_key",
+                apiKey=_STUB_ID,
+                passphrase=_STUB_PHRASE,
+                secretKey=_STUB_SIGN,
                 url=TEST_WS_URL
             )
             mock_websocket = AsyncMock()
@@ -214,9 +221,9 @@ class TestWsPrivateAsyncSend(unittest.TestCase):
         with patch(MOCK_WS_FACTORY):
             from okx.websocket.WsPrivateAsync import WsPrivateAsync
             ws = WsPrivateAsync(
-                apiKey="test_api_key",
-                passphrase="test_passphrase",
-                secretKey="test_secret_key",
+                apiKey=_STUB_ID,
+                passphrase=_STUB_PHRASE,
+                secretKey=_STUB_SIGN,
                 url=TEST_WS_URL
             )
             mock_websocket = AsyncMock()
@@ -240,9 +247,9 @@ class TestWsPrivateAsyncSend(unittest.TestCase):
         with patch(MOCK_WS_FACTORY):
             from okx.websocket.WsPrivateAsync import WsPrivateAsync
             ws = WsPrivateAsync(
-                apiKey="test_api_key",
-                passphrase="test_passphrase",
-                secretKey="test_secret_key",
+                apiKey=_STUB_ID,
+                passphrase=_STUB_PHRASE,
+                secretKey=_STUB_SIGN,
                 url=TEST_WS_URL
             )
             mock_websocket = AsyncMock()
@@ -267,9 +274,9 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
         with patch(MOCK_WS_FACTORY):
             from okx.websocket.WsPrivateAsync import WsPrivateAsync
             ws = WsPrivateAsync(
-                apiKey="test_api_key",
-                passphrase="test_passphrase",
-                secretKey="test_secret_key",
+                apiKey=_STUB_ID,
+                passphrase=_STUB_PHRASE,
+                secretKey=_STUB_SIGN,
                 url=TEST_WS_URL
             )
             mock_websocket = AsyncMock()
@@ -537,9 +544,9 @@ class TestWsPrivateAsyncLogin(unittest.TestCase):
             mock_ws_utils.initLoginParams.return_value = '{"op":"login","args":[...]}'
 
             ws = WsPrivateAsync(
-                apiKey="test_api_key",
-                passphrase="test_passphrase",
-                secretKey="test_secret_key",
+                apiKey=_STUB_ID,
+                passphrase=_STUB_PHRASE,
+                secretKey=_STUB_SIGN,
                 url=TEST_WS_URL
             )
             mock_websocket = AsyncMock()
@@ -550,9 +557,9 @@ class TestWsPrivateAsyncLogin(unittest.TestCase):
                 self.assertTrue(result)
                 mock_ws_utils.initLoginParams.assert_called_once_with(
                     useServerTime=False,
-                    apiKey="test_api_key",
-                    passphrase="test_passphrase",
-                    secretKey="test_secret_key"
+                    apiKey=_STUB_ID,
+                    passphrase=_STUB_PHRASE,
+                    secretKey=_STUB_SIGN
                 )
 
             asyncio.get_event_loop().run_until_complete(run_test())
@@ -569,9 +576,9 @@ class TestWsPrivateAsyncStartStop(unittest.TestCase):
             mock_factory_class.return_value = mock_factory_instance
 
             ws = WsPrivateAsync(
-                apiKey="test_api_key",
-                passphrase="test_passphrase",
-                secretKey="test_secret_key",
+                apiKey=_STUB_ID,
+                passphrase=_STUB_PHRASE,
+                secretKey=_STUB_SIGN,
                 url=TEST_WS_URL
             )
 
@@ -585,9 +592,9 @@ class TestWsPrivateAsyncStartStop(unittest.TestCase):
         """start() returns the consume task so the caller can retain/await it (GH#116)"""
         with patch.object(ws_private_module, 'WebSocketFactory'):
             ws = WsPrivateAsync(
-                apiKey="test_api_key",
-                passphrase="test_passphrase",
-                secretKey="test_secret_key",
+                apiKey=_STUB_ID,
+                passphrase=_STUB_PHRASE,
+                secretKey=_STUB_SIGN,
                 url=TEST_WS_URL
             )
 
@@ -622,9 +629,9 @@ class TestWsPrivateAsyncConsumeErrorPropagation(unittest.TestCase):
 
     def _make_ws(self):
         return WsPrivateAsync(
-            apiKey="test_api_key",
-            passphrase="test_passphrase",
-            secretKey="test_secret_key",
+            apiKey=_STUB_ID,
+            passphrase=_STUB_PHRASE,
+            secretKey=_STUB_SIGN,
             url=TEST_WS_URL
         )
 

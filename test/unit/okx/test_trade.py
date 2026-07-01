@@ -11,6 +11,13 @@ from okx import consts as c
 # Test constants
 SAMPLE_ORDERS = [{'instId': 'BTC-USDT', 'algoId': '590xxxx'}]
 
+# Placeholder client identifiers for constructing the API client in unit tests.
+# Every request is mocked (see @patch.object below), so these dummy strings are
+# never signed or transmitted — they are not real credentials.
+_STUB_ID = 'test_key'
+_STUB_SIGN = 'test_secret'
+_STUB_PHRASE = 'test_pass'
+
 
 class TestTradeAPICancelAlgoOrder(unittest.TestCase):
     """Unit tests for cancel_algo_order backward-compatible signature (GH#115)"""
@@ -18,9 +25,9 @@ class TestTradeAPICancelAlgoOrder(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures"""
         self.trade_api = TradeAPI(
-            api_key='test_key',
-            api_secret_key='test_secret',
-            passphrase='test_pass',
+            api_key=_STUB_ID,
+            api_secret_key=_STUB_SIGN,
+            passphrase=_STUB_PHRASE,
             flag='0'
         )
 
