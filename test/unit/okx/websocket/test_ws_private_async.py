@@ -581,6 +581,104 @@ class TestWsPrivateAsyncStartStop(unittest.TestCase):
 
             asyncio.get_event_loop().run_until_complete(run_test())
 
+    def test_start_returns_task(self):
+        """start() returns the consume task so the caller can retain/await it (GH#116)"""
+        with patch.object(ws_private_module, 'WebSocketFactory'):
+            ws = WsPrivateAsync(
+                apiKey="test_api_key",
+                passphrase="test_passphrase",
+                secretKey="test_secret_key",
+                url=TEST_WS_URL
+            )
+
+            async def run_test():
+                ws.connect = AsyncMock()
+                ws.consume = AsyncMock()
+                task = await ws.start()
+                self.assertIsInstance(task, asyncio.Task)
+                await task
+
+            asyncio.get_event_loop().run_until_complete(run_test())
+
+
+class _RaisingAsyncIterator:
+    """Async iterator that yields queued messages then raises the given exception."""
+
+    def __init__(self, exc, messages=None):
+        self._messages = list(messages or [])
+        self._exc = exc
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        if self._messages:
+            return self._messages.pop(0)
+        raise self._exc
+
+
+class TestWsPrivateAsyncConsumeErrorPropagation(unittest.TestCase):
+    """Unit tests for consume() ConnectionClosedError handling (GH#116)"""
+
+    def _make_ws(self):
+        return WsPrivateAsync(
+            apiKey="test_api_key",
+            passphrase="test_passphrase",
+            secretKey="test_secret_key",
+            url=TEST_WS_URL
+        )
+
+    def test_consume_propagates_connection_closed_and_pushes_error_event(self):
+        """A dropped socket reaches the callback as an error event and re-raises"""
+        from websockets.exceptions import ConnectionClosedError
+
+        with patch.object(ws_private_module, 'WebSocketFactory'):
+            ws = self._make_ws()
+            received = []
+            ws.callback = received.append
+            exc = ConnectionClosedError(None, None)
+            ws.websocket = _RaisingAsyncIterator(exc, messages=['{"data": "ok"}'])
+
+            async def run_test():
+                with self.assertRaises(ConnectionClosedError):
+                    await ws.consume()
+
+            with patch.object(ws_private_module.logger, 'error') as mock_log_error:
+                asyncio.get_event_loop().run_until_complete(run_test())
+                mock_log_error.assert_called_once()
+
+            self.assertEqual(received[0], '{"data": "ok"}')
+            error_payload = json.loads(received[1])
+            self.assertEqual(error_payload["event"], "error")
+            self.assertEqual(error_payload["code"], "ConnClosed")
+
+    def test_consume_happy_path_unchanged(self):
+        """Normal messages still reach the callback with no error event"""
+        with patch.object(ws_private_module, 'WebSocketFactory'):
+            ws = self._make_ws()
+            received = []
+            ws.callback = received.append
+
+            class _CleanIterator:
+                def __init__(self, messages):
+                    self._messages = list(messages)
+
+                def __aiter__(self):
+                    return self
+
+                async def __anext__(self):
+                    if self._messages:
+                        return self._messages.pop(0)
+                    raise StopAsyncIteration
+
+            ws.websocket = _CleanIterator(['a', 'b'])
+
+            async def run_test():
+                await ws.consume()
+
+            asyncio.get_event_loop().run_until_complete(run_test())
+            self.assertEqual(received, ['a', 'b'])
+
 
 if __name__ == '__main__':
     unittest.main()
