@@ -69,8 +69,8 @@ GET_BORROW_REPAY_HISTORY='/api/v5/account/spot-borrow-repay-history'
 SET_AUTO_EARN='/api/v5/account/set-auto-earn'
 SET_TRADING_CONFIG = '/api/v5/account/set-trading-config'
 PRECHECK_SET_DELTA_NEUTRAL = '/api/v5/account/precheck-set-delta-neutral'
-BILL_TYPE = '/api/v5/account/bill-type'
-BILLS_APPLY = '/api/v5/account/bills/apply'
+BILL_TYPE = '/api/v5/account/subtypes'
+BILLS_APPLY = '/api/v5/account/bills-history-archive'
 
 # Funding
 NON_TRADABLE_ASSETS = '/api/v5/asset/non-tradable-assets'

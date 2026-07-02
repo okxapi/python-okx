@@ -346,16 +346,20 @@ class AccountAPI(OkxClient):
         return self._request_with_params(POST, SET_TRADING_CONFIG, params)
 
     # Pre-check whether the delta-neutral switch is allowed (BROK-1724)
-    def precheck_set_delta_neutral(self, deltaNeutral='', ccy=''):
-        params = {'deltaNeutral': deltaNeutral, 'ccy': ccy}
-        return self._request_with_params(POST, PRECHECK_SET_DELTA_NEUTRAL, params)
+    def precheck_set_delta_neutral(self, stgyType=''):
+        params = {'stgyType': stgyType}
+        return self._request_with_params(GET, PRECHECK_SET_DELTA_NEUTRAL, params)
 
-    # Get the list of supported bill types (BROK-1728)
-    def get_bill_type(self):
-        return self._request_without_params(GET, BILL_TYPE)
+    # Get the list of supported bill subtypes (BROK-1728)
+    def get_bill_type(self, type=''):
+        params = {}
+        if type != '':
+            params['type'] = type
+        return self._request_with_params(GET, BILL_TYPE, params)
 
-    # Apply for an asynchronous bill export (BROK-1728)
-    def apply_bills(self, type='', begin='', end='', ccy='', mgnMode='', ctType=''):
-        params = {'type': type, 'begin': begin, 'end': end,
-                  'ccy': ccy, 'mgnMode': mgnMode, 'ctType': ctType}
+    # Apply for an asynchronous bill history archive by year + quarter (BROK-1728)
+    def apply_bills(self, year='', quarter='', type=''):
+        params = {'year': year, 'quarter': quarter}
+        if type != '':
+            params['type'] = type
         return self._request_with_params(POST, BILLS_APPLY, params)
