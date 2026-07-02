@@ -9,8 +9,8 @@ Community issue batch (GH#141 / GH#116 / GH#115) plus the v5 API sync batch. All
 ### Added
 - `okx/Account.py` `get_account_bills`: added optional `begin=''` / `end=''` time-window parameters, mirroring `get_account_bills_archive`. Empty defaults produce the exact same request as before (GH#141).
 - `okx/websocket/WsPublicAsync.py` and `okx/websocket/WsPrivateAsync.py` `start()`: now return the created `consume()` task so callers can retain/await it (GH#116).
-- `okx/Account.py` `set_trading_config` / `precheck_set_delta_neutral`: new methods for `POST /api/v5/account/set-trading-config` and `POST /api/v5/account/precheck-set-delta-neutral` (delta-neutral trading config, BROK-1724).
-- `okx/Account.py` `get_bill_type` / `apply_bills`: new methods for `GET /api/v5/account/bill-type` and `POST /api/v5/account/bills/apply` (bill types + async bill export, BROK-1728).
+- `okx/Account.py` `set_trading_config`: new method for `POST /api/v5/account/set-trading-config`; `precheck_set_delta_neutral`: new method for `GET /api/v5/account/precheck-set-delta-neutral` (param `stgyType`) (delta-neutral trading config, BROK-1724).
+- `okx/Account.py` `get_bill_type` / `apply_bills`: new methods for `GET /api/v5/account/subtypes` (optional `type`) and `POST /api/v5/account/bills-history-archive` (params `year`, `quarter`, optional `type`) (bill subtypes + async bill history archive, BROK-1728).
 - `okx/DualInvest.py` (new module) `DualInvestAPI`: 8 methods for the `/api/v5/dualinvest/*` product surface — `get_currency_pairs`, `get_product_info`, `request_quote`, `trade`, `request_redeem_quote`, `redeem`, `get_order_state`, `get_order_history` (BROK-1729).
 - `okx/PublicData.py` `get_announcements`: new method for `GET /api/v5/announcement/announcements` (BROK-1730).
 - `okx/consts.py`: new path constants for all endpoints above, plus 8 `DUAL_INVEST_*` constants.

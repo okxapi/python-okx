@@ -50,29 +50,40 @@ class TestDeltaNeutralConfig(_Base):
     @patch.object(AccountAPI, '_request_with_params')
     def test_precheck_set_delta_neutral(self, mock_request):
         mock_request.return_value = {'code': '0'}
-        self.api.precheck_set_delta_neutral(deltaNeutral='true', ccy='BTC')
+        self.api.precheck_set_delta_neutral(stgyType='1')
         mock_request.assert_called_once_with(
-            c.POST, c.PRECHECK_SET_DELTA_NEUTRAL, {'deltaNeutral': 'true', 'ccy': 'BTC'})
+            c.GET, c.PRECHECK_SET_DELTA_NEUTRAL, {'stgyType': '1'})
 
 
 class TestBillTypeAndApply(_Base):
-    """#8 bill-type + bills/apply"""
+    """#8 subtypes + bills-history-archive"""
 
-    @patch.object(AccountAPI, '_request_without_params')
+    @patch.object(AccountAPI, '_request_with_params')
     def test_get_bill_type(self, mock_request):
         mock_request.return_value = {'code': '0'}
         self.api.get_bill_type()
-        mock_request.assert_called_once_with(c.GET, c.BILL_TYPE)
+        mock_request.assert_called_once_with(c.GET, c.BILL_TYPE, {})
+
+    @patch.object(AccountAPI, '_request_with_params')
+    def test_get_bill_type_with_type(self, mock_request):
+        mock_request.return_value = {'code': '0'}
+        self.api.get_bill_type(type='1')
+        mock_request.assert_called_once_with(c.GET, c.BILL_TYPE, {'type': '1'})
 
     @patch.object(AccountAPI, '_request_with_params')
     def test_apply_bills(self, mock_request):
         mock_request.return_value = {'code': '0'}
-        self.api.apply_bills(type='1', begin='1597026383085', end='1597026683085',
-                             ccy='BTC', mgnMode='cross', ctType='linear')
+        self.api.apply_bills(year='2023', quarter='Q1', type='1')
         mock_request.assert_called_once_with(
             c.POST, c.BILLS_APPLY,
-            {'type': '1', 'begin': '1597026383085', 'end': '1597026683085',
-             'ccy': 'BTC', 'mgnMode': 'cross', 'ctType': 'linear'})
+            {'year': '2023', 'quarter': 'Q1', 'type': '1'})
+
+    @patch.object(AccountAPI, '_request_with_params')
+    def test_apply_bills_required_only(self, mock_request):
+        mock_request.return_value = {'code': '0'}
+        self.api.apply_bills(year='2023', quarter='Q1')
+        mock_request.assert_called_once_with(
+            c.POST, c.BILLS_APPLY, {'year': '2023', 'quarter': 'Q1'})
 
 
 if __name__ == '__main__':
