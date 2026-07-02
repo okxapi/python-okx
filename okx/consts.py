@@ -307,15 +307,15 @@ FINANCE_LOAN_INFO = '/api/v5/finance/flexible-loan/loan-info'
 FINANCE_LOAN_HISTORY = '/api/v5/finance/flexible-loan/loan-history'
 FINANCE_INTEREST_ACCRUED = '/api/v5/finance/flexible-loan/interest-accrued'
 
-# Dual Investment
-DUAL_INVEST_CURRENCY_PAIRS       = '/api/v5/dualinvest/currency-pairs'
-DUAL_INVEST_PRODUCT_INFO         = '/api/v5/dualinvest/product-info'
-DUAL_INVEST_REQUEST_QUOTE        = '/api/v5/dualinvest/request-quote'
-DUAL_INVEST_TRADE                = '/api/v5/dualinvest/trade'
-DUAL_INVEST_REQUEST_REDEEM_QUOTE = '/api/v5/dualinvest/request-redeem-quote'
-DUAL_INVEST_REDEEM               = '/api/v5/dualinvest/redeem'
-DUAL_INVEST_ORDER_STATE          = '/api/v5/dualinvest/order-state'
-DUAL_INVEST_ORDER_HISTORY        = '/api/v5/dualinvest/order-history'
+# Dual Investment (DCD) — under /api/v5/finance/sfp/dcd/
+DUAL_INVEST_CURRENCY_PAIRS       = '/api/v5/finance/sfp/dcd/currency-pair'
+DUAL_INVEST_PRODUCT_INFO         = '/api/v5/finance/sfp/dcd/products'
+DUAL_INVEST_REQUEST_QUOTE        = '/api/v5/finance/sfp/dcd/quote'
+DUAL_INVEST_TRADE                = '/api/v5/finance/sfp/dcd/trade'
+DUAL_INVEST_REQUEST_REDEEM_QUOTE = '/api/v5/finance/sfp/dcd/redeem-quote'
+DUAL_INVEST_REDEEM               = '/api/v5/finance/sfp/dcd/redeem'
+DUAL_INVEST_ORDER_STATE          = '/api/v5/finance/sfp/dcd/order-status'
+DUAL_INVEST_ORDER_HISTORY        = '/api/v5/finance/sfp/dcd/order-history'
 
 
 
