@@ -340,9 +340,12 @@ class AccountAPI(OkxClient):
             params['earnType'] = earnType
         return self._request_with_params(POST, SET_AUTO_EARN, params)
 
-    # Set delta-neutral trading config (BROK-1724)
-    def set_trading_config(self, deltaNeutral='', ccy=''):
-        params = {'deltaNeutral': deltaNeutral, 'ccy': ccy}
+    # Set trading config (BROK-1724). type is required (e.g. 'stgyType');
+    # stgyType (0=general, 1=delta neutral) applies only when type == 'stgyType'.
+    def set_trading_config(self, type='', stgyType=''):
+        params = {'type': type}
+        if stgyType != '':
+            params['stgyType'] = stgyType
         return self._request_with_params(POST, SET_TRADING_CONFIG, params)
 
     # Pre-check whether the delta-neutral switch is allowed (BROK-1724)

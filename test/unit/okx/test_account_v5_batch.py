@@ -43,9 +43,16 @@ class TestDeltaNeutralConfig(_Base):
     @patch.object(AccountAPI, '_request_with_params')
     def test_set_trading_config(self, mock_request):
         mock_request.return_value = {'code': '0'}
-        self.api.set_trading_config(deltaNeutral='true', ccy='BTC')
+        self.api.set_trading_config(type='stgyType', stgyType='1')
         mock_request.assert_called_once_with(
-            c.POST, c.SET_TRADING_CONFIG, {'deltaNeutral': 'true', 'ccy': 'BTC'})
+            c.POST, c.SET_TRADING_CONFIG, {'type': 'stgyType', 'stgyType': '1'})
+
+    @patch.object(AccountAPI, '_request_with_params')
+    def test_set_trading_config_type_only(self, mock_request):
+        mock_request.return_value = {'code': '0'}
+        self.api.set_trading_config(type='stgyType')
+        mock_request.assert_called_once_with(
+            c.POST, c.SET_TRADING_CONFIG, {'type': 'stgyType'})
 
     @patch.object(AccountAPI, '_request_with_params')
     def test_precheck_set_delta_neutral(self, mock_request):
