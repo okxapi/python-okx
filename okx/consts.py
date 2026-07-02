@@ -270,10 +270,6 @@ STACK_SOL_PURCHASE_REDEEM_HISTORY = '/api/v5/finance/staking-defi/sol/purchase-r
 STACK_SOL_APY_HISTORY = '/api/v5/finance/staking-defi/sol/apy-history'
 STACK_SOL_PRODUCT_INFO = '/api/v5/finance/staking-defi/sol/product-info'
 
-# Earn (on-chain earn) — under /api/v5/finance/staking-defi/ (no /api/v5/earn/ namespace exists)
-STAKING_CANCEL_REDEEM = '/api/v5/finance/staking-defi/cancel'
-STAKING_PRODUCTS = '/api/v5/finance/staking-defi/offers'
-
 # Status
 STATUS = '/api/v5/system/status'
 
