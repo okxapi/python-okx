@@ -48,9 +48,9 @@ class AccountAPI(OkxClient):
 
     # Get Bills Details (recent 7 days)
     def get_account_bills(self, instType='', ccy='', mgnMode='', ctType='', type='', subType='', after='', before='',
-                          limit=''):
+                          limit='', begin='', end=''):
         params = {'instType': instType, 'ccy': ccy, 'mgnMode': mgnMode, 'ctType': ctType, 'type': type,
-                  'subType': subType, 'after': after, 'before': before, 'limit': limit}
+                  'subType': subType, 'after': after, 'before': before, 'limit': limit, 'begin': begin, 'end': end}
         return self._request_with_params(GET, BILLS_DETAIL, params)
 
     # Get Bills Details (recent 3 months)
@@ -113,8 +113,10 @@ class AccountAPI(OkxClient):
         return self._request_with_params(GET, MAX_LOAN, params)
 
     # Get Fee Rates
-    def get_fee_rates(self, instType, instId='', uly='', category='', instFamily=''):
+    def get_fee_rates(self, instType, instId='', uly='', category='', instFamily='', groupId=None):
         params = {'instType': instType, 'instId': instId, 'uly': uly, 'category': category, 'instFamily': instFamily}
+        if groupId is not None:
+            params['groupId'] = groupId
         return self._request_with_params(GET, FEE_RATES, params)
 
     # Get interest-accrued
@@ -337,3 +339,30 @@ class AccountAPI(OkxClient):
         if earnType is not None:
             params['earnType'] = earnType
         return self._request_with_params(POST, SET_AUTO_EARN, params)
+
+    # Set trading config (BROK-1724). type is required (e.g. 'stgyType');
+    # stgyType (0=general, 1=delta neutral) applies only when type == 'stgyType'.
+    def set_trading_config(self, type='', stgyType=''):
+        params = {'type': type}
+        if stgyType != '':
+            params['stgyType'] = stgyType
+        return self._request_with_params(POST, SET_TRADING_CONFIG, params)
+
+    # Pre-check whether the delta-neutral switch is allowed (BROK-1724)
+    def precheck_set_delta_neutral(self, stgyType=''):
+        params = {'stgyType': stgyType}
+        return self._request_with_params(GET, PRECHECK_SET_DELTA_NEUTRAL, params)
+
+    # Get the list of supported bill subtypes (BROK-1728)
+    def get_bill_type(self, type=''):
+        params = {}
+        if type != '':
+            params['type'] = type
+        return self._request_with_params(GET, BILL_TYPE, params)
+
+    # Apply for an asynchronous bill history archive by year + quarter (BROK-1728)
+    def apply_bills(self, year='', quarter='', type=''):
+        params = {'year': year, 'quarter': quarter}
+        if type != '':
+            params['type'] = type
+        return self._request_with_params(POST, BILLS_APPLY, params)
