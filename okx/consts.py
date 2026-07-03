@@ -67,6 +67,10 @@ MANUAL_REBORROW_REPAY = '/api/v5/account/spot-manual-borrow-repay'
 SET_AUTO_REPAY='/api/v5/account/set-auto-repay'
 GET_BORROW_REPAY_HISTORY='/api/v5/account/spot-borrow-repay-history'
 SET_AUTO_EARN='/api/v5/account/set-auto-earn'
+SET_TRADING_CONFIG = '/api/v5/account/set-trading-config'
+PRECHECK_SET_DELTA_NEUTRAL = '/api/v5/account/precheck-set-delta-neutral'
+BILL_TYPE = '/api/v5/account/subtypes'
+BILLS_APPLY = '/api/v5/account/bills-history-archive'
 
 # Funding
 NON_TRADABLE_ASSETS = '/api/v5/asset/non-tradable-assets'
@@ -144,6 +148,7 @@ OPEN_INTEREST_VOLUME_EXPIRY = '/api/v5/rubik/stat/option/open-interest-volume-ex
 INTEREST_VOLUME_STRIKE = '/api/v5/rubik/stat/option/open-interest-volume-strike'
 TAKER_FLOW = '/api/v5/rubik/stat/option/taker-block-volume'
 CONTRACTS_OPEN_INTEREST_HISTORY = '/api/v5/rubik/stat/contracts/open-interest-history'
+ANNOUNCEMENTS = '/api/v5/support/announcements'
 
 # Trade
 PLACR_ORDER = '/api/v5/trade/order'
@@ -301,5 +306,16 @@ FINANCE_ADJUST_COLLATERAL = '/api/v5/finance/flexible-loan/adjust-collateral'
 FINANCE_LOAN_INFO = '/api/v5/finance/flexible-loan/loan-info'
 FINANCE_LOAN_HISTORY = '/api/v5/finance/flexible-loan/loan-history'
 FINANCE_INTEREST_ACCRUED = '/api/v5/finance/flexible-loan/interest-accrued'
+
+# Dual Investment (DCD) — under /api/v5/finance/sfp/dcd/
+DUAL_INVEST_CURRENCY_PAIRS       = '/api/v5/finance/sfp/dcd/currency-pair'
+DUAL_INVEST_PRODUCT_INFO         = '/api/v5/finance/sfp/dcd/products'
+DUAL_INVEST_REQUEST_QUOTE        = '/api/v5/finance/sfp/dcd/quote'
+DUAL_INVEST_TRADE                = '/api/v5/finance/sfp/dcd/trade'
+DUAL_INVEST_REQUEST_REDEEM_QUOTE = '/api/v5/finance/sfp/dcd/redeem-quote'
+DUAL_INVEST_REDEEM               = '/api/v5/finance/sfp/dcd/redeem'
+DUAL_INVEST_ORDER_STATE          = '/api/v5/finance/sfp/dcd/order-status'
+DUAL_INVEST_ORDER_HISTORY        = '/api/v5/finance/sfp/dcd/order-history'
+
 
 
