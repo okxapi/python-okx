@@ -11,8 +11,9 @@ class TradeAPI(OkxClient):
         OkxClient.__init__(self, api_key, api_secret_key, passphrase, use_server_time, flag, domain, debug, proxy)
 
     # Place Order
-    def place_order(self, instId, tdMode, side, ordType, sz, ccy='', clOrdId='', tag='', posSide='', px='',
-                    reduceOnly='', tgtCcy='', stpMode='', attachAlgoOrds=None, pxUsd='', pxVol='', banAmend='', tradeQuoteCcy=None, pxAmendType=None):
+    def place_order(self, instId, tdMode, side, ordType, sz, ccy='', clOrdId='', tag='', posSide='', px='',  # NOSONAR - public OKX v5 place-order API surface; the parameter list mirrors the REST endpoint 1:1 and cannot be reduced without breaking backward compatibility
+                    reduceOnly='', tgtCcy='', stpMode='', attachAlgoOrds=None, pxUsd='', pxVol='', banAmend='', tradeQuoteCcy=None, pxAmendType=None,
+                    isElpTakerAccess=None, instIdCode=None):
         params = {'instId': instId, 'tdMode': tdMode, 'side': side, 'ordType': ordType, 'sz': sz, 'ccy': ccy,
                   'clOrdId': clOrdId, 'tag': tag, 'posSide': posSide, 'px': px, 'reduceOnly': reduceOnly,
                   'tgtCcy': tgtCcy, 'stpMode': stpMode, 'pxUsd': pxUsd, 'pxVol': pxVol, 'banAmend': banAmend}
@@ -20,6 +21,10 @@ class TradeAPI(OkxClient):
             params['tradeQuoteCcy'] = tradeQuoteCcy
         if pxAmendType is not None:
             params['pxAmendType'] = pxAmendType
+        if isElpTakerAccess is not None:
+            params['isElpTakerAccess'] = isElpTakerAccess
+        if instIdCode is not None:
+            params['instIdCode'] = instIdCode
         params['attachAlgoOrds'] = attachAlgoOrds
         return self._request_with_params(POST, PLACR_ORDER, params)
 
@@ -37,15 +42,20 @@ class TradeAPI(OkxClient):
         return self._request_with_params(POST, CANCEL_BATCH_ORDERS, orders_data)
 
     # Amend Order
-    def amend_order(self, instId, cxlOnFail='', ordId='', clOrdId='', reqId='', newSz='', newPx='', newTpTriggerPx='',
+    def amend_order(self, instId, cxlOnFail='', ordId='', clOrdId='', reqId='', newSz='', newPx='', newTpTriggerPx='',  # NOSONAR - public OKX v5 amend-order API surface; the parameter list mirrors the REST endpoint 1:1 and cannot be reduced without breaking backward compatibility
                     newTpOrdPx='', newSlTriggerPx='', newSlOrdPx='', newTpTriggerPxType='', newSlTriggerPxType='',
-                    attachAlgoOrds='', newTriggerPx='', newOrdPx='', pxAmendType=None):
+                    attachAlgoOrds='', newTriggerPx='', newOrdPx='', pxAmendType=None,
+                    newTpTriggerRatio=None, newSlTriggerRatio=None):
         params = {'instId': instId, 'cxlOnFail': cxlOnFail, 'ordId': ordId, 'clOrdId': clOrdId, 'reqId': reqId,
                   'newSz': newSz, 'newPx': newPx, 'newTpTriggerPx': newTpTriggerPx, 'newTpOrdPx': newTpOrdPx,
                   'newSlTriggerPx': newSlTriggerPx, 'newSlOrdPx': newSlOrdPx, 'newTpTriggerPxType': newTpTriggerPxType,
                   'newSlTriggerPxType': newSlTriggerPxType, 'newTriggerPx': newTriggerPx, 'newOrdPx': newOrdPx}
         if pxAmendType is not None:
             params['pxAmendType'] = pxAmendType
+        if newTpTriggerRatio is not None:
+            params['newTpTriggerRatio'] = newTpTriggerRatio
+        if newSlTriggerRatio is not None:
+            params['newSlTriggerRatio'] = newSlTriggerRatio
         params['attachAlgoOrds'] = attachAlgoOrds
         return self._request_with_params(POST, AMEND_ORDER, params)
 
@@ -94,7 +104,7 @@ class TradeAPI(OkxClient):
         return self._request_with_params(GET, ORDER_FILLS, params)
 
     # Place Algo Order
-    def place_algo_order(self, instId='', tdMode='', side='', ordType='', sz='', ccy='',
+    def place_algo_order(self, instId='', tdMode='', side='', ordType='', sz='', ccy='',  # NOSONAR - public OKX v5 place-algo-order API surface; the parameter list mirrors the REST endpoint 1:1 and cannot be reduced without breaking backward compatibility
                          posSide='', reduceOnly='', tpTriggerPx='',
                          tpOrdPx='', slTriggerPx='', slOrdPx='',
                          triggerPx='', orderPx='', tgtCcy='', pxVar='',
@@ -102,7 +112,8 @@ class TradeAPI(OkxClient):
                          szLimit='', pxLimit='', timeInterval='', tpTriggerPxType='', slTriggerPxType='',
                          callbackRatio='', callbackSpread='', activePx='', tag='', triggerPxType='', closeFraction=''
                          , quickMgnType='', algoClOrdId='', tradeQuoteCcy=None, tpOrdKind='', cxlOnClosePos=''
-                         , chaseType='', chaseVal='', maxChaseType='', maxChaseVal='', attachAlgoOrds=[], pxAmendType=None):
+                         , chaseType='', chaseVal='', maxChaseType='', maxChaseVal='', attachAlgoOrds=[], pxAmendType=None
+                         , advanceOrdType=None, tpTriggerRatio=None, slTriggerRatio=None):
         params = {'instId': instId, 'tdMode': tdMode, 'side': side, 'ordType': ordType, 'sz': sz, 'ccy': ccy,
                   'posSide': posSide, 'reduceOnly': reduceOnly, 'tpTriggerPx': tpTriggerPx, 'tpOrdPx': tpOrdPx,
                   'slTriggerPx': slTriggerPx, 'slOrdPx': slOrdPx, 'triggerPx': triggerPx, 'orderPx': orderPx,
@@ -118,6 +129,12 @@ class TradeAPI(OkxClient):
             params['tradeQuoteCcy'] = tradeQuoteCcy
         if pxAmendType is not None:
             params['pxAmendType'] = pxAmendType
+        if advanceOrdType is not None:
+            params['advanceOrdType'] = advanceOrdType
+        if tpTriggerRatio is not None:
+            params['tpTriggerRatio'] = tpTriggerRatio
+        if slTriggerRatio is not None:
+            params['slTriggerRatio'] = slTriggerRatio
         return self._request_with_params(POST, PLACE_ALGO_ORDER, params)
 
     # Cancel Algo Order
