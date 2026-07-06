@@ -24,6 +24,13 @@ class EthStakingAPI(OkxClient):
         }
         return self._request_with_params(POST, STACK_ETH_REDEEM, params)
 
+    def eth_cancel_redeem(self, ordId=''):
+
+        params = {
+            'ordId': ordId,
+        }
+        return self._request_with_params(POST, STACK_ETH_CANCEL_REDEEM, params)
+
     def eth_balance(self):
 
         params = {}
