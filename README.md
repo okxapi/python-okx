@@ -87,7 +87,7 @@ git clone https://github.com/okxapi/python-okx.git
 cd python-okx
 
 # Install dependencies
-pip install -r requirements.txt
+pip install -r dev_requirements.txt
 pip install -e .
 
 # Run tests
