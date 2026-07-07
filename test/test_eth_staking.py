@@ -17,6 +17,9 @@ class EthStakingTest(unittest.TestCase):
     def test_eth_redeem(self):
         print(self.StackingAPI.eth_redeem(amt="1"))
 
+    def test_eth_cancel_redeem(self):
+        print(self.StackingAPI.eth_cancel_redeem(ordId="1234567890"))
+
     def test_eth_balance(self):
         print(self.StackingAPI.eth_balance())
 
