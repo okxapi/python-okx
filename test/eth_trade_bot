@@ -1,0 +1,1215 @@
+# ======================== 导入必要的库 ========================
+import asyncio
+import time
+import json
+import logging
+import string
+import random
+import os
+from datetime import datetime, timedelta
+from collections import defaultdict
+import pytz
+import pandas as pd
+import numpy as np
+import requests
+from okx.websocket.WsPrivateAsync import WsPrivateAsync as PrivateWs
+from okx.websocket.WsPublicAsync import WsPublicAsync as PublicWs
+import okx.Account as Account
+import okx.Trade as Trade
+import okx.MarketData as MarketData
+from supertrend_lib1 import SupertrendAnalyzer  # 使用您提供的库
+
+from decimal import Decimal, getcontext, ROUND_HALF_UP
+
+# ======================== Decimal 配置 ========================
+getcontext().prec = 28  # 高精度以避免价格/数量浮点误差
+
+# ======================== 日志系统配置 ========================
+def setup_logging():
+    os.makedirs("logs", exist_ok=True)
+    logger = logging.getLogger("intelligent_trading_bot")
+    logger.setLevel(logging.DEBUG)
+
+    file_handler = logging.FileHandler("logs/trading.log")
+    file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(logging.Formatter('%(message)s'))
+
+    # 避免重复添加 handler（在多次导入时）
+    if not logger.handlers:
+        logger.addHandler(file_handler)
+        logger.addHandler(console_handler)
+    return logger
+
+
+logger = setup_logging()
+
+
+def log_action(action, details, level="info", extra_data=None, exc_info=False):
+    symbols = {
+        "debug": "🔵",
+        "info": "🟢",
+        "warning": "🟠",
+        "error": "🔴",
+        "critical": "⛔"
+    }
+    symbol = symbols.get(level, "⚪")
+    header = f"\n{'-' * 80}\n[{datetime.now().strftime('%H:%M:%S.%f')}] {symbol} {action}"
+    log_line = header + f"\n  • {details}"
+
+    if extra_data:
+        try:
+            if isinstance(extra_data, dict):
+                log_line += f"\n  • 附加数据: {json.dumps(extra_data, indent=2, ensure_ascii=False)}"
+            else:
+                log_line += f"\n  • 附加数据: {extra_data}"
+        except Exception:
+            log_line += f"\n  • 附加数据: [无法序列化]"
+
+    log_line += f"\n{'-' * 80}"
+
+    # 适配 debug 等级
+    if level == "debug":
+        logger.debug(log_line, exc_info=exc_info)
+    elif level == "info":
+        logger.info(log_line, exc_info=exc_info)
+    elif level == "warning":
+        logger.warning(log_line, exc_info=exc_info)
+    elif level == "error":
+        logger.error(log_line, exc_info=exc_info)
+    elif level == "critical":
+        logger.critical(log_line, exc_info=exc_info)
+    else:
+        logger.info(log_line, exc_info=exc_info)
+
+
+def log_state_transition(current_state, new_state, reason):
+    """记录状态转换 - 增加更多上下文信息"""
+    global trading_phase
+
+    # 获取当前仓位信息
+    long_key = get_position_key(SYMBOL, "long")
+    short_key = get_position_key(SYMBOL, "short")
+    long_pos = position_info[long_key]["pos"]
+    short_pos = position_info[short_key]["pos"]
+
+    # 计算ETH价值
+    long_eth = calculate_contract_value(long_pos)
+    short_eth = calculate_contract_value(short_pos)
+
+    logger.info(f"\n{'=' * 80}")
+    logger.info(f"🔄 状态变更: [{current_state}] → [{new_state}]")
+    logger.info(f"  原因: {reason}")
+    logger.info(f"  当前方向: {trading_direction.upper()}")
+    logger.info(f"  多仓: {long_pos}张 ({long_eth:.6f} ETH) | 空仓: {short_pos}张 ({short_eth:.6f} ETH)")
+    logger.info(f"  当前价格: ${current_price:.4f}")
+    logger.info(f"  账户净值: ${account_equity:.2f}")
+    logger.info(f"  活跃订单: {len(active_orders)}个")
+    logger.info(f"  最后趋势检查: {datetime.fromtimestamp(last_trend_check).strftime('%H:%M:%S')}")
+    logger.info(f"{'=' * 80}\n")
+
+
+# ======================== 基础配置 ========================
+API_KEY = "a3a2a008-576a-4548-a1c0-f28ac940bd6b"
+SECRET_KEY = "3F9170BCBE9C88EDFA6675438CD0DBAA"
+PASSPHRASE = "Aa123414.."
+
+# ======================== 交易对基础信息（可由 API 获取覆盖） ========================
+CONTRACT_INFO = {
+    "symbol": "ETH-USDT-SWAP",
+    "lotSz": 1,  # 下单数量精度
+    "minSz": 1,  # 最小下单数量
+    "ctVal": 0.01,  # 合约面值 (每张合约代表 0.01 ETH) -- 已修正注释
+    "tickSz": 0.1,  # 价格精度
+    "ctValCcy": "ETH",  # 合约价值货币
+    "instType": "SWAP"  # 合约类型
+}
+
+# 使用合约信息配置全局变量（会在启动时尝试从 API 更新）
+SYMBOL = CONTRACT_INFO["symbol"]
+TICK_SIZE = CONTRACT_INFO["tickSz"]
+
+# Supertrend策略配置
+SUPERTREND_CONFIG = {
+    'symbol': SYMBOL,
+    'timeframe': '1H',
+    'atr_period': 7,
+    'multiplier': 2.5,
+    'change_atr': True,
+    'min_data': 50,
+    'data_delay': 1
+}
+
+# ======================== 全局配置常量 ========================
+PING_INTERVAL = 25  # WebSocket心跳间隔
+PONG_TIMEOUT = 5  # Pong响应超时时间
+
+# 交易策略配置
+TRADE_STRATEGY = {
+    "price_offset": 0.015,  # 价格偏移 15%（例如 0.015 表示当前价格的 15%）
+    "eth_position": 0.01,  # 目标 ETH 持仓量（以 ETH 计）
+    "leverage": 10,  # 杠杆倍数
+    "atr_multiplier": 0.7,  # ATR系数
+    "order_increment": 0,  # 开仓单在基础仓位上增加的合约张数；0 表示不启用增仓
+    "fixed_trend_direction": "long",  # 固定趋势方向 (long/short)
+    "trend_mode": "fixed"  # "fixed" 或 "auto"
+}
+
+# 全局变量
+account_equity = 0.0
+initial_equity = 0.0
+current_price = 0.0
+last_price = 0.0
+trading_direction = TRADE_STRATEGY.get("fixed_trend_direction", "long")
+last_trend_check = 0
+last_ws_price_update = 0
+last_api_price_update = 0
+price_source = "unknown"
+# 日志
+last_status_log_time = 0
+STATUS_LOG_INTERVAL = 60  # 60秒记录一次摘要
+
+# 订单和仓位管理
+active_orders = {}  # 使用 cl_ord_id 作为键
+position_info = defaultdict(lambda: {
+    "pos": 0.0,  # 合约张数
+    "eth_value": 0.0,  # ETH价值
+    "avg_px": 0.0,
+    "upl": 0.0,
+    "entry_time": 0
+})
+
+# 订单对映射
+order_pair_mapping = {}  # 使用 pair_id 作为键，存储订单对信息
+
+# API客户端
+flag = "0"
+account_api = Account.AccountAPI(API_KEY, SECRET_KEY, PASSPHRASE, False, flag)
+trade_api = Trade.TradeAPI(API_KEY, SECRET_KEY, PASSPHRASE, False, flag)
+market_api = MarketData.MarketAPI(API_KEY, SECRET_KEY, PASSPHRASE, False, flag)
+
+# WebSocket实例（占位）
+ws_private = None
+ws_public = None
+
+# 初始化Supertrend分析器
+supertrend_analyzer = SupertrendAnalyzer(SUPERTREND_CONFIG)
+
+
+# ======================== ETH合约工具函数 ========================
+def calculate_contract_value(sz):
+    """计算合约实际价值 (ETH数量)"""
+    return sz * CONTRACT_INFO["ctVal"]
+
+
+def calculate_contract_size(eth_amount):
+    """根据ETH数量计算合约张数"""
+    return eth_amount / CONTRACT_INFO["ctVal"]
+
+
+def round_to_min_size(size):
+    """调整数量到最小交易单位的整数倍"""
+    min_lot = CONTRACT_INFO["minSz"]
+    # 保证返回与 min_lot 同单位（整数倍）
+    if min_lot == 0:
+        return size
+    # 使用 Decimal 以获得更好精度
+    s = Decimal(str(size))
+    m = Decimal(str(min_lot))
+    rounded = (s / m).quantize(Decimal('1'), rounding=ROUND_HALF_UP) * m
+    return float(rounded)
+
+
+def validate_position_size(size):
+    """验证仓位大小是否符合要求"""
+    min_size = CONTRACT_INFO["minSz"]
+    if size < min_size:
+        log_action("风控", f"仓位大小{size}小于最小值{min_size}，自动修正", "warning")
+        return min_size
+
+    # 检查是否为最小单位的整数倍
+    if not (size / min_size).is_integer():
+        log_action("风控", f"仓位大小{size}不是最小单位{min_size}的整数倍", "warning")
+        return round_to_min_size(size)
+
+    return size
+
+
+def get_position_size():
+    """根据ETH目标持仓计算合约张数"""
+    eth_amount = TRADE_STRATEGY["eth_position"]
+    contract_size = calculate_contract_size(eth_amount)
+    return round_to_min_size(contract_size)  # 确保符合最小单位
+
+
+def get_size_precision():
+    """获取数量精度的小数位数"""
+    min_sz = CONTRACT_INFO["minSz"]
+    # 计算需要的小数位数
+    if min_sz >= 1:
+        return 0
+    elif min_sz >= 0.1:
+        return 1
+    elif min_sz >= 0.01:
+        return 2
+    elif min_sz >= 0.001:
+        return 3
+    else:
+        return 4  # 默认4位小数
+
+
+def get_price_precision():
+    """获取价格精度的小数位数"""
+    tick_sz = CONTRACT_INFO["tickSz"]
+    # 计算需要的小数位数
+    if tick_sz >= 1:
+        return 0
+    elif tick_sz >= 0.1:
+        return 1
+    elif tick_sz >= 0.01:
+        return 2
+    elif tick_sz >= 0.001:
+        return 3
+    else:
+        return 4  # 默认4位小数
+
+
+def validate_order_increment():
+    """验证开仓增量配置是否有效。允许为 0（表示不启用增仓）。"""
+    increment = TRADE_STRATEGY.get("order_increment", 0)
+    min_sz = CONTRACT_INFO["minSz"]
+
+    if increment < 0:
+        log_action("配置验证", "开仓增量不能为负数", "error")
+        return False
+
+    if increment == 0:
+        log_action("配置验证", "开仓增量为0，表示不启用分批增仓", "info")
+        return True
+
+    # 如果小于最小单位，自动修正到最小单位
+    if increment < min_sz:
+        log_action("配置验证",
+                   f"开仓增量({increment})小于最小交易单位({min_sz})，自动修正为最小单位",
+                   "warning")
+        TRADE_STRATEGY["order_increment"] = min_sz
+        return True
+
+    # 检查是否为最小单位的整数倍
+    if not (increment / min_sz).is_integer():
+        log_action("配置验证",
+                   f"开仓增量({increment})不是最小单位({min_sz})的整数倍，自动四舍五入",
+                   "warning")
+        TRADE_STRATEGY["order_increment"] = round_to_min_size(increment)
+        return True
+
+    return True
+
+
+# ======================== 交易阶段定义 ========================
+class TradingPhase:
+    INIT = "INIT"
+    A1_POSITION_SETUP = "A1"  # 新增: 仓位建立阶段
+    A2_ORDER_PAIR = "A2"  # 订单对阶段
+    B2_WAIT_PAIR = "B2"  # 订单对监控阶段
+
+
+# 当前交易阶段
+trading_phase = TradingPhase.INIT
+phase_start_time = 0
+
+
+# ======================== 核心功能函数 ========================
+def get_position_key(inst_id, pos_side):
+    """获取持仓唯一键"""
+    return f"{inst_id}-{pos_side.lower()}"
+
+
+def generate_order_id(prefix):
+    """生成符合OKX要求的订单ID"""
+    clean_prefix = ''.join(c for c in prefix if c.isalnum())
+    rand_part = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
+    return (clean_prefix + rand_part)[:32]
+
+
+def round_price(price):
+    """根据 tick 精度调整价格（使用 Decimal 以避免 float 精度问题）"""
+    tick = Decimal(str(TICK_SIZE))
+    p = Decimal(str(price))
+    quant = (p / tick).quantize(Decimal('1'), rounding=ROUND_HALF_UP)
+    rounded = (quant * tick).normalize()
+    return float(rounded)
+
+
+def safe_float(value, default=0.0):
+    """安全转换浮点数"""
+    try:
+        return float(value) if value else default
+    except (ValueError, TypeError):
+        return default
+
+
+# ======================== 账户与市场数据 ========================
+async def fetch_account_balance():
+    """获取账户余额 - 使用线程池执行阻塞 API 调用"""
+    global account_equity, initial_equity
+
+    try:
+        log_action("账户查询", "发送账户余额请求", "debug")
+        # 尝试直接按 SDK 常用签名调用，放到线程池以防阻塞
+        response = await asyncio.to_thread(account_api.get_account_balance, ccy="USDT")
+
+        # 记录完整响应
+        log_action("账户查询", "收到账户余额响应", "debug", response)
+
+        if response.get("code", "") == "0" and response.get("data"):
+            for detail_group in response["data"]:
+                for detail in detail_group.get("details", []):
+                    if detail.get("ccy") == "USDT":
+                        equity = float(detail.get("eq", 0.0))
+                        account_equity = equity
+                        if initial_equity == 0:
+                            initial_equity = equity
+                            log_action("账户初始化", f"初始权益: ${initial_equity:.2f}")
+                        return True
+        return False
+    except Exception as e:
+        log_action("账户查询", f"请求失败: {str(e)}", "error", exc_info=True)
+        return False
+
+
+def log_periodic_status():
+    """记录周期性状态摘要"""
+    global last_status_log_time
+
+    current_time = time.time()
+    if current_time - last_status_log_time >= STATUS_LOG_INTERVAL:
+        last_status_log_time = current_time
+
+        long_key = get_position_key(SYMBOL, "long")
+        short_key = get_position_key(SYMBOL, "short")
+        long_pos = position_info[long_key]["pos"]
+        short_pos = position_info[short_key]["pos"]
+
+        # 计算ETH价值
+        long_eth = calculate_contract_value(long_pos)
+        short_eth = calculate_contract_value(short_pos)
+
+        logger.info(f"\n{'=' * 80}")
+        logger.info(f"📊 当前状态摘要 - {trading_phase}")
+        logger.info(f"  当前方向: {trading_direction.upper()}")
+        logger.info(f"  多仓: {long_pos}张 ({long_eth:.6f} ETH) | 空仓: {short_pos}张 ({short_eth:.6f} ETH)")
+        logger.info(f"  当前价格: ${current_price:.4f}")
+        logger.info(f"  账户净值: ${account_equity:.2f}")
+        logger.info(f"  活跃订单: {len(active_orders)}个")
+        logger.info(f"  最后趋势检查: {datetime.fromtimestamp(last_trend_check).strftime('%H:%M:%S')}")
+        logger.info(f"  开仓增量配置: {TRADE_STRATEGY['order_increment']}张")
+        logger.info(f"{'=' * 80}\n")
+
+
+async def update_position_info():
+    """获取持仓信息 - 使用线程池执行阻塞 API 调用"""
+    try:
+        log_action("仓位查询", "发送仓位查询请求", "debug")
+        response = await asyncio.to_thread(account_api.get_positions, instType="SWAP")
+
+        log_action("仓位查询", "收到仓位查询响应", "debug", response)
+
+        if response.get("code") == "0":
+            positions = response.get("data", [])
+
+            # 重置仓位信息
+            for key in list(position_info.keys()):
+                position_info[key]["pos"] = 0.0
+                position_info[key]["eth_value"] = 0.0
+                position_info[key]["avg_px"] = 0.0
+                position_info[key]["upl"] = 0.0
+                position_info[key]["entry_time"] = 0
+
+            # 更新有效仓位
+            for pos in positions:
+                if isinstance(pos, dict) and pos.get("instId") == SYMBOL:
+                    pos_side = pos.get("posSide", "net").lower()
+                    pos_key = get_position_key(SYMBOL, pos_side)
+
+                    contract_size = float(pos.get("pos", "0"))
+                    eth_value = calculate_contract_value(contract_size)
+
+                    position_info[pos_key]["pos"] = contract_size
+                    position_info[pos_key]["eth_value"] = eth_value
+                    position_info[pos_key]["avg_px"] = float(pos.get("avgPx", "0"))
+                    position_info[pos_key]["upl"] = float(pos.get("upl", "0"))
+
+                    log_action("仓位更新",
+                               f"{pos_side}仓: {contract_size}张 ({eth_value:.6f} ETH)",
+                               "debug")
+            return True
+        return False
+    except Exception as e:
+        log_action("仓位查询", f"请求失败: {str(e)}", "error", exc_info=True)
+        return False
+
+
+async def update_current_price():
+    """获取当前价格 - 通过API备选 - 使用线程池执行阻塞调用"""
+    global current_price, last_price, last_api_price_update, price_source
+
+    try:
+        log_action("价格查询", "发送价格查询请求", "debug")
+        response = await asyncio.to_thread(market_api.get_ticker, instId=SYMBOL)
+
+        log_action("价格查询", "收到价格查询响应", "debug", response)
+
+        if response.get("code") == "0" and response.get("data"):
+            price = float(response["data"][0]["last"])
+
+            # 更新价格和时间戳
+            last_price = current_price
+            current_price = price
+            last_api_price_update = time.time()
+            price_source = "rest_api"
+
+            log_action("API价格更新", f"${last_price:.4f} → ${price:.4f}", "info")
+            return True
+        return False
+    except Exception as e:
+        log_action("价格查询", f"请求失败: {str(e)}", "error", exc_info=True)
+        return False
+
+
+async def ensure_price_freshness():
+    """确保价格足够新鲜 - 增加详细日志"""
+    global price_source
+
+    # 记录当前状态
+    ws_freshness = time.time() - last_ws_price_update
+    api_freshness = time.time() - last_api_price_update
+    log_action("价格新鲜度",
+               f"WS新鲜度: {ws_freshness:.2f}s | API新鲜度: {api_freshness:.2f}s",
+               "debug")
+
+    # 如果WebSocket价格在2秒内更新过，使用WebSocket价格
+    if ws_freshness <= 2.0:
+        price_source = "websocket"
+        log_action("价格新鲜度", f"使用WS价格(新鲜度:{ws_freshness:.2f}s)", "debug")
+        return True
+
+    # 如果API价格在5秒内更新过，使用API价格
+    if api_freshness <= 5.0:
+        price_source = "rest_api"
+        log_action("价格新鲜度", f"使用API价格(新鲜度:{api_freshness:.2f}s)", "debug")
+        return True
+
+    # 主动更新价格
+    log_action("价格更新", "价格数据过期，主动获取最新价格", "warning")
+    return await update_current_price()
+
+
+# ======================== 订单管理 ========================
+class RateLimiter:
+    """OKX API速率限制管理器 - 增加详细日志"""
+
+    def __init__(self):
+        self.last_request_time = 0
+        self.request_count = 0
+        self.window_start = time.time()
+        # 默认通用上限（保守），但支持自定义短时间窗口限制
+        self.max_orders_per_window = 300  # 每2秒300个订单（可视为上限，谨慎使用）
+        self.window_seconds = 2
+
+    async def check_limit(self, orders_count, max_per_window=None, window_seconds=None):
+        """检查并遵守API速率限制。允许传入自定义限速（用于特定端点）"""
+        # 支持自定义值
+        max_orders = max_per_window if max_per_window is not None else self.max_orders_per_window
+        win_seconds = window_seconds if window_seconds is not None else self.window_seconds
+
+        current_time = time.time()
+
+        # 检查当前时间窗口
+        window_elapsed = current_time - self.window_start
+        if window_elapsed > win_seconds:
+            log_action("限速器", f"窗口重置 (已过{window_elapsed:.2f}s > {win_seconds}s)", "debug")
+            self.request_count = 0
+            self.window_start = current_time
+            window_elapsed = 0
+
+        # 预测请求后是否超出限制
+        predicted_count = self.request_count + orders_count
+        while predicted_count > max_orders:
+            # 计算需要等待的时间
+            wait_time = max(0.0, win_seconds - window_elapsed + 0.1)
+            log_action("限速等待",
+                       f"需等待{wait_time:.2f}秒 (当前{self.request_count}/{max_orders}，请求后{predicted_count})",
+                       "warning")
+            await asyncio.sleep(wait_time)
+            current_time = time.time()
+            window_elapsed = current_time - self.window_start
+
+            if window_elapsed > win_seconds:
+                log_action("限速器", f"等待后窗口重置 (已过{window_elapsed:.2f}s > {win_seconds}s)", "debug")
+                self.request_count = 0
+                self.window_start = current_time
+                break
+
+            predicted_count = self.request_count + orders_count
+
+        # 避免请求过快（即使未达限制）
+        if current_time - self.last_request_time < 0.1:
+            wait_time = 0.1 - (current_time - self.last_request_time)
+            log_action("限速等待", f"避免请求过快，等待{wait_time:.3f}s", "debug")
+            await asyncio.sleep(wait_time)
+
+        # 更新计数器
+        self.request_count += orders_count
+        self.last_request_time = time.time()
+        log_action("限速器", f"请求计数: {self.request_count}/{max_orders}", "debug",
+                   {"订单数": orders_count, "窗口秒数": win_seconds})
+
+
+# 全局速率限制器实例
+rate_limiter = RateLimiter()
+
+
+async def check_rate_limit(orders_count, max_per_window=None, window_seconds=None):
+    """应用速率限制"""
+    await rate_limiter.check_limit(orders_count, max_per_window=max_per_window, window_seconds=window_seconds)
+
+
+async def fetch_instrument_info_from_api():
+    """使用 OKX API 获取指定合约的基础信息并更新 CONTRACT_INFO（遵守 20 requests / 2s 限速）"""
+    global CONTRACT_INFO, TICK_SIZE, SYMBOL
+    try:
+        # OKX 文档：获取交易产品基础信息，限速 20 次/2s（User ID + Instrument Type）
+        await check_rate_limit(1, max_per_window=20, window_seconds=2)
+
+        log_action("合约信息", f"请求合约信息: instType={CONTRACT_INFO.get('instType','SWAP')} instId={CONTRACT_INFO.get('symbol')}", "debug")
+        # account_api.get_instruments(instType="SWAP") or with instId
+        response = await asyncio.to_thread(account_api.get_instruments, instType=CONTRACT_INFO.get("instType", "SWAP"))
+        log_action("合约信息", "收到合约信息响应", "debug", response)
+
+        if response.get("code") == "0" and response.get("data"):
+            # 寻找匹配的 instId（SYMBOL 形如 ETH-USDT-SWAP）
+            inst_list = response.get("data", [])
+            # Normalize symbol: OKX api uses instId like 'ETH-USDT-SWAP' depending on API; try match by prefix
+            target = CONTRACT_INFO.get("symbol")
+            found = None
+            for item in inst_list:
+                # fields often instId, tickSz, minSz, ctVal, lotSz, ctValCcy
+                inst_id = item.get("instId") or item.get("inst_id") or ""
+                if inst_id == target or inst_id.startswith(target.split('-')[0] + '-'):
+                    found = item
+                    break
+            if not found:
+                # fallback: try exact match where instId may be without '-SWAP'
+                for item in inst_list:
+                    inst_id = item.get("instId") or ""
+                    if target.split('-')[0] in inst_id and 'USDT' in inst_id:
+                        found = item
+                        break
+
+            if found:
+                # Parse and update CONTRACT_INFO fields if present
+                minSz = safe_float(found.get("minSz", CONTRACT_INFO["minSz"]))
+                tickSz = safe_float(found.get("tickSz", CONTRACT_INFO["tickSz"]))
+                ctVal = found.get("ctVal", CONTRACT_INFO["ctVal"])
+                try:
+                    ctVal = float(ctVal) if ctVal not in (None, "", []) else CONTRACT_INFO["ctVal"]
+                except Exception:
+                    ctVal = CONTRACT_INFO["ctVal"]
+                lotSz = found.get("lotSz", CONTRACT_INFO["lotSz"])
+                try:
+                    lotSz = float(lotSz) if lotSz not in (None, "", []) else CONTRACT_INFO["lotSz"]
+                except Exception:
+                    lotSz = CONTRACT_INFO["lotSz"]
+                ctValCcy = found.get("ctValCcy", CONTRACT_INFO.get("ctValCcy", "ETH"))
+
+                CONTRACT_INFO.update({
+                    "minSz": minSz,
+                    "tickSz": tickSz,
+                    "ctVal": ctVal,
+                    "lotSz": lotSz,
+                    "ctValCcy": ctValCcy
+                })
+
+                # Update derived globals
+                TICK_SIZE = CONTRACT_INFO["tickSz"]
+                SYMBOL = CONTRACT_INFO["symbol"]
+
+                log_action("合约信息", f"已更新 CONTRACT_INFO: minSz={minSz}, tickSz={tickSz}, ctVal={ctVal}, lotSz={lotSz}", "info")
+                return True
+            else:
+                log_action("合约信息", f"未在返回列表中找到匹配合约: {CONTRACT_INFO.get('symbol')}", "warning", {"returned_count": len(inst_list)})
+                return False
+        else:
+            log_action("合约信息", f"获取合约信息失败: {response.get('msg','')}", "warning", response)
+            return False
+    except Exception as e:
+        log_action("合约信息", f"获取合约信息异常: {e}", "error", exc_info=True)
+        return False
+
+
+async def cancel_all_orders():
+    """取消所有活跃订单 - 增加详细日志"""
+    try:
+        if active_orders:
+            order_ids = list(active_orders.keys())
+            order_count = len(order_ids)
+            log_action("订单取消", f"取消{order_count}个订单", "info")
+
+            # 应用速率限制
+            await check_rate_limit(order_count)
+
+            # 批量取消请求
+            cancel_reqs = [{"instId": SYMBOL, "clOrdId": cl_ord_id} for cl_ord_id in order_ids]
+            log_action("批量取消", "发送批量取消请求", "debug", {"订单列表": order_ids})
+            # trade_api.cancel_multiple_orders likely blocking; run in thread
+            response = await asyncio.to_thread(trade_api.cancel_multiple_orders, cancel_reqs)
+
+            # 记录完整响应
+            log_action("批量取消", "收到批量取消响应", "debug", response)
+
+            if response.get("code") == "0":
+                active_orders.clear()
+                return True
+            else:
+                log_action("批量取消", "批量取消返回非 0 code，未清除本地订单", "warning", response)
+                # Do not clear locally unless confirmed; attempt best-effort update
+                return False
+        return True  # 没有订单也算成功
+    except Exception as e:
+        log_action("取消订单", f"取消失败: {str(e)}", "error", exc_info=True)
+        return False
+
+
+async def cancel_single_order(cl_ord_id):
+    """取消单个订单 - 增加详细日志"""
+    try:
+        # 应用速率限制
+        await check_rate_limit(1)
+
+        request = {"instId": SYMBOL, "clOrdId": cl_ord_id}
+        log_action("取消订单", f"发送取消请求: {cl_ord_id}", "debug", request)
+        response = await asyncio.to_thread(trade_api.cancel_order, **request)
+
+        # 记录完整响应
+        log_action("取消订单", f"收到取消响应: {cl_ord_id}", "debug", response)
+
+        if str(response.get("code", "")) == "0":
+            log_action("订单取消", f"订单 {cl_ord_id} 取消成功")
+            # 更新本地 active_orders
+            if cl_ord_id in active_orders:
+                del active_orders[cl_ord_id]
+            return True
+        else:
+            log_action("订单取消", f"订单 {cl_ord_id} 取消失败: {response.get('msg', '未知错误')}", "warning")
+            return False
+    except Exception as e:
+        log_action("取消订单", f"取消订单 {cl_ord_id} 失败: {str(e)}", "error")
+        return False
+
+
+# ======================== 新增: A1阶段 - 仓位建立 ========================
+async def place_market_setup_order(adjust_size):
+    """根据当前趋势方向市价建仓 - 使用线程池执行阻塞 trade_api 调用"""
+    # 确保数量有效
+    if adjust_size <= 0:
+        log_action("A1下单", "调整量为0，无需建仓", "warning")
+        return True
+
+    try:
+        # 确定下单方向
+        side = "buy" if trading_direction == "long" else "sell"
+
+        # 生成订单ID
+        cl_ord_id = generate_order_id(f"A1_{trading_direction[:1]}")
+
+        # 验证并调整仓位大小
+        validated_size = validate_position_size(adjust_size)
+        eth_value = calculate_contract_value(validated_size)
+
+        request = {
+            "instId": SYMBOL,
+            "tdMode": "isolated",
+            "clOrdId": cl_ord_id,
+            "side": side,
+            "posSide": trading_direction,
+            "ordType": "market",
+            "sz": str(validated_size)
+        }
+
+        # 应用速率限制
+        await check_rate_limit(1)
+
+        # 发送下单请求（线程池）
+        log_action("A1下单", "发送市价开仓请求", "debug", request)
+        response = await asyncio.to_thread(trade_api.place_order, **request)
+
+        # 记录完整响应
+        log_action("A1下单", "收到下单响应", "debug", response)
+
+        if str(response.get("code", "")) == "0":
+            # 记录活跃订单
+            ord_id = response['data'][0].get('ordId', '')
+            active_orders[cl_ord_id] = {
+                "ord_id": ord_id,
+                "state": "live",
+                "type": "market",
+                "tag": "A1_SETUP",
+                "create_time": time.time(),
+                "side": side,
+                "posSide": trading_direction
+            }
+
+            log_action("A1下单", f"市价{trading_direction}建仓单已提交", "info", {
+                "调整仓位": f"{validated_size}张 ({eth_value:.6f} ETH)",
+                "订单ID": cl_ord_id
+            })
+            return True
+
+        # 处理下单失败
+        log_action("A1下单", f"市价建仓失败: {response.get('msg', '未知错误')}", "error", response)
+        return False
+    except Exception as e:
+        log_action("A1下单", f"市价建仓异常: {str(e)}", "error", exc_info=True)
+        return False
+
+
+# ======================== 重构: A2阶段 - 挂订单对 (OKX批量下单) ========================
+async def calculate_dynamic_offset():
+    """计算价格偏移 - 简化版本，只使用固定偏移"""
+    base_offset = TRADE_STRATEGY["price_offset"]
+    # 记录简单的调试信息
+    log_action("价格偏移", f"使用固定偏移: {base_offset * 100:.2f}% ({base_offset})", "debug")
+    return base_offset
+
+
+async def place_open_order_only():
+    """只挂开仓单的逻辑"""
+    # 生成订单ID
+    open_cl_ord_id = generate_order_id("OPEN_ONLY")
+
+    # 计算开仓价格
+    offset_percent = await calculate_dynamic_offset()
+    # 使用 Decimal 以提升精度
+    if trading_direction == "long":
+        open_price = round_price(Decimal(str(current_price)) * (Decimal('1') - Decimal(str(offset_percent))))
+    else:
+        open_price = round_price(Decimal(str(current_price)) * (Decimal('1') + Decimal(str(offset_percent))))
+
+    # 获取仓位大小
+    contract_size = get_position_size()
+    eth_value = calculate_contract_value(contract_size)
+
+    # 创建开仓单请求
+    request = {
+        "instId": SYMBOL,
+        "tdMode": "isolated",
+        "clOrdId": open_cl_ord_id,
+        "side": "buy" if trading_direction == "long" else "sell",
+        "posSide": trading_direction,
+        "ordType": "limit",
+        "px": str(open_price),
+        "sz": str(contract_size),
+        "reduceOnly": False
+    }
+
+    try:
+        await check_rate_limit(1)
+        response = await asyncio.to_thread(trade_api.place_order, **request)
+
+        if str(response.get("code", "")) == "0":
+            ord_id = response['data'][0].get('ordId', '')
+            active_orders[open_cl_ord_id] = {
+                "ord_id": ord_id,
+                "state": "live",
+                "type": "limit",
+                "tag": "OPEN_ONLY",
+                "create_time": time.time(),
+                "side": request["side"],
+                "posSide": trading_direction,
+                "px": open_price,
+                "sz": contract_size
+            }
+            log_action("开仓单", f"开仓单已提交 {open_cl_ord_id}", "info", {
+                "价格": open_price,
+                "方向": trading_direction,
+                "数量": f"{contract_size}张 ({eth_value:.6f} ETH)"
+            })
+            return True
+        log_action("开仓单", f"开仓单失败: {response.get('msg', '未知错误')}", "error", response)
+        return False
+    except Exception as e:
+        log_action("开仓单", f"挂单失败: {str(e)}", "error", exc_info=True)
+        return False
+
+
+async def place_full_order_pair(offset_percent):
+    """挂完整订单对"""
+    # 生成订单对ID
+    pair_id = generate_order_id("PAIR")
+    open_tag = "BL" if trading_direction == "long" else "SS"  # BL = Buy Long, SS = Sell Short
+    close_tag = "SL" if trading_direction == "short" else "SC"  # SL = Sell Long, SC = Cover Short
+
+    # 计算开仓和平仓价格（使用 Decimal 再转 float via round_price）
+    if trading_direction == "long":
+        open_price = round_price(Decimal(str(current_price)) * (Decimal('1') - Decimal(str(offset_percent))))
+        close_price = round_price(Decimal(str(current_price)) * (Decimal('1') + Decimal(str(offset_percent))))
+    else:
+        open_price = round_price(Decimal(str(current_price)) * (Decimal('1') + Decimal(str(offset_percent))))
+        close_price = round_price(Decimal(str(current_price)) * (Decimal('1') - Decimal(str(offset_percent))))
+
+    # 获取基础仓位大小
+    base_contract_size = get_position_size()
+
+    # 获取开仓增量配置值
+    order_increment = TRADE_STRATEGY["order_increment"]
+
+    # 开仓单增加配置的增量
+    open_contract_size = base_contract_size + order_increment
+    open_contract_size = validate_position_size(open_contract_size)
+
+    # 平仓单保持原大小
+    close_contract_size = base_contract_size
+
+    # 计算ETH价值
+    base_eth_value = calculate_contract_value(base_contract_size)
+    increment_eth_value = calculate_contract_value(order_increment)
+    open_eth_value = calculate_contract_value(open_contract_size)
+    close_eth_value = calculate_contract_value(close_contract_size)
+
+    # 创建开仓单
+    open_cl_ord_id = generate_order_id(f"{open_tag}_{pair_id}")
+    open_request = {
+        "instId": SYMBOL,
+        "tdMode": "isolated",
+        "clOrdId": open_cl_ord_id,
+        "side": "buy" if trading_direction == "long" else "sell",
+        "posSide": trading_direction,
+        "ordType": "limit",
+        "px": str(open_price),
+        "sz": str(open_contract_size),  # 使用修改后的开仓数量
+        "reduceOnly": False
+    }
+
+    # 创建平仓单
+    close_cl_ord_id = generate_order_id(f"{close_tag}_{pair_id}")
+    close_request = {
+        "instId": SYMBOL,
+        "tdMode": "isolated",
+        "clOrdId": close_cl_ord_id,
+        "side": "sell" if trading_direction == "long" else "buy",
+        "posSide": trading_direction,
+        "ordType": "limit",
+        "px": str(close_price),
+        "sz": str(close_contract_size),  # 使用原始平仓数量
+        "reduceOnly": True
+    }
+
+    # 批量订单请求
+    batch_requests = [open_request, close_request]
+
+    # 记录订单对关系（提前记录以处理回调）
+    order_pair_mapping[pair_id] = {
+        "open_cl_ord_id": open_cl_ord_id,
+        "close_cl_ord_id": close_cl_ord_id,
+        "status": "pending",
+        "create_time": time.time()
+    }
+
+    try:
+        # 应用速率限制 (2个订单)
+        await check_rate_limit(2)
+
+        # 提交批量订单
+        log_action("批量下单", "提交批量订单请求", "info", {
+            "订单对ID": pair_id,
+            "开仓请求": open_request,
+            "平仓请求": close_request,
+            "价格偏移": f"{offset_percent * 100:.2f}%",
+            "当前价格": current_price,
+            "基础仓位": f"{base_contract_size}张 ({base_eth_value:.6f} ETH)",
+            "开仓增量": f"{order_increment}张 ({increment_eth_value:.6f} ETH)",
+            "开仓总量": f"{open_contract_size}张 ({open_eth_value:.6f} ETH)"
+        })
+        response = await asyncio.to_thread(trade_api.place_multiple_orders, batch_requests)
+
+        # 记录完整响应
+        log_action("批量下单", "收到批量下单响应", "debug", response)
+
+        # 检查主响应代码
+        if response.get("code") != "0":
+            log_action("批量下单", "批量接口主响应错误", "error", response)
+            del order_pair_mapping[pair_id]
+            return False
+
+        # 处理每个订单的响应
+        order_data = response.get("data", [])
+        success_orders = []
+        failure_orders = []
+
+        for result in order_data:
+            cl_ord_id = result.get("clOrdId", "")
+            s_code = result.get("sCode", "")
+            ord_id = result.get("ordId", "")  # 服务器分配的订单ID
+            s_msg = result.get("sMsg", "")
+
+            if s_code == "0":  # 成功
+                success_orders.append({
+                    "cl_ord_id": cl_ord_id,
+                    "ord_id": ord_id,
+                    "request": next((r for r in batch_requests if r["clOrdId"] == cl_ord_id), None)
+                })
+            else:
+                failure_orders.append({
+                    "cl_ord_id": cl_ord_id,
+                    "s_code": s_code,
+                    "s_msg": s_msg,
+                    "ord_id": ord_id
+                })
+
+        # 处理部分失败情况
+        if failure_orders:
+            log_action("批量下单", f"{len(failure_orders)}个订单失败", "error", failure_orders)
+
+            # 取消已成功的订单
+            if success_orders:
+                for order in success_orders:
+                    await cancel_single_order(order["cl_ord_id"])
+                log_action("批量下单", f"已取消{len(success_orders)}个成功订单", "warning")
+
+            # 清理订单对映射
+            if pair_id in order_pair_mapping:
+                del order_pair_mapping[pair_id]
+            return False
+
+        # 记录活跃订单
+        for order in success_orders:
+            # 确定订单类型（开仓单还是平仓单）
+            if open_tag in order["cl_ord_id"]:
+                order_type = "open"
+                tag = open_tag
+            else:
+                order_type = "close"
+                tag = close_tag
+
+            # 记录到活跃订单
+            active_orders[order["cl_ord_id"]] = {
+                "ord_id": order["ord_id"],
+                "state": "live",
+                "type": "limit",
+                "tag": tag,
+                "create_time": time.time(),
+                "side": order["request"]["side"],
+                "posSide": trading_direction,
+                "pair_id": pair_id,
+                "px": order["request"]["px"],
+                "sz": order["request"]["sz"]
+            }
+
+            log_action("订单记录", f"{order_type}订单已记录", "info", {
+                "cl_ord_id": order["cl_ord_id"],
+                "ord_id": order["ord_id"],
+                "price": order["request"]["px"],
+                "size": f"{order['request']['sz']}张"
+            })
+
+        # 更新订单对状态
+        order_pair_mapping[pair_id]["status"] = "active"
+        log_action("批量下单", "✅ 订单对挂单成功", "info", {
+            "pair_id": pair_id,
+            "开仓价": open_price,
+            "平仓价": close_price,
+            "价格偏移": f"{offset_percent * 100:.2f}%",
+            "当前价格": current_price,
+            "基础仓位": f"{base_contract_size}张 ({base_eth_value:.6f} ETH)",
+            "开仓增量": f"{order_increment}张 ({increment_eth_value:.6f} ETH)",
+            "开仓总量": f"{open_contract_size}张 ({open_eth_value:.6f} ETH)"
+        })
+        return True
+
+    except Exception as e:
+        log_action("批量下单", f"批量下单异常: {str(e)}", "error", exc_info=True)
+        if pair_id in order_pair_mapping:
+            del order_pair_mapping[pair_id]
+        return False
+
+
+async def place_order_pair():
+    """挂完整订单对 - 简化版本，不考虑持仓均价"""
+    # 确保价格新鲜
+    if not await ensure_price_freshness():
+        log_action("A2下单", "无法获取最新价格", "error")
+        return False
+
+    # 计算动态偏移量
+    offset_percent = await calculate_dynamic_offset()
+
+    # 直接挂完整订单对
+    log_action("订单对", "无价格限制，挂完整订单对", "info")
+    return await place_full_order_pair(offset_percent)
+
+
+# ======================== 趋势分析 ========================
+async def analyze_trend():
+    """分析Supertrend趋势并返回方向 - 支持 fixed 或 auto 模式"""
+    global trading_direction, last_trend_check
+
+    # 更新最后趋势检查时间
+    last_trend_check = time.time()
+
+    mode = TRADE_STRATEGY.get("trend_mode", "fixed")
+    if mode == "fixed":
+        fixed_direction = TRADE_STRATEGY.get("fixed_trend_direction", "long")
+        if trading_direction != fixed_direction:
+            log_action("趋势更新",
+                       f"更新趋势方向: {trading_direction} → {fixed_direction}",
+                       "warning",
+                       {"reason": "使用配置的固定趋势方向"})
+            trading_direction = fixed_direction
+        # 返回 False 表示没有触发方向变化事件外部需处理
+        return False
+    else:
+        # auto 模式：调用 supertrend_analyzer（假设存在同步接口 get_direction 或 analyze）
+        try:
+            # 将可能阻塞的计算放到线程池
+            direction = await asyncio.to_thread(supertrend_analyzer.get_direction)
+            # direction 应返回 'long' 或 'short'
+            if direction not in ["long", "short"]:
+                log_action("趋势分析", f"Supertrend 返回的方向不在预期集合: {direction}", "error")
+                return False
+            if direction != trading_direction:
+                log_action("趋势更新", f"自动趋势更新: {trading_direction} → {direction}", "info", {"source": "supertrend"})
+                trading_direction = direction
+                return True
+            return False
+        except Exception as e:
+            log_action("趋势分析", f"Supertrend 分析失败: {e}", "error")
+            return False
+
+
+async def close_position(pos_side):
+    """平掉指定方向的仓位 - 增加详细日志"""
+    if pos_side not in ["long", "short"]:
+        log_action("平仓", f"非法平仓方向: {pos_side}", "error")
+        return False
+
+    pos_key = get_position_key(SYMBOL, pos_side)
+    pos_size = position_info[pos_key]["pos"]
+
+    if pos_size <= 0:
+        log_action("平仓", f"{pos_side} 仓位为0，无需平仓", "info")
+        return True
+
+    try:
+        # 市价平仓
+        side = "sell" if pos_side == "long" else "buy"
+        cl_ord_id = generate_order_id(f"MC_{pos_side[:1]}")
+
+        # 验证仓位大小
+        validated_size = validate_position_size(pos_size)
+        eth_value = calculate_contract_value(validated_size)
+
+        request = {
+            "instId": SYMBOL,
+            "tdMode": "isolated",
+            "clOrdId": cl_ord_id,
+            "side": side,
+            "posSide": pos_side,
+            "ordType": "market",
+            "sz": str(validated_size),
+            "reduceOnly": True
+        }
+
+        # 发送下单请求（线程池）
+        log_action("平仓下单", "发送平仓请求", "debug", request)
+        response = await asyncio.to_thread(trade_api.place_order, **request)
+
+        # 记录完整响应
+        log_action("平仓下单", "收到平仓响应", "debug", response)
+
+        if str(response.get("code", "")) == "0":
+            log_action("平仓下单", f"{pos_side} 仓位市价平仓提交成功", "info", {
+                "数量": f"{validated_size}张 ({eth_value:.6f} ETH)",
+                "订单ID": cl_ord_id
+            })
+            # 在本地更新仓位信息为 0（由于我们没有等待 websocket 真实成交通知）
+            position_info[pos_key]["pos"] = 0.0
+            return True
+        else:
+            log_action("平仓下单", f"市价平仓失败: {response.get('msg', '未知错误')}", "error", response)
+            return False
+    except Exception as e:
+        log_action("平仓下单", f"市价平仓异常: {str(e)}", "error", exc_info=True)
+        return False
+
+
+# ======================== WebSocket 及回调占位（测试用） ========================
+# 为了测试流程，提供最小的 WebSocket 占位（不做实际连接）
+async def ws_price_update_simulator():
+    """模拟 WebSocket 价格更新 - 在测试时可启动"""
+    global current_price, last_ws_price_update
+    while True:
+        # 模拟价格微动
+        if current_price == 0:
+            current_price = 1000.0  # 初始测试价格
+        else:
+            current_price = current_price * (1 + (random.random() - 0.5) * 0.001)
+        last_ws_price_update = time.time()
+        await asyncio.sleep(0.5)
+
+
+# ======================== 主流程入口（测试/调试专用） ========================
+async def main_loop_once():
+    """单次运行逻辑，用于测试脚本在没有真实 websocket 回调的环境下运行"""
+    # 尝试从 API 获取合约信息以覆盖本地 CONTRACT_INFO（如果成功则会修正 minSz/tickSz/ctVal 等）
+    await fetch_instrument_info_from_api()
+
+    # 刷新账户、仓位、价格
+    await update_current_price()
+    await fetch_account_balance()
+    await update_position_info()
+
+    # 确保 order_increment 配置有效
+    validate_order_increment()
+
+    # 分析趋势（fixed 或 auto）
+    await analyze_trend()
+
+    # 根据阶段与策略做简单动作（示例）
+    # 如果没有活跃订单，挂一对订单作为测试
+    if not active_orders:
+        log_action("主流程", "当前无活跃订单，尝试挂一对订单", "info")
+        success = await place_order_pair()
+        log_action("主流程", f"挂单对结果: {success}", "info")
+    else:
+        log_action("主流程", f"已有活跃订单: {len(active_orders)}，跳过挂单", "debug")
+
+    # 记录周期状态
+    log_periodic_status()
+
+
+async def main(run_forever=False):
+    """主入口，用于测试与调试"""
+    # 启动一个价格模拟器（测试用）
+    sim_task = asyncio.create_task(ws_price_update_simulator())
+
+    try:
+        # 单次运行并退出，或持续运行
+        if run_forever:
+            while True:
+                await main_loop_once()
+                await asyncio.sleep(5)
+        else:
+            await main_loop_once()
+    finally:
+        sim_task.cancel()
+        try:
+            await sim_task
+        except asyncio.CancelledError:
+            pass
+
+
+if __name__ == "__main__":
+    # 便于测试：运行一次主流程
+    asyncio.run(main(run_forever=False))
