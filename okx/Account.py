@@ -367,7 +367,7 @@ class AccountAPI(OkxClient):
             params['type'] = type
         return self._request_with_params(POST, BILLS_APPLY, params)
 
-    # Get GLP daily performance history for a program (BROK-2261)
+    # Get GLP daily performance history for a program
     def get_glp_historical_performance(self, program, begin='', end='', limit=''):
         params = {'program': program}
         if begin != '':
@@ -378,6 +378,6 @@ class AccountAPI(OkxClient):
             params['limit'] = limit
         return self._request_with_params(GET, GLP_HISTORICAL_PERFORMANCE, params)
 
-    # Get current-day + MTD GLP snapshot for all enrolled programs (BROK-2261)
+    # Get current-day + MTD GLP snapshot for all enrolled programs
     def get_glp_today_performance(self):
         return self._request_without_params(GET, GLP_TODAY_PERFORMANCE)
