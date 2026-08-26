@@ -1,5 +1,12 @@
 from okx.okxclient import OkxClient
-from okx.consts import *
+from okx.consts import (
+    GET,
+    OKUSD_ACCOUNT,
+    OKUSD_RATE_HISTORY,
+    OKUSD_SUBSCRIBE_HISTORY,
+    OKUSD_REDEEM_HISTORY,
+    OKUSD_REWARDS_HISTORY,
+)
 
 # "Unset" sentinel for the credential args so public endpoints work without keys;
 # never signed or transmitted as a real key/secret/passphrase.

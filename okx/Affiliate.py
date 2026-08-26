@@ -1,5 +1,12 @@
 from .okxclient import OkxClient
-from .consts import *
+from .consts import (
+    GET,
+    AFFILIATE_TVB_INVITEE_DETAIL,
+    AFFILIATE_TVB_INVITEE_LIST,
+    AFFILIATE_TVB_LINK_LIST,
+    AFFILIATE_TVB_PERFORMANCE_SUMMARY,
+    AFFILIATE_TVB_TIER_BREAKDOWN,
+)
 
 # "Unset" sentinel for the credential args so public endpoints work without keys;
 # never signed or transmitted as a real key/secret/passphrase.
