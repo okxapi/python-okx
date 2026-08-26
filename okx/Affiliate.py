@@ -18,12 +18,12 @@ class AffiliateAPI(OkxClient):
                  domain='https://www.okx.com', debug=False, proxy=None):
         OkxClient.__init__(self, api_key, api_secret_key, passphrase, use_server_time, flag, domain, debug, proxy)
 
-    def get_invitee_detail(self, uid):
+    def get_tvb_invitee_detail(self, uid):
         params = {'uid': uid}
         return self._request_with_params(GET, AFFILIATE_TVB_INVITEE_DETAIL, params)
 
-    def get_invitee_list(self, periodType='', begin='', end='', feeTier=None, tradeType='',
-                         keyword='', orderBy='', orderDir='', page='', limit=''):
+    def get_tvb_invitee_list(self, periodType='', begin='', end='', feeTier=None, tradeType='',
+                             keyword='', orderBy='', orderDir='', page='', limit=''):
         params = {}
         if periodType != '':
             params['periodType'] = periodType
@@ -47,8 +47,8 @@ class AffiliateAPI(OkxClient):
             params['limit'] = limit
         return self._request_with_params(GET, AFFILIATE_TVB_INVITEE_LIST, params)
 
-    def get_link_list(self, periodType='', begin='', end='', page='', limit='',
-                      linkType='', linkStatus=''):
+    def get_tvb_link_list(self, periodType='', begin='', end='', page='', limit='',
+                          linkType='', linkStatus=''):
         params = {}
         if periodType != '':
             params['periodType'] = periodType
@@ -66,7 +66,7 @@ class AffiliateAPI(OkxClient):
             params['linkStatus'] = linkStatus
         return self._request_with_params(GET, AFFILIATE_TVB_LINK_LIST, params)
 
-    def get_performance_summary(self, periodType='', begin='', end=''):
+    def get_tvb_performance_summary(self, periodType='', begin='', end=''):
         params = {}
         if periodType != '':
             params['periodType'] = periodType
@@ -76,7 +76,7 @@ class AffiliateAPI(OkxClient):
             params['end'] = end
         return self._request_with_params(GET, AFFILIATE_TVB_PERFORMANCE_SUMMARY, params)
 
-    def get_tier_breakdown(self, periodType='', begin='', end=''):
+    def get_tvb_tier_breakdown(self, periodType='', begin='', end=''):
         params = {}
         if periodType != '':
             params['periodType'] = periodType
