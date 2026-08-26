@@ -63,3 +63,28 @@ class FlexibleLoanAPI(OkxClient):
         if limit != '':
             params['limit'] = limit
         return self._request_with_params(GET, FINANCE_INTEREST_ACCRUED, params)
+
+    def borrow(self, loanData, clOrdId, ordId='', collateralData=None, eMode=''):
+        params = {
+            'loanData': loanData,
+            'clOrdId': clOrdId,
+        }
+        if ordId != '':
+            params['ordId'] = ordId
+        if collateralData is not None:
+            params['collateralData'] = collateralData
+        if eMode != '':
+            params['eMode'] = eMode
+        return self._request_with_params(POST, FINANCE_FLEXIBLE_LOAN_BORROW, params)
+
+    def repay(self, ordId, ccy, amt, clOrdId):
+        params = {
+            'ordId': ordId,
+            'ccy': ccy,
+            'amt': amt,
+            'clOrdId': clOrdId,
+        }
+        return self._request_with_params(POST, FINANCE_FLEXIBLE_LOAN_REPAY, params)
+
+    def emode_info(self):
+        return self._request_without_params(GET, FINANCE_FLEXIBLE_LOAN_EMODE_INFO)

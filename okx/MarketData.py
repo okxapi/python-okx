@@ -31,6 +31,11 @@ class MarketAPI(OkxClient):
         params = {'instId': instId, 'sz': sz}
         return self._request_with_params(GET, ORDER_BOOKS, params)
 
+    # Get RPI Order Book
+    def get_rpi_orderbook(self, instId, sz=''):
+        params = {'instId': instId, 'sz': sz}
+        return self._request_with_params(GET, MARKET_BOOKS_RPI, params)
+
     # Get Candlesticks
     def get_candlesticks(self, instId, after='', before='', bar='', limit=''):
         params = {'instId': instId, 'after': after, 'before': before, 'bar': bar, 'limit': limit}

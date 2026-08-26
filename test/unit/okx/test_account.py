@@ -779,6 +779,44 @@ class TestAccountAPIGetAccountBills(unittest.TestCase):
         self.assertEqual(bills_keys, archive_keys)
 
 
+class TestAccountAPIGlpPerformance(unittest.TestCase):
+    """Unit tests for GLP performance methods (TD 0.4.4 items #2-3)"""
+
+    def setUp(self):
+        self.account_api = AccountAPI(
+            api_key=_STUB_ID,
+            api_secret_key=_STUB_SIGN,
+            passphrase=_STUB_PHRASE,
+            flag='0'
+        )
+
+    def test_glp_constant_paths(self):
+        self.assertEqual(c.GLP_HISTORICAL_PERFORMANCE, '/api/v5/users/glp/historicalperformance')
+        self.assertEqual(c.GLP_TODAY_PERFORMANCE, '/api/v5/users/glp/todayperformance')
+
+    @patch.object(AccountAPI, '_request_with_params')
+    def test_glp_historical_performance_required_only(self, mock_request):
+        mock_request.return_value = {'code': '0', 'msg': '', 'data': []}
+        self.account_api.get_glp_historical_performance(program='SPOT')
+        mock_request.assert_called_once_with(
+            c.GET, c.GLP_HISTORICAL_PERFORMANCE, {'program': 'SPOT'})
+
+    @patch.object(AccountAPI, '_request_with_params')
+    def test_glp_historical_performance_with_all_params(self, mock_request):
+        mock_request.return_value = {'code': '0', 'msg': '', 'data': []}
+        self.account_api.get_glp_historical_performance(
+            program='PERP', begin='1', end='2', limit='100')
+        mock_request.assert_called_once_with(
+            c.GET, c.GLP_HISTORICAL_PERFORMANCE,
+            {'program': 'PERP', 'begin': '1', 'end': '2', 'limit': '100'})
+
+    @patch.object(AccountAPI, '_request_without_params')
+    def test_glp_today_performance(self, mock_request):
+        mock_request.return_value = {'code': '0', 'msg': '', 'data': []}
+        self.account_api.get_glp_today_performance()
+        mock_request.assert_called_once_with(c.GET, c.GLP_TODAY_PERFORMANCE)
+
+
 if __name__ == '__main__':
     unittest.main()
 

@@ -2,6 +2,18 @@
 
 All notable changes to `python-okx` are documented in this file.
 
+## [0.4.4]
+
+REST parity catch-up with the OKX v5 docs added between 2026-07-06 and 2026-08-26: 16 new endpoint bindings across market data, GLP performance, Flexible Loan, OKUSD, and Affiliate TVB. All changes are additive / opt-in and backward compatible — existing public signatures and happy-path behaviour are unchanged. New endpoints/modules are net-new symbols; new optional kwargs default to "unset" (omitted from the request).
+
+### Added
+- `okx/MarketData.py` `get_rpi_orderbook(instId, sz='')`: new method for `GET /api/v5/market/books-rpi` (RPI-consolidated order book). Mirrors `get_orderbook`.
+- `okx/Account.py` `get_glp_historical_performance(program, begin='', end='', limit='')` and `get_glp_today_performance()`: new methods for `GET /api/v5/users/glp/historicalperformance` and `GET /api/v5/users/glp/todayperformance` (GLP market-maker performance reporting).
+- `okx/Finance/FlexibleLoan.py` `borrow(loanData, clOrdId, ordId='', collateralData=None, eMode='')`, `repay(ordId, ccy, amt, clOrdId)`, and `emode_info()`: new methods for `POST /api/v5/finance/flexible-loan/borrow`, `POST /api/v5/finance/flexible-loan/repay`, and `GET /api/v5/finance/flexible-loan/emode-info`.
+- `okx/Finance/Okusd.py` (new module) `OkusdAPI`: 5 methods for the OKUSD stablecoin product — `get_account`, `get_rate_history`, `get_subscribe_history`, `get_redeem_history`, `get_rewards_history` (`GET /api/v5/finance/okusd/{account,rate/history,subscribe/history,redeem/history,rewards/history}`). Registered in `okx/Finance/__init__.py`.
+- `okx/Affiliate.py` (new module) `AffiliateAPI`: 5 methods for the Affiliate Trading Volume Bonus (TVB) program — `get_invitee_detail`, `get_invitee_list`, `get_link_list`, `get_performance_summary`, `get_tier_breakdown` (`GET /api/v5/affiliate/tvb/{invitee/detail,invitee/list,link/list,performance/summary,tier-breakdown}`).
+- `okx/consts.py`: 16 new path constants for all endpoints above.
+
 ## [0.4.3]
 
 Packaging hygiene plus one additive ETH Staking endpoint. All changes are backward compatible — existing public signatures and happy-path behaviour are unchanged.

@@ -318,5 +318,31 @@ DUAL_INVEST_REDEEM               = '/api/v5/finance/sfp/dcd/redeem'
 DUAL_INVEST_ORDER_STATE          = '/api/v5/finance/sfp/dcd/order-status'
 DUAL_INVEST_ORDER_HISTORY        = '/api/v5/finance/sfp/dcd/order-history'
 
+# RPI order book (0.4.4)
+MARKET_BOOKS_RPI = '/api/v5/market/books-rpi'
+
+# GLP performance (0.4.4)
+GLP_HISTORICAL_PERFORMANCE = '/api/v5/users/glp/historicalperformance'
+GLP_TODAY_PERFORMANCE = '/api/v5/users/glp/todayperformance'
+
+# Flexible loan borrow / repay / E-Mode (0.4.4)
+FINANCE_FLEXIBLE_LOAN_BORROW = '/api/v5/finance/flexible-loan/borrow'
+FINANCE_FLEXIBLE_LOAN_REPAY = '/api/v5/finance/flexible-loan/repay'
+FINANCE_FLEXIBLE_LOAN_EMODE_INFO = '/api/v5/finance/flexible-loan/emode-info'
+
+# OKUSD (0.4.4)
+OKUSD_ACCOUNT = '/api/v5/finance/okusd/account'
+OKUSD_RATE_HISTORY = '/api/v5/finance/okusd/rate/history'
+OKUSD_SUBSCRIBE_HISTORY = '/api/v5/finance/okusd/subscribe/history'
+OKUSD_REDEEM_HISTORY = '/api/v5/finance/okusd/redeem/history'
+OKUSD_REWARDS_HISTORY = '/api/v5/finance/okusd/rewards/history'
+
+# Affiliate TVB (0.4.4)
+AFFILIATE_TVB_INVITEE_DETAIL = '/api/v5/affiliate/tvb/invitee/detail'
+AFFILIATE_TVB_INVITEE_LIST = '/api/v5/affiliate/tvb/invitee/list'
+AFFILIATE_TVB_LINK_LIST = '/api/v5/affiliate/tvb/link/list'
+AFFILIATE_TVB_PERFORMANCE_SUMMARY = '/api/v5/affiliate/tvb/performance/summary'
+AFFILIATE_TVB_TIER_BREAKDOWN = '/api/v5/affiliate/tvb/tier-breakdown'
+
 
 
