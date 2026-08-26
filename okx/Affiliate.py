@@ -1,9 +1,13 @@
 from .okxclient import OkxClient
 from .consts import *
 
+# "Unset" sentinel for the credential args so public endpoints work without keys;
+# never signed or transmitted as a real key/secret/passphrase.
+_NO_CREDENTIAL = '-1'
+
 
 class AffiliateAPI(OkxClient):
-    def __init__(self, api_key='-1', api_secret_key='-1', passphrase='-1', use_server_time=None, flag='1',
+    def __init__(self, api_key=_NO_CREDENTIAL, api_secret_key=_NO_CREDENTIAL, passphrase=_NO_CREDENTIAL, use_server_time=None, flag='1',
                  domain='https://www.okx.com', debug=False, proxy=None):
         OkxClient.__init__(self, api_key, api_secret_key, passphrase, use_server_time, flag, domain, debug, proxy)
 
