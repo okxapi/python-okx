@@ -1,1 +1,1 @@
-from . import Okusd  # noqa: F401
+from okx.Finance import Okusd  # noqa: F401

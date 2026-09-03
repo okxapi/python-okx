@@ -16,6 +16,10 @@ APPLICATION_JSON = 'application/json'
 GET = "GET"
 POST = "POST"
 
+# Unset sentinel for credential args — lets public endpoints work without keys.
+# Never signed or transmitted as a real key/secret/passphrase.
+_NO_CREDENTIAL = '-1'
+
 SERVER_TIMESTAMP_URL = '/api/v5/public/time'
 
 # Account
@@ -112,6 +116,7 @@ BLOCK_TICKER = '/api/v5/market/block-ticker'
 BLOCK_TRADES = '/api/v5/market/block-trades'
 GET_ORDER_LITE_BOOK = '/api/v5/market/books-lite'
 GET_OPTION_TRADES = '/api/v5/market/option/instrument-family-trades'
+MARKET_BOOKS_RPI = '/api/v5/market/books-rpi'
 
 # Public Data
 INSTRUMENT_INFO = '/api/v5/public/instruments'
@@ -192,6 +197,10 @@ SET_TRSNSFER_OUT = '/api/v5/users/subaccount/set-transfer-out'
 GET_ASSET_SUBACCOUNT_BALANCE = '/api/v5/asset/subaccount/balances'
 SET_SUB_ACCOUNTS_VIP_LOAN = '/api/v5/account/subaccount/set-loan-allocation'
 GET_SUB_ACCOUNT_BORROW_INTEREST_AND_LIMIT = '/api/v5/account/subaccount/interest-limits'
+
+# GLP performance
+GLP_HISTORICAL_PERFORMANCE = '/api/v5/users/glp/historicalperformance'
+GLP_TODAY_PERFORMANCE = '/api/v5/users/glp/todayperformance'
 
 # Convert
 GET_CURRENCIES = '/api/v5/asset/convert/currencies'
@@ -307,6 +316,9 @@ FINANCE_ADJUST_COLLATERAL = '/api/v5/finance/flexible-loan/adjust-collateral'
 FINANCE_LOAN_INFO = '/api/v5/finance/flexible-loan/loan-info'
 FINANCE_LOAN_HISTORY = '/api/v5/finance/flexible-loan/loan-history'
 FINANCE_INTEREST_ACCRUED = '/api/v5/finance/flexible-loan/interest-accrued'
+FINANCE_FLEXIBLE_LOAN_BORROW = '/api/v5/finance/flexible-loan/borrow'
+FINANCE_FLEXIBLE_LOAN_REPAY = '/api/v5/finance/flexible-loan/repay'
+FINANCE_FLEXIBLE_LOAN_EMODE_INFO = '/api/v5/finance/flexible-loan/emode-info'
 
 # Dual Investment (DCD) — under /api/v5/finance/sfp/dcd/
 DUAL_INVEST_CURRENCY_PAIRS       = '/api/v5/finance/sfp/dcd/currency-pair'
@@ -317,18 +329,6 @@ DUAL_INVEST_REQUEST_REDEEM_QUOTE = '/api/v5/finance/sfp/dcd/redeem-quote'
 DUAL_INVEST_REDEEM               = '/api/v5/finance/sfp/dcd/redeem'
 DUAL_INVEST_ORDER_STATE          = '/api/v5/finance/sfp/dcd/order-status'
 DUAL_INVEST_ORDER_HISTORY        = '/api/v5/finance/sfp/dcd/order-history'
-
-# RPI order book
-MARKET_BOOKS_RPI = '/api/v5/market/books-rpi'
-
-# GLP performance
-GLP_HISTORICAL_PERFORMANCE = '/api/v5/users/glp/historicalperformance'
-GLP_TODAY_PERFORMANCE = '/api/v5/users/glp/todayperformance'
-
-# Flexible loan borrow / repay / E-Mode
-FINANCE_FLEXIBLE_LOAN_BORROW = '/api/v5/finance/flexible-loan/borrow'
-FINANCE_FLEXIBLE_LOAN_REPAY = '/api/v5/finance/flexible-loan/repay'
-FINANCE_FLEXIBLE_LOAN_EMODE_INFO = '/api/v5/finance/flexible-loan/emode-info'
 
 # OKUSD
 OKUSD_ACCOUNT = '/api/v5/finance/okusd/account'
@@ -343,6 +343,3 @@ AFFILIATE_TVB_INVITEE_LIST = '/api/v5/affiliate/tvb/invitee/list'
 AFFILIATE_TVB_LINK_LIST = '/api/v5/affiliate/tvb/link/list'
 AFFILIATE_TVB_PERFORMANCE_SUMMARY = '/api/v5/affiliate/tvb/performance/summary'
 AFFILIATE_TVB_TIER_BREAKDOWN = '/api/v5/affiliate/tvb/tier-breakdown'
-
-
-

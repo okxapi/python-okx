@@ -1,16 +1,13 @@
-from .okxclient import OkxClient
-from .consts import (
+from okx.okxclient import OkxClient
+from okx.consts import (
     GET,
+    _NO_CREDENTIAL,
     AFFILIATE_TVB_INVITEE_DETAIL,
     AFFILIATE_TVB_INVITEE_LIST,
     AFFILIATE_TVB_LINK_LIST,
     AFFILIATE_TVB_PERFORMANCE_SUMMARY,
     AFFILIATE_TVB_TIER_BREAKDOWN,
 )
-
-# "Unset" sentinel for the credential args so public endpoints work without keys;
-# never signed or transmitted as a real key/secret/passphrase.
-_NO_CREDENTIAL = '-1'
 
 
 class AffiliateAPI(OkxClient):
