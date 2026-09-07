@@ -229,7 +229,7 @@ class AccountAPI(OkxClient):
         }
         return self._request_with_params(POST, SET_AUTO_LOAN, params)
 
-    # - Set auto loan
+    # - Set account level
     def set_account_level(self, acctLv):
         params = {
             'acctLv': acctLv
