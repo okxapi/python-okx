@@ -38,6 +38,16 @@ class TestWsPublicAsyncInit(unittest.TestCase):
             self.assertEqual(ws.secretKey, '')
             self.assertFalse(ws.debug)
             self.assertFalse(ws.isLoggedIn)
+            mock_factory.assert_called_once_with(TEST_WS_URL, proxy=None)
+
+    def test_init_forwards_proxy_to_factory(self):
+        """An explicit proxy is forwarded to the WebSocket transport."""
+        with patch.object(ws_public_module, 'WebSocketFactory') as mock_factory:
+            proxy = 'http://127.0.0.1:7890'
+
+            WsPublicAsync(url=TEST_WS_URL, proxy=proxy)
+
+            mock_factory.assert_called_once_with(TEST_WS_URL, proxy=proxy)
 
     def test_init_with_credentials(self):
         """Test initialization with all credentials for business channel"""
@@ -85,7 +95,7 @@ class TestWsPublicAsyncLogin(unittest.TestCase):
                     await ws.login()
                 self.assertIn("apiKey, secretKey and passphrase are required for login", str(context.exception))
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
     def test_login_with_credentials_success(self):
         """Test successful login with valid credentials"""
@@ -116,7 +126,7 @@ class TestWsPublicAsyncLogin(unittest.TestCase):
                 )
                 mock_websocket.send.assert_called_once()
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
 
 class TestWsPublicAsyncSubscribe(unittest.TestCase):
@@ -144,7 +154,7 @@ class TestWsPublicAsyncSubscribe(unittest.TestCase):
                 self.assertEqual(payload["args"], params)
                 self.assertNotIn("id", payload)
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
     def test_subscribe_with_id(self):
         """Test subscribe with id parameter"""
@@ -165,7 +175,7 @@ class TestWsPublicAsyncSubscribe(unittest.TestCase):
                 self.assertEqual(payload["args"], params)
                 self.assertEqual(payload["id"], "sub001")
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
     def test_subscribe_with_multiple_channels(self):
         """Test subscribe with multiple channels"""
@@ -186,7 +196,7 @@ class TestWsPublicAsyncSubscribe(unittest.TestCase):
                 self.assertEqual(len(payload["args"]), 2)
                 self.assertEqual(payload["id"], "multi001")
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
 
 class TestWsPublicAsyncUnsubscribe(unittest.TestCase):
@@ -209,7 +219,7 @@ class TestWsPublicAsyncUnsubscribe(unittest.TestCase):
                 self.assertEqual(payload["args"], params)
                 self.assertNotIn("id", payload)
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
     def test_unsubscribe_with_id(self):
         """Test unsubscribe with id parameter"""
@@ -227,7 +237,7 @@ class TestWsPublicAsyncUnsubscribe(unittest.TestCase):
                 self.assertEqual(payload["op"], "unsubscribe")
                 self.assertEqual(payload["id"], "unsub001")
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
 
 class TestWsPublicAsyncSend(unittest.TestCase):
@@ -252,7 +262,7 @@ class TestWsPublicAsyncSend(unittest.TestCase):
                 self.assertEqual(payload["args"], args)
                 self.assertNotIn("id", payload)
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
     def test_send_with_id(self):
         """Test generic send method with id"""
@@ -270,7 +280,7 @@ class TestWsPublicAsyncSend(unittest.TestCase):
                 self.assertEqual(payload["op"], "custom_op")
                 self.assertEqual(payload["id"], "send001")
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
     def test_send_without_callback(self):
         """Test send method without callback (preserves existing callback)"""
@@ -288,7 +298,7 @@ class TestWsPublicAsyncSend(unittest.TestCase):
                 # Callback should remain unchanged
                 self.assertEqual(ws.callback, existing_callback)
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
     def test_send_with_new_callback_replaces_existing(self):
         """Test send method with new callback replaces existing callback"""
@@ -306,7 +316,7 @@ class TestWsPublicAsyncSend(unittest.TestCase):
                 await ws.send("custom_op", args, callback=new_callback)
                 self.assertEqual(ws.callback, new_callback)
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
 
 class TestWsPublicAsyncStartStop(unittest.TestCase):
@@ -325,7 +335,7 @@ class TestWsPublicAsyncStartStop(unittest.TestCase):
                 await ws.stop()
                 mock_factory_instance.close.assert_called_once()
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
     def test_start_returns_task(self):
         """start() returns the consume task so the caller can retain/await it (GH#116)"""
@@ -339,7 +349,7 @@ class TestWsPublicAsyncStartStop(unittest.TestCase):
                 self.assertIsInstance(task, asyncio.Task)
                 await task
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
 
 class _RaisingAsyncIterator:
@@ -377,7 +387,7 @@ class TestWsPublicAsyncConsumeErrorPropagation(unittest.TestCase):
                     await ws.consume()
 
             with patch.object(ws_public_module.logger, 'error') as mock_log_error:
-                asyncio.get_event_loop().run_until_complete(run_test())
+                asyncio.run(run_test())
                 mock_log_error.assert_called_once()
 
             # Normal message delivered first, then the injected error event
@@ -410,7 +420,7 @@ class TestWsPublicAsyncConsumeErrorPropagation(unittest.TestCase):
             async def run_test():
                 await ws.consume()
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
             self.assertEqual(received, ['a', 'b'])
 
 

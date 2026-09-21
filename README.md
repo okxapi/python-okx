@@ -110,6 +110,8 @@ passphrase = ""
 - WebSocketAPI
   - Run test/WsPrivateTest.py for private websocket channels
   - Run test/WsPublicTest.py for public websocket channels
+  - Pass `proxy="http://127.0.0.1:7890"` to `WsPublicAsync` or
+    `WsPrivateAsync` when the WebSocket connection must use an explicit proxy
   - Use different URLs for different environment
       - Live trading URLs: https://www.okx.com/docs-v5/en/#overview-production-trading-services
       - Demo trading URLs: https://www.okx.com/docs-v5/en/#overview-demo-trading-services

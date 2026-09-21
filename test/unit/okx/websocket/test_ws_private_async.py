@@ -44,7 +44,22 @@ class TestWsPrivateAsyncInit(unittest.TestCase):
             self.assertEqual(ws.url, TEST_WS_URL)
             self.assertFalse(ws.useServerTime)
             self.assertFalse(ws.debug)
-            mock_factory.assert_called_once_with(TEST_WS_URL)
+            mock_factory.assert_called_once_with(TEST_WS_URL, proxy=None)
+
+    def test_init_forwards_proxy_to_factory(self):
+        """An explicit proxy is forwarded to the WebSocket transport."""
+        with patch.object(ws_private_module, 'WebSocketFactory') as mock_factory:
+            proxy = 'http://127.0.0.1:7890'
+
+            WsPrivateAsync(
+                apiKey=_STUB_ID,
+                passphrase=_STUB_PHRASE,
+                secretKey=_STUB_SIGN,
+                url=TEST_WS_URL,
+                proxy=proxy
+            )
+
+            mock_factory.assert_called_once_with(TEST_WS_URL, proxy=proxy)
 
     def test_init_with_debug_enabled(self):
         """Test initialization with debug mode enabled"""
@@ -130,7 +145,7 @@ class TestWsPrivateAsyncSubscribe(unittest.TestCase):
                 self.assertEqual(payload["args"], params)
                 self.assertNotIn("id", payload)
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
     def test_subscribe_with_id(self):
         """Test subscribe with id parameter"""
@@ -159,7 +174,7 @@ class TestWsPrivateAsyncSubscribe(unittest.TestCase):
                 self.assertEqual(payload["op"], "subscribe")
                 self.assertEqual(payload["id"], "sub001")
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
 
 class TestWsPrivateAsyncUnsubscribe(unittest.TestCase):
@@ -187,7 +202,7 @@ class TestWsPrivateAsyncUnsubscribe(unittest.TestCase):
                 self.assertEqual(payload["args"], params)
                 self.assertNotIn("id", payload)
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
     def test_unsubscribe_with_id(self):
         """Test unsubscribe with id parameter"""
@@ -210,7 +225,7 @@ class TestWsPrivateAsyncUnsubscribe(unittest.TestCase):
                 self.assertEqual(payload["op"], "unsubscribe")
                 self.assertEqual(payload["id"], "unsub001")
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
 
 class TestWsPrivateAsyncSend(unittest.TestCase):
@@ -240,7 +255,7 @@ class TestWsPrivateAsyncSend(unittest.TestCase):
                 self.assertEqual(payload["args"], args)
                 self.assertNotIn("id", payload)
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
     def test_send_with_id(self):
         """Test generic send method with id"""
@@ -263,7 +278,7 @@ class TestWsPrivateAsyncSend(unittest.TestCase):
                 self.assertEqual(payload["op"], "custom_op")
                 self.assertEqual(payload["id"], "send001")
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
 
 class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
@@ -306,7 +321,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
                 self.assertEqual(payload["args"], order_args)
                 self.assertEqual(payload["id"], "order001")
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
     def test_place_order_without_id(self):
         """Test place_order without id parameter"""
@@ -321,7 +336,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
                 self.assertEqual(payload["op"], "order")
                 self.assertNotIn("id", payload)
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
     def test_batch_orders_sends_correct_payload(self):
         """Test batch_orders sends correct operation"""
@@ -341,7 +356,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
                 self.assertEqual(payload["args"], order_args)
                 self.assertEqual(payload["id"], "batch001")
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
     def test_batch_orders_without_id(self):
         """Test batch_orders without id parameter"""
@@ -356,7 +371,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
                 self.assertEqual(payload["op"], "batch-orders")
                 self.assertNotIn("id", payload)
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
     def test_cancel_order_sends_correct_payload(self):
         """Test cancel_order sends correct operation"""
@@ -373,7 +388,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
                 self.assertEqual(payload["args"], cancel_args)
                 self.assertEqual(payload["id"], "cancel001")
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
     def test_cancel_order_without_id(self):
         """Test cancel_order without id parameter"""
@@ -388,7 +403,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
                 self.assertEqual(payload["op"], "cancel-order")
                 self.assertNotIn("id", payload)
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
     def test_batch_cancel_orders_sends_correct_payload(self):
         """Test batch_cancel_orders sends correct operation"""
@@ -408,7 +423,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
                 self.assertEqual(payload["args"], cancel_args)
                 self.assertEqual(payload["id"], "batchCancel001")
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
     def test_batch_cancel_orders_without_id(self):
         """Test batch_cancel_orders without id parameter"""
@@ -423,7 +438,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
                 self.assertEqual(payload["op"], "batch-cancel-orders")
                 self.assertNotIn("id", payload)
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
     def test_amend_order_sends_correct_payload(self):
         """Test amend_order sends correct operation"""
@@ -445,7 +460,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
                 self.assertEqual(payload["args"], amend_args)
                 self.assertEqual(payload["id"], "amend001")
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
     def test_amend_order_without_id(self):
         """Test amend_order without id parameter"""
@@ -460,7 +475,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
                 self.assertEqual(payload["op"], "amend-order")
                 self.assertNotIn("id", payload)
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
     def test_batch_amend_orders_sends_correct_payload(self):
         """Test batch_amend_orders sends correct operation"""
@@ -480,7 +495,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
                 self.assertEqual(payload["args"], amend_args)
                 self.assertEqual(payload["id"], "batchAmend001")
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
     def test_batch_amend_orders_without_id(self):
         """Test batch_amend_orders without id parameter"""
@@ -495,7 +510,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
                 self.assertEqual(payload["op"], "batch-amend-orders")
                 self.assertNotIn("id", payload)
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
     def test_mass_cancel_sends_correct_payload(self):
         """Test mass_cancel sends correct operation"""
@@ -515,7 +530,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
                 self.assertEqual(payload["args"], mass_cancel_args)
                 self.assertEqual(payload["id"], "massCancel001")
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
     def test_mass_cancel_without_id(self):
         """Test mass_cancel without id parameter"""
@@ -530,7 +545,7 @@ class TestWsPrivateAsyncOrderMethods(unittest.TestCase):
                 self.assertEqual(payload["op"], "mass-cancel")
                 self.assertNotIn("id", payload)
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
 
 class TestWsPrivateAsyncLogin(unittest.TestCase):
@@ -562,7 +577,7 @@ class TestWsPrivateAsyncLogin(unittest.TestCase):
                     secretKey=_STUB_SIGN
                 )
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
 
 class TestWsPrivateAsyncStartStop(unittest.TestCase):
@@ -586,7 +601,7 @@ class TestWsPrivateAsyncStartStop(unittest.TestCase):
                 await ws.stop()
                 mock_factory_instance.close.assert_called_once()
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
     def test_start_returns_task(self):
         """start() returns the consume task so the caller can retain/await it (GH#116)"""
@@ -605,7 +620,7 @@ class TestWsPrivateAsyncStartStop(unittest.TestCase):
                 self.assertIsInstance(task, asyncio.Task)
                 await task
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
 
 
 class _RaisingAsyncIterator:
@@ -651,7 +666,7 @@ class TestWsPrivateAsyncConsumeErrorPropagation(unittest.TestCase):
                     await ws.consume()
 
             with patch.object(ws_private_module.logger, 'error') as mock_log_error:
-                asyncio.get_event_loop().run_until_complete(run_test())
+                asyncio.run(run_test())
                 mock_log_error.assert_called_once()
 
             self.assertEqual(received[0], '{"data": "ok"}')
@@ -683,7 +698,7 @@ class TestWsPrivateAsyncConsumeErrorPropagation(unittest.TestCase):
             async def run_test():
                 await ws.consume()
 
-            asyncio.get_event_loop().run_until_complete(run_test())
+            asyncio.run(run_test())
             self.assertEqual(received, ['a', 'b'])
 
 

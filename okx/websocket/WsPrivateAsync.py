@@ -12,12 +12,12 @@ logger = logging.getLogger(__name__)
 
 
 class WsPrivateAsync:
-    def __init__(self, apiKey, passphrase, secretKey, url, useServerTime=None, debug=False):
+    def __init__(self, apiKey, passphrase, secretKey, url, useServerTime=None, debug=False, proxy=None):
         self.url = url
         self.subscriptions = set()
         self.callback = None
-        self.loop = asyncio.get_event_loop()
-        self.factory = WebSocketFactory(url)
+        self.loop = None
+        self.factory = WebSocketFactory(url, proxy=proxy)
         self.apiKey = apiKey
         self.passphrase = passphrase
         self.secretKey = secretKey
@@ -201,12 +201,13 @@ class WsPrivateAsync:
             logger.debug("Connecting to WebSocket...")
         else:
             logger.info("Connecting to WebSocket...")
+        self.loop = asyncio.get_running_loop()
         await self.connect()
         return self.loop.create_task(self.consume())
 
     def stop_sync(self):
-        if self.loop.is_running():
+        if self.loop is not None and self.loop.is_running():
             future = asyncio.run_coroutine_threadsafe(self.stop(), self.loop)
             future.result(timeout=10)
         else:
-            self.loop.run_until_complete(self.stop())
+            asyncio.run(self.stop())
